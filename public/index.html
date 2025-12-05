@@ -102,31 +102,31 @@
                 const minutesSinceDeployment = (Date.now() - deployedTime) / 1000 / 60;
                 
                 // Update local agent indicator with device-specific status
-                // Update status indicators (Server + Website Visitors)
+                // Update status indicators (Cloud Agent + Website Visitors)
                 function updateStatusIndicators(visitorsConnected) {
                     const cloudLight = document.getElementById('cloudAgentLight');
                     const localLight = document.getElementById('localAgentsLight');
                     const localText = document.getElementById('localAgentsText');
                     const statusMessage = document.getElementById('statusMessage');
                     
-                    // Server is always GREEN (online)
+                    // Cloud Agent is always GREEN (always online collecting)
                     if (cloudLight) {
                         cloudLight.style.background = '#00ff00';
                         cloudLight.style.boxShadow = '0 0 20px #00ff00, inset 0 0 10px rgba(255, 255, 255, 0.5)';
                     }
                     
                     if (visitorsConnected > 0) {
-                        // YELLOW - People browsing the site
+                        // YELLOW - People browsing your sites
                         if (localLight) {
                             localLight.style.background = '#ffff00';
                             localLight.style.boxShadow = '0 0 20px #ffff00, inset 0 0 10px rgba(255, 255, 255, 0.5)';
                         }
                         if (localText) {
-                            localText.textContent = `Active Visitors: ${visitorsConnected}`;
+                            localText.textContent = `Site Visitors: ${visitorsConnected}`;
                             localText.style.color = '#ffff00';
                         }
                         if (statusMessage) {
-                            statusMessage.innerHTML = `🌐 Server Running | 👁️ ${visitorsConnected} visitor${visitorsConnected > 1 ? 's' : ''} browsing site`;
+                            statusMessage.innerHTML = `✅ Cloud Agent Online | 🎯 Collecting from ${visitorsConnected} visitor${visitorsConnected > 1 ? 's' : ''}`;
                             statusMessage.style.borderLeft = '3px solid #ffff00';
                             statusMessage.style.background = 'rgba(255, 255, 0, 0.1)';
                             statusMessage.style.color = '#ffff00';
@@ -138,11 +138,11 @@
                             localLight.style.boxShadow = 'inset 0 0 5px rgba(0, 0, 0, 0.5)';
                         }
                         if (localText) {
-                            localText.textContent = 'Active Visitors: 0';
+                            localText.textContent = 'Site Visitors: 0';
                             localText.style.color = '#666';
                         }
                         if (statusMessage) {
-                            statusMessage.innerHTML = '🌐 Server Running | 👁️ Waiting for visitors to browse the site';
+                            statusMessage.innerHTML = '✅ Cloud Agent Online | 👁️ Monitoring nupidesktopai.com + therapyconne.com';
                             statusMessage.style.borderLeft = '3px solid #0099ff';
                             statusMessage.style.background = 'rgba(0, 153, 255, 0.1)';
                             statusMessage.style.color = '#0099ff';
@@ -1467,36 +1467,36 @@
                 <!-- 3-INDICATOR STATUS BAR -->
                 <div style="background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(20, 20, 20, 0.6)); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                        <h3 style="color: #fff; margin: 0; font-size: 1.2em;">Monitoring Status</h3>
+                        <h3 style="color: #fff; margin: 0; font-size: 1.2em;">System Status</h3>
                         <div style="display: flex; gap: 20px; align-items: center;">
-                            <!-- GREEN - Server Online -->
+                            <!-- GREEN - Cloud Agent Always Online -->
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <div id="cloudAgentLight" style="width: 18px; height: 18px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 20px #00ff00, inset 0 0 10px rgba(255, 255, 255, 0.5); animation: pulse 2s infinite; border: 2px solid rgba(255, 255, 255, 0.3);"></div>
-                                <span style="color: #00ff00; font-weight: 600; font-size: 0.95em;">Server Online</span>
+                                <span style="color: #00ff00; font-weight: 600; font-size: 0.95em;">Cloud Agent</span>
                             </div>
                             
-                            <!-- YELLOW - Active Site Visitors -->
+                            <!-- YELLOW - Website Visitors -->
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <div id="localAgentsLight" style="width: 18px; height: 18px; background: #333; border-radius: 50%; box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5); border: 2px solid rgba(255, 255, 0, 0.3);"></div>
-                                <span id="localAgentsText" style="color: #666; font-weight: 600; font-size: 0.95em;">Active Visitors: 0</span>
+                                <span id="localAgentsText" style="color: #666; font-weight: 600; font-size: 0.95em;">Site Visitors: 0</span>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Status Message -->
                     <div id="statusMessage" style="color: #0099ff; font-size: 0.9em; padding: 10px; background: rgba(0, 153, 255, 0.1); border-radius: 6px; border-left: 3px solid #0099ff;">
-                        🌐 Server Running | 👁️ Waiting for visitors to browse the site
+                        ✅ Cloud Agent Online | 👁️ Monitoring nupidesktopai.com + therapyconne.com
                     </div>
                 </div>
                 
-                <!-- SERVER STATUS CARD -->
+                <!-- CLOUD AGENT STATUS CARD -->
                 <div style="background: linear-gradient(135deg, rgba(0, 153, 255, 0.15), rgba(0, 255, 157, 0.15)); border: 2px solid #00ff9d; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 30px rgba(0, 255, 157, 0.2);">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                         <h3 style="color: #00ff9d; margin: 0; font-size: 1.3em; display: flex; align-items: center; gap: 10px;">
                             <span class="status-dot" style="width: 12px; height: 12px; animation: pulse 2s infinite;"></span>
-                            Data Collection Server
+                            Cloud Agent
                         </h3>
-                        <div id="agentStatus" style="color: #00ff9d; font-size: 1.1em; font-weight: 600;">✅ READY</div>
+                        <div id="agentStatus" style="color: #00ff9d; font-size: 1.1em; font-weight: 600;">✅ ONLINE & COLLECTING</div>
                     </div>
                 </div>
                 
