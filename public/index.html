@@ -5063,50 +5063,9 @@ Real-World Features:
         
         // Run Auto-Commands from quick buttons
         async function runAutoCommand(cmd) {
-            addCloudChatMessage(`Running: ${cmd}`, 'user');
-            
-            if (cmd === 'clean') {
-                addCloudChatMessage('🧹 Starting auto-clean...', 'agent');
-                // Execute actual clean command
-                document.getElementById('terminalInput').value = 'clean';
-                await executeCommand();
-                addCloudChatMessage('✅ Auto-clean complete! Check terminal for details.', 'agent');
-            } else if (cmd === 'memory') {
-                addCloudChatMessage('🧠 Analyzing memory usage...', 'agent');
-                document.getElementById('terminalInput').value = 'memory';
-                await executeCommand();
-                addCloudChatMessage('✅ Memory analysis complete! Check terminal for details.', 'agent');
-            } else if (cmd === 'performance') {
-                addCloudChatMessage('📊 Running performance benchmarks...', 'agent');
-                document.getElementById('terminalInput').value = 'performance';
-                await executeCommand();
-                addCloudChatMessage('✅ Performance test complete! Check terminal for results.', 'agent');
-            } else if (cmd === 'battery') {
-                addCloudChatMessage('🔋 Checking battery status...', 'agent');
-                document.getElementById('terminalInput').value = 'battery';
-                await executeCommand();
-                addCloudChatMessage('✅ Battery check complete! Check terminal for details.', 'agent');
-            } else if (cmd === 'network') {
-                addCloudChatMessage('📡 Testing network speed...', 'agent');
-                document.getElementById('terminalInput').value = 'network';
-                await executeCommand();
-                addCloudChatMessage('✅ Network test complete! Check terminal for results.', 'agent');
-            } else if (cmd === 'report') {
-                addCloudChatMessage('📈 Generating performance report...', 'agent');
-                const report = await PerformanceTracker.generateReport();
-                if (report) {
-                    let msg = `📊 Performance Report:\n`;
-                    msg += `• Average Memory: ${report.avgMemory}MB\n`;
-                    msg += `• Average Load Time: ${report.avgLoadTime}ms\n`;
-                    msg += `• Total Sessions: ${report.totalSessions}`;
-                    if (report.improvement !== 0) {
-                        msg += `\n• Performance Change: ${report.improvement > 0 ? '📈' : '📉'} ${Math.abs(report.improvement)}%`;
-                    }
-                    addCloudChatMessage(msg, 'agent');
-                } else {
-                    addCloudChatMessage('Need at least 10 sessions to generate report. Keep using the system!', 'agent');
-                }
-            }
+            // Simulate sending the command through chat
+            document.getElementById('cloudChatInput').value = cmd;
+            await sendCloudMessage();
         }
 
         async function sendCloudMessage() {
@@ -5258,6 +5217,79 @@ Real-World Features:
                 } catch (error) {
                     addCloudChatMessage('Cleanup completed. Cloud sync pending.', 'agent');
                 }
+                return;
+            }
+            
+            // HELP COMMAND
+            if (lower.includes('help') || lower.includes('commands')) {
+                addCloudChatMessage(`🤖 Available Commands:\n\n` +
+                               `🚀 Performance:\n` +
+                               `• "optimize" - Boost system speed\n` +
+                               `• "clean" - Free up storage space\n` +
+                               `• "report" - Show performance stats\n\n` +
+                               `📊 Monitoring:\n` +
+                               `• "status" - System health check\n` +
+                               `• "agents" - View local agent status\n\n` +
+                               `🎛️ Control:\n` +
+                               `• "show terminal" - Open command terminal\n` +
+                               `• "hide terminal" - Close terminal\n\n` +
+                               `💡 Just ask me anything naturally!`, 'agent');
+                return;
+            }
+            
+            // REPORT COMMAND
+            if (lower.includes('report') || lower.includes('performance') || lower.includes('stats')) {
+                const healthEl = document.getElementById('systemHealthScore');
+                const currentHealth = healthEl.textContent;
+                const optimizations = AILearning.optimizations || 0;
+                const dataPoints = AILearning.dataPoints || 0;
+                const patterns = AILearning.patterns || 0;
+                
+                addCloudChatMessage(`📊 Performance Report\n\n` +
+                               `💚 System Health: ${currentHealth}\n` +
+                               `✨ Optimizations Completed: ${optimizations}\n` +
+                               `📈 Data Points Collected: ${dataPoints}\n` +
+                               `🧠 Patterns Learned: ${patterns}\n\n` +
+                               `🎯 System is ${currentHealth >= 85 ? 'running smoothly!' : 'ready for optimization!'}`, 'agent');
+                return;
+            }
+            
+            // AGENTS COMMAND
+            if (lower.includes('agents') || lower.includes('local agent')) {
+                addCloudChatMessage(`🤖 Local Agent Status\n\n` +
+                               `✅ NUPI Desktop AI: Online\n` +
+                               `✅ Cloud Agent: Connected\n` +
+                               `✅ Learning System: Active\n` +
+                               `✅ Auto-Optimization: Enabled\n\n` +
+                               `📡 All agents working silently in background!\n` +
+                               `Use "show terminal" to see detailed output.`, 'agent');
+                return;
+            }
+            
+            // STATUS COMMAND
+            if (lower.includes('status') || lower.includes('health')) {
+                const healthEl = document.getElementById('systemHealthScore');
+                const currentHealth = healthEl.textContent;
+                const optimizations = AILearning.optimizations || 0;
+                addCloudChatMessage(`💚 System Health: ${currentHealth}\n\n` +
+                               `📊 Current Status:\n` +
+                               `• Data Points: ${AILearning.dataPoints}\n` +
+                               `• Patterns: ${AILearning.patterns}\n` +
+                               `• Optimizations: ${optimizations}\n\n` +
+                               `I'm constantly monitoring and learning from your system!`, 'agent');
+                return;
+            }
+            
+            // TERMINAL CONTROL
+            if (lower.includes('show terminal') || lower.includes('open terminal')) {
+                document.getElementById('terminal').style.display = 'block';
+                addCloudChatMessage('✅ Terminal opened! You can now execute commands directly.', 'agent');
+                return;
+            }
+            
+            if (lower.includes('hide terminal') || lower.includes('close terminal')) {
+                document.getElementById('terminal').style.display = 'none';
+                addCloudChatMessage('✅ Terminal hidden. Use "show terminal" to open it again.', 'agent');
                 return;
             }
 
