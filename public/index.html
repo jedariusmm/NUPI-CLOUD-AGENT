@@ -1457,24 +1457,6 @@
                     </div>
                 </div>
                 
-                <!-- REAL-TIME AI ACTIVITY FEED - LIKE TV -->
-                <!-- AI AGENT ACTIVITY - SIMPLE VIEW -->
-                <div style="background: linear-gradient(135deg, rgba(138, 43, 226, 0.15), rgba(255, 20, 147, 0.15)); border: 2px solid #8a2be2; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 30px rgba(138, 43, 226, 0.3); position: relative;">
-                    <!-- LIVE Indicator -->
-                    <div style="position: absolute; top: -10px; right: 20px; background: rgba(0, 0, 0, 0.8); padding: 5px 15px; border-radius: 20px; border: 2px solid #ff1493;">
-                        <span style="color: #ff1493; font-size: 0.75em; font-weight: 700;">● LIVE</span>
-                    </div>
-                    
-                    <!-- Live Activity Stream with Scanlines Effect -->
-                    <div style="background: #000; border: 2px solid #8a2be2; border-radius: 8px; padding: 15px; max-height: 200px; overflow-y: auto; position: relative;">
-                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.3) 2px, rgba(0, 0, 0, 0.3) 4px); pointer-events: none;"></div>
-                        <div id="activityFeed" style="font-family: 'Courier New', monospace; font-size: 0.85em; line-height: 1.8; position: relative;">
-                            <div style="color: #00ff9d; margin-bottom: 5px;">✅ AI Learning System Active</div>
-                            <div id="cloudAgentStatusMsg" style="color: #0099ff;">🔴 BROADCASTING - Real-time monitoring started</div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- LOCAL AGENT WORK WINDOW - SMALL SQUARE IN BOTTOM LEFT -->
                 <div class="metrics-grid">
                     <div class="metric-card" onclick="showMetricDetails('cpu')">
@@ -5009,6 +4991,13 @@ Real-World Features:
         }
         
         function addTerminalLine(text, type) {
+            // Silent operation - terminal disabled
+            // Only show output when terminal is displayed (user commanded it)
+            const terminal = document.getElementById('terminal');
+            if (!terminal || terminal.style.display === 'none') {
+                return; // Don't show anything
+            }
+            
             const output = document.getElementById('terminalOutput');
             const line = document.createElement('div');
             line.style.padding = '2px 10px';
