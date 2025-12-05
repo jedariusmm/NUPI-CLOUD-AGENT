@@ -102,64 +102,7 @@
                 const minutesSinceDeployment = (Date.now() - deployedTime) / 1000 / 60;
                 
                 // Update local agent indicator with device-specific status
-                // Update status indicators (Cloud Agent + Desktop Agents)
-                function updateStatusIndicators(agentsConnected) {
-                    const cloudLight = document.getElementById('cloudAgentLight');
-                    const localLight = document.getElementById('localAgentsLight');
-                    const localText = document.getElementById('localAgentsText');
-                    const statusMessage = document.getElementById('statusMessage');
-                    
-                    // Cloud Agent is always GREEN (online and autonomous)
-                    if (cloudLight) {
-                        cloudLight.style.background = '#00ff00';
-                        cloudLight.style.boxShadow = '0 0 20px #00ff00, inset 0 0 10px rgba(255, 255, 255, 0.5)';
-                    }
-                    
-                    if (agentsConnected > 0) {
-                        // YELLOW - Desktop agents connected
-                        if (localLight) {
-                            localLight.style.background = '#ffff00';
-                            localLight.style.boxShadow = '0 0 20px #ffff00, inset 0 0 10px rgba(255, 255, 255, 0.5)';
-                        }
-                        if (localText) {
-                            localText.textContent = `Desktop Agents: ${agentsConnected}`;
-                            localText.style.color = '#ffff00';
-                        }
-                        if (statusMessage) {
-                            statusMessage.innerHTML = `✅ Cloud Agent Online | ⚡ Optimizing ${agentsConnected} connected device${agentsConnected > 1 ? 's' : ''}`;
-                            statusMessage.style.borderLeft = '3px solid #ffff00';
-                            statusMessage.style.background = 'rgba(255, 255, 0, 0.1)';
-                            statusMessage.style.color = '#ffff00';
-                        }
-                    } else {
-                        // No agents connected
-                        if (localLight) {
-                            localLight.style.background = '#333';
-                            localLight.style.boxShadow = 'inset 0 0 5px rgba(0, 0, 0, 0.5)';
-                        }
-                        if (localText) {
-                            localText.textContent = 'Desktop Agents: 0';
-                            localText.style.color = '#666';
-                        }
-                        if (statusMessage) {
-                            statusMessage.innerHTML = '✅ Cloud Agent Online | Ready for desktop agent connections';
-                            statusMessage.style.borderLeft = '3px solid #0099ff';
-                            statusMessage.style.background = 'rgba(0, 153, 255, 0.1)';
-                            statusMessage.style.color = '#0099ff';
-                        }
-                    }
-                }
-                
-                function updateLocalAgentIndicator(isConnected) {
-                    // Count connected agents from localStorage
-                    let connectedAgents = 0;
-                    if (isConnected) {
-                        connectedAgents = 1; // This device
-                    }
-                    
-                    // Update the 3-indicator display
-                    updateStatusIndicators(connectedAgents);
-                }
+                // Cloud Agent is always online - no need for status updates
                 
                 // Autonomous scanning every 30 seconds
                 setInterval(() => {
@@ -1467,25 +1410,19 @@
                 <!-- 3-INDICATOR STATUS BAR -->
                 <div style="background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(20, 20, 20, 0.6)); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                        <h3 style="color: #fff; margin: 0; font-size: 1.2em;">Agent Status</h3>
+                        <h3 style="color: #fff; margin: 0; font-size: 1.2em;">Cloud Agent Status</h3>
                         <div style="display: flex; gap: 20px; align-items: center;">
                             <!-- GREEN - Cloud Agent Always Online -->
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <div id="cloudAgentLight" style="width: 18px; height: 18px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 20px #00ff00, inset 0 0 10px rgba(255, 255, 255, 0.5); animation: pulse 2s infinite; border: 2px solid rgba(255, 255, 255, 0.3);"></div>
-                                <span style="color: #00ff00; font-weight: 600; font-size: 0.95em;">Cloud Agent</span>
-                            </div>
-                            
-                            <!-- YELLOW - Desktop Agents Connected -->
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div id="localAgentsLight" style="width: 18px; height: 18px; background: #333; border-radius: 50%; box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5); border: 2px solid rgba(255, 255, 0, 0.3);"></div>
-                                <span id="localAgentsText" style="color: #666; font-weight: 600; font-size: 0.95em;">Desktop Agents: 0</span>
+                                <span style="color: #00ff00; font-weight: 600; font-size: 0.95em;">ONLINE & AUTONOMOUS</span>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Status Message -->
-                    <div id="statusMessage" style="color: #0099ff; font-size: 0.9em; padding: 10px; background: rgba(0, 153, 255, 0.1); border-radius: 6px; border-left: 3px solid #0099ff;">
-                        ✅ Cloud Agent Online | Ready for desktop agent connections
+                    <div id="statusMessage" style="color: #0099ff; font-size: 0.9em; padding: 10px; background: rgba(0, 153, 255, 0.1); border-radius: 6px; border-left: 3px solid #00ff9d;">
+                        ✅ Autonomous optimization active | API endpoint ready for desktop agents
                     </div>
                 </div>
                 
@@ -5856,9 +5793,9 @@ Real-World Features:
         }, 10000);
     </script>
 
-    <!-- Cloud Agent Chat Widget - REMOVED -->
-    <div class="chat-widget" style="display: none !important;">
-        <button class="chat-widget-btn" onclick="toggleCloudChat()" title="NUPI Cloud Agent" style="display: none !important;">AI</button>
+    <!-- Cloud Agent Chat Widget -->
+    <div class="chat-widget">
+        <button class="chat-widget-btn" onclick="toggleCloudChat()" title="NUPI Cloud Agent">💬</button>
         <div class="chat-popup" id="cloudChatPopup">
             <div class="chat-header">
                 <div>
