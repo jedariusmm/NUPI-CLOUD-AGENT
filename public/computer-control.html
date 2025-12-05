@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ NUPI Computer Control - Test Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .quick-commands {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .quick-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .quick-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        #commandInput {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        #commandInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        #output {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-style: italic;
+        }
+        
+        .status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="status">
+        <div class="status-dot"></div>
+        <span>NUPI Online</span>
+    </div>
+
+    <div class="container">
+        <h1>🖥️ NUPI Computer Control</h1>
+        <p class="subtitle">Control your computer with natural language</p>
+        
+        <div class="quick-commands">
+            <button class="quick-btn" onclick="quickCommand('list files')">📂 List Files</button>
+            <button class="quick-btn" onclick="quickCommand('system info')">💻 System Info</button>
+            <button class="quick-btn" onclick="quickCommand('show processes')">⚙️ Processes</button>
+            <button class="quick-btn" onclick="quickCommand('current directory')">📍 Current Dir</button>
+            <button class="quick-btn" onclick="quickCommand('disk space')">💾 Disk Space</button>
+            <button class="quick-btn" onclick="quickCommand('network info')">🌐 Network</button>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="commandInput" placeholder="Type a command or ask in natural language..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="sendCommand()">Send</button>
+        </div>
+        
+        <div id="output">
+            <div class="message info">
+                <strong>🎉 Welcome to NUPI Computer Control!</strong><br><br>
+                You can ask me to do things like:<br>
+                • "List files in my directory"<br>
+                • "What's my system information?"<br>
+                • "Show running processes"<br>
+                • "Read file 'example.txt'"<br>
+                • "Run: python --version"<br><br>
+                Try clicking the quick command buttons above or type your own! 🚀
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://nupi-cloud-agent-production.up.railway.app';
+        const output = document.getElementById('output');
+        const input = document.getElementById('commandInput');
+
+        function addMessage(content, type = 'info') {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.innerHTML = content;
+            output.appendChild(message);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendCommand();
+            }
+        }
+
+        function quickCommand(cmd) {
+            input.value = cmd;
+            sendCommand();
+        }
+
+        async function sendCommand() {
+            const command = input.value.trim();
+            if (!command) return;
+
+            addMessage(`<strong>You:</strong> ${command}`, 'info');
+            input.value = '';
+            
+            // Show loading
+            const loadingId = Date.now();
+            addMessage(`<div id="loading-${loadingId}" class="loading">⏳ Executing command...</div>`, 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/api/computer/execute`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        command: command,
+                        userId: 'test-user-' + Date.now()
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Remove loading message
+                const loadingEl = document.getElementById(`loading-${loadingId}`);
+                if (loadingEl) loadingEl.parentElement.remove();
+
+                if (data.success) {
+                    let output = '';
+                    
+                    if (data.output) {
+                        output = data.output;
+                    } else if (data.data) {
+                        output = JSON.stringify(data.data, null, 2);
+                    }
+                    
+                    addMessage(`<strong>✅ Success (${data.type}):</strong><br>${output}`, 'success');
+                } else {
+                    addMessage(`<strong>❌ Error:</strong><br>${data.error || data.message}`, 'error');
+                }
+
+            } catch (error) {
+                const loadingEl = document.getElementById(`loading-${loadingId}`);
+                if (loadingEl) loadingEl.parentElement.remove();
+                
+                addMessage(`<strong>❌ Connection Error:</strong><br>${error.message}<br><br>Make sure the NUPI server is running!`, 'error');
+            }
+        }
+
+        // Test connection on load
+        window.onload = async () => {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                if (data.status === 'healthy') {
+                    addMessage(`<strong>✅ Connected to NUPI Cloud Agent</strong><br>Model: ${data.model}<br>Status: ${data.status}`, 'success');
+                }
+            } catch (error) {
+                addMessage(`<strong>⚠️ Warning:</strong> Could not connect to NUPI server.<br>Make sure it's running at: ${API_URL}`, 'error');
+            }
+        };
+    </script>
+</body>
+</html>

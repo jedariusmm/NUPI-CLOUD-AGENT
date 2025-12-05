@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUPI AI - Customer Bot Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .customers-section, .bots-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .customer-card, .bot-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .customer-card h4, .bot-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .customer-card p, .bot-card p {
+            color: #666;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .status-pending {
+            background: #ffd93d;
+            color: #333;
+        }
+        
+        .status-active {
+            background: #6bcf7f;
+            color: white;
+        }
+        
+        .activate-form {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .activate-form input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .activate-form button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .activate-form button:hover {
+            background: #5568d3;
+        }
+        
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .refresh-btn:hover {
+            background: #5568d3;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 NUPI AI - Customer Bot Manager</h1>
+            <p>Automated AI Creation System - Live Dashboard</p>
+        </div>
+        
+        <button class="refresh-btn" onclick="loadData()">🔄 Refresh Data</button>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Customers</h3>
+                <div class="number" id="totalCustomers">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Bots</h3>
+                <div class="number" id="totalBots">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Pending Activation</h3>
+                <div class="number" id="pendingActivation">0</div>
+            </div>
+        </div>
+        
+        <div class="customers-section">
+            <h2 class="section-title">📋 Customers</h2>
+            <div id="customersList"></div>
+        </div>
+        
+        <div class="bots-section">
+            <h2 class="section-title">🤖 Active Bots</h2>
+            <div id="botsList"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = window.location.origin;
+        
+        async function loadData() {
+            try {
+                const response = await fetch(`${API_URL}/api/customer-bots`);
+                const data = await response.json();
+                
+                // Update stats
+                document.getElementById('totalCustomers').textContent = data.totalCustomers;
+                document.getElementById('totalBots').textContent = data.totalBots;
+                document.getElementById('pendingActivation').textContent = 
+                    data.totalCustomers - data.totalBots;
+                
+                // Display customers
+                const customersList = document.getElementById('customersList');
+                if (data.customers.length === 0) {
+                    customersList.innerHTML = '<div class="no-data">No customers yet. Waiting for Stripe orders...</div>';
+                } else {
+                    customersList.innerHTML = data.customers.map(customer => {
+                        const hasBot = data.bots.some(b => b.customerId === customer.customerId);
+                        return `
+                            <div class="customer-card">
+                                <h4>👤 ${customer.name}</h4>
+                                <p>📧 ${customer.email}</p>
+                                <p>🎭 Personality: ${customer.personality}</p>
+                                <p>💼 Use Case: ${customer.useCase}</p>
+                                <p>💰 Paid: $${customer.amountPaid} ${customer.currency}</p>
+                                <p>📅 ${new Date(customer.paymentDate).toLocaleString()}</p>
+                                <span class="status-badge ${hasBot ? 'status-active' : 'status-pending'}">
+                                    ${hasBot ? '✅ Bot Active' : '⏳ Waiting for Bot Token'}
+                                </span>
+                                
+                                ${!hasBot ? `
+                                    <div class="activate-form">
+                                        <p><strong>Activate Bot:</strong></p>
+                                        <input 
+                                            type="text" 
+                                            id="token-${customer.customerId}" 
+                                            placeholder="Paste Telegram bot token from customer"
+                                        />
+                                        <button onclick="activateBot('${customer.customerId}')">
+                                            🚀 Activate Bot
+                                        </button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                }
+                
+                // Display bots
+                const botsList = document.getElementById('botsList');
+                if (data.bots.length === 0) {
+                    botsList.innerHTML = '<div class="no-data">No active bots yet.</div>';
+                } else {
+                    botsList.innerHTML = data.bots.map(bot => `
+                        <div class="bot-card">
+                            <h4>🤖 ${bot.name}'s AI Assistant</h4>
+                            <p>📧 ${bot.email}</p>
+                            <p>🎭 ${bot.personality} | 💼 ${bot.useCase}</p>
+                            <p>📱 Chat ID: ${bot.chatId || 'Pending first message'}</p>
+                            <p>📅 Activated: ${new Date(bot.activated).toLocaleString()}</p>
+                            <span class="status-badge status-active">
+                                ✅ Active & Running
+                            </span>
+                        </div>
+                    `).join('');
+                }
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('Error loading data. Check console.');
+            }
+        }
+        
+        async function activateBot(customerId) {
+            const tokenInput = document.getElementById(`token-${customerId}`);
+            const botToken = tokenInput.value.trim();
+            
+            if (!botToken) {
+                alert('Please enter a bot token!');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/api/activate-bot`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customerId,
+                        botToken
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Bot activated successfully!');
+                    loadData(); // Refresh
+                } else {
+                    alert('❌ Error: ' + result.error);
+                }
+                
+            } catch (error) {
+                console.error('Activation error:', error);
+                alert('Error activating bot. Check console.');
+            }
+        }
+        
+        // Load data on page load
+        loadData();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>
