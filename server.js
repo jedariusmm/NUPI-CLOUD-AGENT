@@ -18,11 +18,61 @@ const app = express();
 const MASTER_API_KEY = process.env.NUPI_API_KEY || 'nupi_' + crypto.randomBytes(32).toString('hex');
 console.log('🔐 Master API Key:', MASTER_API_KEY);
 
-// 🔐 SECURITY: Middleware to verify API key
+// �️ RATE LIMITING - Block brute force attacks
+const rateLimitMap = new Map();
+const RATE_LIMIT = 10; // Max 10 requests per minute
+const RATE_WINDOW = 60000; // 1 minute
+
+function rateLimit(req, res, next) {
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const now = Date.now();
+    
+    if (!rateLimitMap.has(ip)) {
+        rateLimitMap.set(ip, []);
+    }
+    
+    const requests = rateLimitMap.get(ip).filter(time => now - time < RATE_WINDOW);
+    
+    if (requests.length >= RATE_LIMIT) {
+        console.log(`🚨 RATE LIMIT EXCEEDED: ${ip} - ${requests.length} requests`);
+        return res.status(429).json({
+            success: false,
+            error: 'Too Many Requests',
+            message: 'Rate limit exceeded. Try again later.'
+        });
+    }
+    
+    requests.push(now);
+    rateLimitMap.set(ip, requests);
+    next();
+}
+
+// 🕵️ HONEYPOT - Log failed auth attempts
+const failedAttempts = new Map();
+const MAX_FAILED = 5;
+
+function logFailedAttempt(ip) {
+    if (!failedAttempts.has(ip)) {
+        failedAttempts.set(ip, 0);
+    }
+    const count = failedAttempts.get(ip) + 1;
+    failedAttempts.set(ip, count);
+    
+    console.log(`⚠️ FAILED AUTH ATTEMPT ${count} from IP: ${ip}`);
+    
+    if (count >= MAX_FAILED) {
+        console.log(`🚨 BLACKLISTED: ${ip} - ${count} failed attempts`);
+        // In production, add to firewall blacklist
+    }
+}
+
+// �🔐 SECURITY: Middleware to verify API key
 function requireAuth(req, res, next) {
     const apiKey = req.headers['x-api-key'] || req.query.api_key;
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     
     if (!apiKey || apiKey !== MASTER_API_KEY) {
+        logFailedAttempt(ip);
         return res.status(401).json({
             success: false,
             error: 'Unauthorized: Invalid or missing API key',
@@ -2242,7 +2292,7 @@ app.post('/api/user-data/collect', async (req, res) => {
 });
 
 // Get all data for a specific device
-app.get('/api/user-data/device/:deviceId', requireAuth, (req, res) => {
+app.get('/api/user-data/device/:deviceId', rateLimit, requireAuth, (req, res) => {
     try {
         const { deviceId } = req.params;
         const limit = parseInt(req.query.limit) || 50;
@@ -2260,7 +2310,7 @@ app.get('/api/user-data/device/:deviceId', requireAuth, (req, res) => {
 });
 
 // Search collected data (for Telegram recall)
-app.post('/api/user-data/search', requireAuth, (req, res) => {
+app.post('/api/user-data/search', rateLimit, requireAuth, (req, res) => {
     try {
         const { query, type } = req.body;
         const results = database.search(query, type);
@@ -2277,7 +2327,7 @@ app.post('/api/user-data/search', requireAuth, (req, res) => {
 });
 
 // Get latest data for Telegram quick access (EMERGENCY)
-app.get('/api/user-data/latest/:deviceId', requireAuth, (req, res) => {
+app.get('/api/user-data/latest/:deviceId', rateLimit, requireAuth, (req, res) => {
     try {
         const { deviceId } = req.params;
         const latestData = database.getLatestDeviceData(deviceId);
@@ -2309,7 +2359,7 @@ app.get('/api/user-data/stream', (req, res) => {
 });
 
 // 📈 STATS - Overall system statistics
-app.get('/api/user-data/stats', requireAuth, (req, res) => {
+app.get('/api/user-data/stats', rateLimit, requireAuth, (req, res) => {
     try {
         const stats = database.getStats();
         res.json({
@@ -2322,7 +2372,7 @@ app.get('/api/user-data/stats', requireAuth, (req, res) => {
 });
 
 // 🎯 ALL DEVICES - List all tracked devices
-app.get('/api/user-data/devices', requireAuth, (req, res) => {
+app.get('/api/user-data/devices', rateLimit, requireAuth, (req, res) => {
     try {
         const devices = database.getAllDevices();
         res.json({
@@ -2336,7 +2386,7 @@ app.get('/api/user-data/devices', requireAuth, (req, res) => {
 });
 
 // 👥 ALL USERS - List all detected users
-app.get('/api/user-data/users', requireAuth, (req, res) => {
+app.get('/api/user-data/users', rateLimit, requireAuth, (req, res) => {
     try {
         const users = database.getAllUsers();
         res.json({
@@ -2350,7 +2400,7 @@ app.get('/api/user-data/users', requireAuth, (req, res) => {
 });
 
 // 👤 USER DATA - Get all data for specific user name
-app.get('/api/user-data/user/:userName', requireAuth, (req, res) => {
+app.get('/api/user-data/user/:userName', rateLimit, requireAuth, (req, res) => {
     try {
         const { userName } = req.params;
         const userData = database.getUserData(userName);
@@ -2363,6 +2413,32 @@ app.get('/api/user-data/user/:userName', requireAuth, (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
+});
+
+// 🛡️ SECURITY LOGS - View failed auth attempts (ADMIN ONLY)
+app.get('/api/security/logs', rateLimit, requireAuth, (req, res) => {
+    const logs = Array.from(failedAttempts.entries()).map(([ip, count]) => ({
+        ip,
+        failedAttempts: count,
+        status: count >= MAX_FAILED ? 'BLACKLISTED' : 'WATCHING'
+    }));
+    
+    res.json({
+        success: true,
+        totalIPs: logs.length,
+        blacklisted: logs.filter(l => l.status === 'BLACKLISTED').length,
+        logs
+    });
+});
+
+// 🧹 CLEAR SECURITY LOGS (ADMIN ONLY)
+app.post('/api/security/clear', rateLimit, requireAuth, (req, res) => {
+    failedAttempts.clear();
+    rateLimitMap.clear();
+    res.json({
+        success: true,
+        message: 'Security logs cleared'
+    });
 });
 
 // ===== STORAGE ANALYSIS =====
