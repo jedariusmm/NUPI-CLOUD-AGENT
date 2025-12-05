@@ -860,3 +860,12 @@ bot.on('message', (msg) => {
 console.log('✅ Telegram recall bot is running!');
 console.log('📱 Only authorized user can access data');
 console.log(`🔐 Your Chat ID: ${AUTHORIZED_CHAT_ID}`);
+
+// Error handling
+bot.on('polling_error', (error) => {
+    console.error('❌ Telegram polling error:', error.code, error.message);
+});
+
+bot.on('error', (error) => {
+    console.error('❌ Telegram bot error:', error);
+});
