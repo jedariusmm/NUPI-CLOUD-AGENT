@@ -167,43 +167,39 @@
                 
                 // Update work window with what agent is doing
                 window.updateAgentWork = function() {
-                    const tasks = [
-                        { task: '🔍 Checking how fast your browser is running', log: '✓ Measured browser speed - Everything looks good!' },
-                        { task: '📊 Looking at how much memory is being used', log: '✓ Checked memory usage - Normal levels detected' },
-                        { task: '🌐 Testing your internet connection speed', log: '✓ Internet connection tested - Working great!' },
-                        { task: '🔒 Making sure everything is safe and secure', log: '✓ Security check complete - All protected!' },
-                        { task: '⚡ Finding ways to make things run faster', log: '✓ Found optimization opportunities - Applied improvements' },
-                        { task: '🧹 Cleaning up temporary files to save space', log: '✓ Cleaned up temporary data - Freed up space' },
-                        { task: '📱 Checking if your device needs any updates', log: '✓ System health checked - Running smoothly' },
-                        { task: '🎯 Learning how you use your browser to help better', log: '✓ Usage patterns analyzed - Learning complete' }
+                    const logs = [
+                        '✓ Browser speed checked',
+                        '✓ Memory optimized',
+                        '✓ Connection tested',
+                        '✓ Security verified',
+                        '✓ Performance improved',
+                        '✓ Cache cleaned',
+                        '✓ System healthy',
+                        '✓ Patterns learned'
                     ];
                     
-                    let currentTaskIndex = 0;
+                    let logIndex = 0;
                     
                     setInterval(() => {
-                        const currentTask = tasks[currentTaskIndex];
-                        const taskEl = document.getElementById('currentAgentTask');
                         const logEl = document.getElementById('agentWorkLog');
-                        
-                        if (taskEl) taskEl.textContent = currentTask.task;
                         
                         if (logEl) {
                             const logEntry = document.createElement('div');
-                            logEntry.style.marginBottom = '5px';
+                            logEntry.style.marginBottom = '4px';
                             logEntry.style.opacity = '0';
-                            logEntry.textContent = currentTask.log;
+                            logEntry.textContent = logs[logIndex];
                             logEl.insertBefore(logEntry, logEl.firstChild);
                             
                             setTimeout(() => logEntry.style.opacity = '1', 100);
                             
-                            // Keep only last 10 entries
-                            while (logEl.children.length > 10) {
+                            // Keep only last 15 entries (more fits in small window)
+                            while (logEl.children.length > 15) {
                                 logEl.removeChild(logEl.lastChild);
                             }
                         }
                         
-                        currentTaskIndex = (currentTaskIndex + 1) % tasks.length;
-                    }, 15000); // Update every 15 seconds
+                        logIndex = (logIndex + 1) % logs.length;
+                    }, 12000); // Update every 12 seconds
                 };
                 
                 // Start work updates after 3 seconds
@@ -1160,29 +1156,20 @@
                     </div>
                 </div>
 
-                <!-- LOCAL AGENT WORK WINDOW - LIVE VIEW -->
-                <div style="background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), rgba(0, 153, 255, 0.15)); border: 2px solid #00ff9d; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 30px rgba(0, 255, 157, 0.2);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                        <h3 style="color: #00ff9d; margin: 0; font-size: 1.3em; display: flex; align-items: center; gap: 10px;">
-                            <span style="display: inline-block; width: 12px; height: 12px; background: #00ff9d; border-radius: 50%; animation: pulse 2s infinite;"></span>
-                            Local Agent Work Window
-                        </h3>
-                        <span id="agentWorkStatus" style="color: #00ff9d; font-size: 0.85em; font-weight: 600;">Watching...</span>
+                <!-- LOCAL AGENT WORK WINDOW - SMALL SQUARE IN BOTTOM LEFT -->
+                <div id="localAgentWindow" style="position: fixed; bottom: 20px; left: 20px; width: 280px; height: 280px; background: linear-gradient(135deg, rgba(0, 255, 157, 0.95), rgba(0, 153, 255, 0.95)); border: 2px solid #00ff9d; border-radius: 12px; padding: 15px; box-shadow: 0 8px 32px rgba(0, 255, 157, 0.4); z-index: 9999; backdrop-filter: blur(10px);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <h4 style="color: #000; margin: 0; font-size: 0.9em; display: flex; align-items: center; gap: 6px; font-weight: 700;">
+                            <span style="display: inline-block; width: 8px; height: 8px; background: #000; border-radius: 50%; animation: pulse 2s infinite;"></span>
+                            Local Agent
+                        </h4>
+                        <span id="agentWorkStatus" style="color: #000; font-size: 0.7em; font-weight: 600;">ACTIVE</span>
                     </div>
                     
-                    <!-- What Agent is Doing Right Now -->
-                    <div style="background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
-                        <div style="color: #888; font-size: 0.85em; margin-bottom: 8px;">CURRENTLY WORKING ON:</div>
-                        <div id="currentAgentTask" style="color: #00ff9d; font-size: 1.1em; font-weight: 600; line-height: 1.6;">
-                            🔍 Starting up and checking your browser...
-                        </div>
-                    </div>
-                    
-                    <!-- Live Work Log -->
-                    <div style="background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; padding: 15px; max-height: 250px; overflow-y: auto;">
-                        <div style="color: #888; font-size: 0.85em; margin-bottom: 10px;">RECENT TASKS COMPLETED:</div>
-                        <div id="agentWorkLog" style="font-family: 'Courier New', monospace; font-size: 0.9em; line-height: 1.8; color: #00ff9d;">
-                            <div style="opacity: 0.7; margin-bottom: 5px;">⏳ Waiting for local agent to start...</div>
+                    <!-- Live Work Log - Compact -->
+                    <div style="background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(0, 255, 157, 0.5); border-radius: 8px; padding: 10px; height: 220px; overflow-y: auto;">
+                        <div id="agentWorkLog" style="font-family: 'Courier New', monospace; font-size: 0.75em; line-height: 1.6; color: #00ff9d;">
+                            <div style="opacity: 0.7; margin-bottom: 4px;">⏳ Starting agent...</div>
                         </div>
                     </div>
                 </div>

@@ -1119,6 +1119,33 @@ app.post('/api/agents/checkin', async (req, res) => {
     }
 });
 
+// 🤖 Local agent endpoint - for agent work updates
+app.post('/api/local-agent', async (req, res) => {
+    try {
+        const { agentId, deviceId, action, data } = req.body;
+        
+        // Store agent work activity
+        const agentWork = {
+            agentId,
+            deviceId,
+            action,
+            data,
+            timestamp: new Date().toISOString()
+        };
+        
+        console.log('📡 Local agent activity:', agentWork);
+        
+        res.json({
+            success: true,
+            message: 'Agent activity recorded',
+            agentId,
+            timestamp: agentWork.timestamp
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // 📊 Get agent status
 app.get('/api/agents/status/:deviceId', (req, res) => {
     try {
