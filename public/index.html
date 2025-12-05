@@ -1435,68 +1435,6 @@
                     </div>
                 </div>
                 
-                <!-- LIVE CLOUD AGENT STATUS CARD -->
-                <div style="background: linear-gradient(135deg, rgba(0, 153, 255, 0.15), rgba(0, 255, 157, 0.15)); border: 2px solid #00ff9d; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 30px rgba(0, 255, 157, 0.2);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                        <h3 style="color: #00ff9d; margin: 0; font-size: 1.3em; display: flex; align-items: center; gap: 10px;">
-                            <span class="status-dot" style="width: 12px; height: 12px; animation: pulse 2s infinite;"></span>
-                            Cloud Agent Live Status
-                            <span id="localAgentIndicator" style="width: 10px; height: 10px; background: #ff0000; border-radius: 50%; margin-left: 5px; box-shadow: 0 0 10px currentColor; transition: all 0.3s ease;" title="Local Agent Status: Not Connected"></span>
-                        </h3>
-                        <span id="agentUptime" style="color: #00ff9d; font-size: 0.85em; font-weight: 600;">ACTIVE - Working Now</span>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <div style="background: rgba(0, 0, 0, 0.3); padding: 12px; border-radius: 8px;">
-                            <div style="color: #888; font-size: 0.85em; margin-bottom: 5px;">Status</div>
-                            <div id="agentStatus" style="color: #ff9d00; font-size: 1.1em; font-weight: 600;">⏳ WAITING...</div>
-                        </div>
-                        <div style="background: rgba(0, 0, 0, 0.3); padding: 12px; border-radius: 8px;">
-                            <div style="color: #888; font-size: 0.85em; margin-bottom: 5px;">Location</div>
-                            <div id="agentEndpoint" style="color: #ff9d00; font-size: 0.9em; font-weight: 600; word-break: break-all;">⏳ Connecting...</div>
-                        </div>
-                        <div style="background: rgba(0, 0, 0, 0.3); padding: 12px; border-radius: 8px;">
-                            <div style="color: #888; font-size: 0.85em; margin-bottom: 5px;">Last Response</div>
-                            <div id="agentLastCheck" style="color: #ff9d00; font-size: 1.1em; font-weight: 600;">⏳ Waiting...</div>
-                        </div>
-                    </div>
-                    
-                    <!-- LIVE LOCAL AGENT & WORLDWIDE OPTIMIZATION STATS -->
-                    <div style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, rgba(0, 255, 157, 0.1), rgba(0, 153, 255, 0.1)); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px;">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 1.5em;">🟢</span>
-                                <div>
-                                    <div style="color: #00ff9d; font-size: 1.2em; font-weight: 700;">
-                                        <span id="localAgentsCount">0</span> Devices
-                                    </div>
-                                    <div style="color: #888; font-size: 0.8em;">Being Optimized Now</div>
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 1.5em;">🌍</span>
-                                <div>
-                                    <div style="color: #0099ff; font-size: 1.2em; font-weight: 700;">
-                                        <span id="worldwideOptimizations">0</span> Systems
-                                    </div>
-                                    <div style="color: #888; font-size: 0.8em;">Optimized Worldwide</div>
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 1.5em;">⚡</span>
-                                <div>
-                                    <div style="color: #ff9d00; font-size: 1.2em; font-weight: 700;">
-                                        <span id="optimizationsPerMin">0</span>/min
-                                    </div>
-                                    <div style="color: #888; font-size: 0.8em;">Active Right Now</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="recentActivity" style="margin-top: 12px; padding: 10px; background: rgba(0, 0, 0, 0.4); border-radius: 6px; max-height: 80px; overflow-y: auto; font-size: 0.85em; color: #888; line-height: 1.6;">
-                            <div style="color: #00ff9d;">⏳ Initializing agent network...</div>
-                        </div>
-                    </div>
-                </div>
-                
                 <!-- LOCAL AGENT WORK WINDOW - SMALL SQUARE IN BOTTOM LEFT -->
                 <div class="metrics-grid">
                     <div class="metric-card" onclick="showMetricDetails('cpu')">
@@ -1522,12 +1460,6 @@
                         <div class="metric-value" id="networkValue">--</div>
                         <div class="metric-subtitle">Transfer Speed</div>
                         <div class="metric-trend trend-up" id="networkTrend">↑ Connected</div>
-                    </div>
-                    <div class="metric-card" onclick="showMetricDetails('processes')">
-                        <div class="metric-label">Active Tasks</div>
-                        <div class="metric-value" id="processValue">--</div>
-                        <div class="metric-subtitle">Background Operations</div>
-                        <div class="metric-trend trend-down" id="processTrend">↓ Stable</div>
                     </div>
                     <div class="metric-card" onclick="showMetricDetails('uptime')">
                         <div class="metric-label">Uptime</div>
@@ -1744,20 +1676,6 @@
         </section>
 
         <!-- Process List Section - ALWAYS VISIBLE -->
-        <section id="processes" class="process-list" style="display: block;">
-            <div class="panel-header">
-                <h2 class="panel-title">Active Processes</h2>
-                <div style="display: flex; gap: 10px;">
-                    <button class="cta-btn cta-secondary" style="padding: 8px 20px; font-size: 0.9em;" onclick="showDetailedInfo()"> Refresh ALL Data</button>
-                    <button class="cta-btn cta-secondary" style="padding: 8px 20px; font-size: 0.9em;" onclick="refreshProcesses()">Refresh Processes</button>
-                </div>
-            </div>
-            <div id="processList">
-                <div style="text-align: center; color: #888; padding: 40px;">
-                    Loading processes...
-                </div>
-            </div>
-        </section>
     </div>
 
     <!-- Chat Widgets -->
@@ -3210,10 +3128,6 @@
                 updateDashboard(systemData);
                 console.log('✅ Dashboard updated with fresh data');
                 
-                // Update local agent and worldwide optimization stats
-                updateLocalAgentStats();
-                console.log('✅ Local agent stats updated');
-                
                 // ALWAYS show as active and working
                 document.getElementById('systemStatus').textContent = '✅ AI Agent Active & Monitoring';
                 document.getElementById('systemStatus').style.color = '#00ff9d';
@@ -3662,22 +3576,12 @@
             console.log(' Dashboard updated:', new Date().toLocaleTimeString());
         }
         
-        // 🌍 UPDATE LOCAL AGENT & WORLDWIDE OPTIMIZATION STATS
-        let totalOptimizations = 0;
-        let lastOptimizationCount = 0;
-        let optimizationsThisMinute = 0;
-        let lastMinuteTimestamp = Date.now();
-        const activityLog = [];
-        
-        function updateLocalAgentStats() {
+        //  COMPREHENSIVE EXPANDED METRICS UPDATE
+        async function updateExpandedMetrics() {
             try {
-                // Count connected local agents from localStorage
-                let connectedAgents = 0;
-                const deviceId = localStorage.getItem('nupi_unique_device_id');
-                const agentId = localStorage.getItem('nupi_agent_id');
-                
-                if (deviceId && agentId) {
-                    connectedAgents = 1; // This device is connected
+                // BATTERY DATA
+                if (navigator.getBattery) {
+                    const battery = await navigator.getBattery();
                     
                     // Add random simulated agents (2-8 more) to show worldwide network
                     connectedAgents += Math.floor(Math.random() * 7) + 2;
@@ -3741,24 +3645,6 @@
                 console.log('📊 Local Agent Stats Updated:', {
                     connectedAgents,
                     totalOptimizations,
-                    optimizationsPerMin: activeOpts
-                });
-                
-            } catch (error) {
-                console.error('Error updating local agent stats:', error);
-            }
-        }
-        
-        function getRandomLocation() {
-            const locations = [
-                'New York, USA', 'London, UK', 'Tokyo, Japan', 'Sydney, Australia',
-                'Toronto, Canada', 'Berlin, Germany', 'Paris, France', 'Mumbai, India',
-                'Singapore', 'São Paulo, Brazil', 'Moscow, Russia', 'Seoul, South Korea',
-                'Dubai, UAE', 'Hong Kong', 'Los Angeles, USA', 'Chicago, USA'
-            ];
-            return locations[Math.floor(Math.random() * locations.length)];
-        }
-        
         //  COMPREHENSIVE EXPANDED METRICS UPDATE
         async function updateExpandedMetrics() {
             try {
