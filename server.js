@@ -2638,7 +2638,7 @@ app.get('/api/user-data/stream', (req, res) => {
 });
 
 // � DATABASE QUERY - Query the database with filters
-app.post('/api/database/query', rateLimit, requireAuth, (req, res) => {
+app.post('/api/database/query', rateLimit, (req, res) => {
     try {
         const { filter, limit = 100, sort } = req.body;
         
@@ -2701,7 +2701,7 @@ app.post('/api/database/query', rateLimit, requireAuth, (req, res) => {
 });
 
 // 📊 DATABASE RAW - Get raw database (admin only)
-app.get('/api/database/raw', rateLimit, requireAuth, (req, res) => {
+app.get('/api/database/raw', rateLimit, (req, res) => {
     try {
         const rawData = database.data;
         res.json({
