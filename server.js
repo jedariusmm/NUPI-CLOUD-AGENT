@@ -13,6 +13,18 @@ const localAgentController = require('./local-agent-controller');
 const autonomousOrchestrator = require('./autonomous-orchestrator');
 const app = express();
 
+// 🤖 Start Telegram Recall Bot in Cloud
+const TelegramBot = require('node-telegram-bot-api');
+const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const AUTHORIZED_CHAT_ID = process.env.YOUR_CHAT_ID;
+
+if (TELEGRAM_TOKEN && AUTHORIZED_CHAT_ID) {
+    console.log('🤖 Starting Telegram Recall Bot in cloud...');
+    require('./telegram-recall-bot');
+} else {
+    console.log('⚠️  Telegram bot not configured. Set TELEGRAM_BOT_TOKEN and YOUR_CHAT_ID environment variables.');
+}
+
 // 🔑 Claude Sonnet 3.5 API (Use environment variable)
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY || 'your-api-key-here';
 
