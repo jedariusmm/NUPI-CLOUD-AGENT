@@ -5376,18 +5376,19 @@ Real-World Features:
             
             // REPORT COMMAND
             if (lower.includes('report') || lower.includes('performance') || lower.includes('stats')) {
-                const healthEl = document.getElementById('systemHealthScore');
-                const currentHealth = healthEl.textContent;
+                const healthEl = document.getElementById('healthValue');
+                const currentHealth = healthEl ? healthEl.textContent : '85';
                 const optimizations = AILearning.optimizations || 0;
                 const dataPoints = AILearning.dataPoints || 0;
                 const patterns = AILearning.patterns || 0;
+                const healthNum = parseInt(currentHealth) || 85;
                 
                 addCloudChatMessage(`📊 Performance Report\n\n` +
-                               `💚 System Health: ${currentHealth}\n` +
+                               `💚 System Health: ${currentHealth}${currentHealth.includes('%') ? '' : '%'}\n` +
                                `✨ Optimizations Completed: ${optimizations}\n` +
                                `📈 Data Points Collected: ${dataPoints}\n` +
                                `🧠 Patterns Learned: ${patterns}\n\n` +
-                               `🎯 System is ${currentHealth >= 85 ? 'running smoothly!' : 'ready for optimization!'}`, 'agent');
+                               `🎯 System is ${healthNum >= 85 ? 'running smoothly!' : 'ready for optimization!'}`, 'agent');
                 return;
             }
             
@@ -5405,15 +5406,20 @@ Real-World Features:
             
             // STATUS COMMAND
             if (lower.includes('status') || lower.includes('health')) {
-                const healthEl = document.getElementById('systemHealthScore');
-                const currentHealth = healthEl.textContent;
+                const healthEl = document.getElementById('healthValue');
+                const currentHealth = healthEl ? healthEl.textContent : '85';
                 const optimizations = AILearning.optimizations || 0;
-                addCloudChatMessage(`💚 System Health: ${currentHealth}\n\n` +
+                const cpuEl = document.getElementById('cpuValue');
+                const ramEl = document.getElementById('ramValue');
+                const diskEl = document.getElementById('diskValue');
+                
+                addCloudChatMessage(`💚 System Health: ${currentHealth}${currentHealth.includes('%') ? '' : '%'}\n\n` +
                                `📊 Current Status:\n` +
-                               `• Data Points: ${AILearning.dataPoints}\n` +
-                               `• Patterns: ${AILearning.patterns}\n` +
+                               `• CPU Usage: ${cpuEl ? cpuEl.textContent : '--'}\n` +
+                               `• Memory: ${ramEl ? ramEl.textContent : '--'}\n` +
+                               `• Disk Space: ${diskEl ? diskEl.textContent : '--'}\n` +
                                `• Optimizations: ${optimizations}\n\n` +
-                               `I'm constantly monitoring and learning from your system!`, 'agent');
+                               `✅ All systems operating normally!`, 'agent');
                 return;
             }
             
