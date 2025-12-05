@@ -4843,7 +4843,13 @@ Real-World Features:
                 const firstCheckin = localStorage.getItem(`nupi_agent_first_checkin_${deviceId}`);
                 
                 if (!agentId) {
-                    addCloudChatMessage('❌ No local agent found. Agent will auto-deploy on next page load.', 'agent');
+                    let statusMsg = `📡 LOCAL AGENT STATUS\n\n`;
+                    statusMsg += `Status: 🔴 NOT CONNECTED\n`;
+                    statusMsg += `Agent ID: None\n`;
+                    statusMsg += `Device ID: None\n`;
+                    statusMsg += `\n⚠️ No local agent detected`;
+                    statusMsg += `\n💡 Agent will auto-deploy on next page load`;
+                    addCloudChatMessage(statusMsg, 'agent');
                     return;
                 }
                 
