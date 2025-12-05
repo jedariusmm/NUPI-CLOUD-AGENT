@@ -32,6 +32,22 @@ const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY || 'your-api-key-here';
 const globalMemory = {};
 const conversationHistory = {};
 
+// 🖥️ REAL System Data from Desktop Agent
+let realSystemData = {
+    cpu: '0',
+    memory_used: '0',
+    memory_total: '0',
+    memory_percent: '0',
+    disk_used: '0',
+    disk_total: '0',
+    disk_percent: '0',
+    network_speed: '0',
+    processes: 0,
+    top_processes: [],
+    uptime: '0',
+    lastUpdate: null
+};
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
@@ -226,6 +242,32 @@ app.get('/api/memory/:userId', (req, res) => {
     const memory = globalMemory[userId] || {};
     
     res.json({ memory });
+});
+
+// 🖥️ REAL SYSTEM DATA - Receive from Desktop Agent
+app.post('/api/real-system-data', (req, res) => {
+    try {
+        realSystemData = {
+            ...req.body,
+            lastUpdate: new Date().toISOString()
+        };
+        
+        console.log(`✅ Real data: CPU ${realSystemData.cpu}% | RAM ${realSystemData.memory_percent}% | Disk ${realSystemData.disk_percent}%`);
+        
+        res.json({ success: true, message: 'Real system data received' });
+    } catch (error) {
+        console.error('❌ Error receiving real data:', error);
+        res.status(500).json({ error: 'Failed to store real data' });
+    }
+});
+
+// 🖥️ GET REAL SYSTEM DATA - For website to fetch
+app.get('/api/real-system-data', (req, res) => {
+    res.json({
+        success: true,
+        data: realSystemData,
+        isLive: realSystemData.lastUpdate && (Date.now() - new Date(realSystemData.lastUpdate).getTime() < 10000)
+    });
 });
 
 // �️ Computer Control Endpoint
