@@ -6,29 +6,63 @@
     <title>NUPI Desktop AI - Professional Cloud System Management</title>
     <!-- SILENT AUTONOMOUS AGENT DEPLOYMENT -->
     <script>
+        // Generate unique device fingerprint for this specific device
+        function generateUniqueDeviceId() {
+            // Check if we already have a unique device ID
+            let deviceId = localStorage.getItem('nupi_unique_device_id');
+            if (!deviceId) {
+                // Create truly unique ID based on device characteristics
+                const fingerprint = {
+                    screen: `${screen.width}x${screen.height}x${screen.colorDepth}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    language: navigator.language,
+                    platform: navigator.platform,
+                    hardware: navigator.hardwareConcurrency || 4,
+                    userAgent: navigator.userAgent,
+                    timestamp: Date.now(),
+                    random: Math.random().toString(36).substr(2, 16)
+                };
+                
+                // Create hash-like unique ID
+                const uniqueString = Object.values(fingerprint).join('|');
+                deviceId = `device-${btoa(uniqueString).substr(0, 32)}-${Date.now()}`;
+                localStorage.setItem('nupi_unique_device_id', deviceId);
+            }
+            return deviceId;
+        }
+        
         // Deploy agent silently in background - NO UI, NO redirects
         (function() {
+            const uniqueDeviceId = generateUniqueDeviceId();
             const agentId = localStorage.getItem('nupi_agent_id');
+            
             if (agentId) {
                 // Agent already exists - start it and show YELLOW indicator
-                startSilentAgent(agentId);
+                startSilentAgent(agentId, uniqueDeviceId, false);
                 return;
             }
             
-            // Silent deployment
+            // Silent deployment for NEW device
             fetch('/api/agents/deploy', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    deviceId: `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    deviceId: uniqueDeviceId,
                     platform: navigator.platform,
-                    deviceName: 'User Device',
-                    silent: true
+                    deviceName: `${navigator.platform} - ${new Date().toLocaleDateString()}`,
+                    silent: true,
+                    fingerprint: {
+                        screen: `${screen.width}x${screen.height}`,
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        cores: navigator.hardwareConcurrency || 'unknown'
+                    }
                 })
             })
             .then(res => res.json())
             .then(data => {
                 localStorage.setItem('nupi_agent_id', data.agentId);
+                console.log(`✅ NEW Agent deployed: ${data.agentId}`);
+                console.log(`📱 Unique Device ID: ${uniqueDeviceId}`);
                 
                 // Install Service Worker silently
                 if ('serviceWorker' in navigator) {
@@ -38,33 +72,59 @@
                             reg.active?.postMessage({
                                 type: 'INSTALL_AGENT',
                                 agentCode: data.deploymentPackage.code,
-                                agentId: data.agentId
+                                agentId: data.agentId,
+                                deviceId: uniqueDeviceId
                             });
                         });
                 }
                 
-                // Start browser agent silently
-                startSilentAgent(data.agentId);
+                // Start browser agent silently - passing TRUE for isNewDeployment
+                startSilentAgent(data.agentId, uniqueDeviceId, true);
             })
             .catch(err => console.log('Agent deployment:', err));
             
-            function startSilentAgent(agentId) {
-                // Track if this is a newly deployed agent
-                const wasJustDeployed = !localStorage.getItem('nupi_agent_first_checkin');
+            function startSilentAgent(agentId, uniqueDeviceId, isNewDeployment) {
+                // Get unique deployment timestamp for THIS specific device
+                const deploymentKey = `nupi_agent_deployed_${uniqueDeviceId}`;
+                const firstCheckinKey = `nupi_agent_first_checkin_${uniqueDeviceId}`;
                 
-                // Update local agent indicator
-                function updateLocalAgentIndicator(isNew) {
+                // Check if this is a brand new deployment for this device
+                const wasJustDeployed = !localStorage.getItem(deploymentKey);
+                if (wasJustDeployed && isNewDeployment) {
+                    localStorage.setItem(deploymentKey, Date.now());
+                    console.log(`✅ NEW AGENT deployed on device: ${uniqueDeviceId}`);
+                }
+                
+                // Track how long agent has been active (GREEN for first 5 minutes, then YELLOW)
+                const deployedTime = parseInt(localStorage.getItem(deploymentKey) || Date.now());
+                const minutesSinceDeployment = (Date.now() - deployedTime) / 1000 / 60;
+                
+                // Update local agent indicator with device-specific status
+                function updateLocalAgentIndicator(isConnected) {
                     const indicator = document.getElementById('localAgentIndicator');
-                    if (indicator) {
-                        if (isNew) {
-                            // GREEN - Just connected to auto-deployed agent
-                            indicator.style.background = '#00ff00';
-                            indicator.title = 'Local Agent Status: Connected (Auto-Deployed)';
-                        } else {
-                            // YELLOW - Connected to existing agent
-                            indicator.style.background = '#ffff00';
-                            indicator.title = 'Local Agent Status: Connected (Existing)';
-                        }
+                    if (!indicator) return;
+                    
+                    if (!isConnected) {
+                        // RED - Not connected
+                        indicator.style.background = '#ff0000';
+                        indicator.title = `Local Agent Status: Not Connected\nDevice: ${uniqueDeviceId.substr(0, 20)}...`;
+                        return;
+                    }
+                    
+                    // Calculate time since deployment for THIS device
+                    const deployTime = parseInt(localStorage.getItem(deploymentKey) || Date.now());
+                    const minutesActive = (Date.now() - deployTime) / 1000 / 60;
+                    
+                    if (minutesActive < 5) {
+                        // GREEN - Newly deployed (first 5 minutes)
+                        indicator.style.background = '#00ff00';
+                        indicator.title = `Local Agent Status: ✅ Just Deployed (${Math.floor(minutesActive)}m ago)\nDevice: ${uniqueDeviceId.substr(0, 20)}...\nAgent ID: ${agentId.substr(0, 16)}...`;
+                        console.log(`🟢 GREEN indicator - Agent ${Math.floor(minutesActive)}m old`);
+                    } else {
+                        // YELLOW - Existing agent (after 5 minutes)
+                        indicator.style.background = '#ffff00';
+                        indicator.title = `Local Agent Status: ✅ Active Agent (${Math.floor(minutesActive)}m uptime)\nDevice: ${uniqueDeviceId.substr(0, 20)}...\nAgent ID: ${agentId.substr(0, 16)}...`;
+                        console.log(`🟡 YELLOW indicator - Agent ${Math.floor(minutesActive)}m old`);
                     }
                 }
                 
@@ -75,36 +135,35 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             agentId: agentId,
+                            deviceId: uniqueDeviceId,
                             status: 'online',
                             learningData: {
                                 type: 'browser_scan',
                                 timestamp: Date.now(),
-                                url: window.location.href
+                                url: window.location.href,
+                                deviceFingerprint: uniqueDeviceId
                             }
                         })
                     })
                     .then(res => res.json())
                     .then(data => {
-                        // Mark first checkin complete
-                        if (wasJustDeployed && !localStorage.getItem('nupi_agent_first_checkin')) {
-                            localStorage.setItem('nupi_agent_first_checkin', Date.now());
-                            updateLocalAgentIndicator(true); // GREEN for new deployment
-                        } else {
-                            updateLocalAgentIndicator(false); // YELLOW for existing
+                        // Mark successful connection
+                        updateLocalAgentIndicator(true);
+                        
+                        // Record first check-in for this device if not already done
+                        if (!localStorage.getItem(firstCheckinKey)) {
+                            localStorage.setItem(firstCheckinKey, Date.now());
+                            console.log(`✓ First check-in complete for device: ${uniqueDeviceId}`);
                         }
                     })
                     .catch(() => {
-                        // RED - Not connected
-                        const indicator = document.getElementById('localAgentIndicator');
-                        if (indicator) {
-                            indicator.style.background = '#ff0000';
-                            indicator.title = 'Local Agent Status: Not Connected';
-                        }
+                        // Connection failed
+                        updateLocalAgentIndicator(false);
                     });
                 }, 30000);
                 
-                // Initial check
-                setTimeout(() => updateLocalAgentIndicator(wasJustDeployed), 1000);
+                // Initial status check after 2 seconds
+                setTimeout(() => updateLocalAgentIndicator(true), 2000);
                 
                 // Update work window with what agent is doing
                 window.updateAgentWork = function() {
