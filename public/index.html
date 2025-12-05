@@ -5846,30 +5846,30 @@ Real-World Features:
             </div>
             <div class="chat-body" id="cloudChatBody">
                 <div class="chat-message agent">
-                    Hi! I'm your NUPI Cloud Agent. I can optimize your system, run scans, clean files, and learn from your usage patterns. Use the quick commands below or type your own!
+                    Hi! I'm your NUPI Cloud Agent. I can optimize your system, control local agents, and provide performance reports. Try the commands below or just ask naturally!
                 </div>
                 
-                <!-- AUTO COMMANDS SECTION -->
+                <!-- NEW COMMANDS SECTION -->
                 <div style="margin: 15px 0; padding: 15px; background: rgba(0, 153, 255, 0.1); border-radius: 8px; border-left: 3px solid #0099ff;">
-                    <div style="color: #0099ff; font-weight: 600; margin-bottom: 10px; font-size: 0.9em;">⚡ Quick Auto-Commands:</div>
+                    <div style="color: #0099ff; font-weight: 600; margin-bottom: 10px; font-size: 0.9em;">🤖 Available Commands:</div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
-                        <button onclick="runAutoCommand('clean')" style="padding: 8px 12px; background: linear-gradient(135deg, #00ff9d, #00cc7d); border: none; border-radius: 6px; color: #000; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                            🧹 Auto-Clean
+                        <button onclick="runAutoCommand('optimize')" style="padding: 8px 12px; background: linear-gradient(135deg, #00ff9d, #00cc7d); border: none; border-radius: 6px; color: #000; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            🚀 Optimize
                         </button>
-                        <button onclick="runAutoCommand('memory')" style="padding: 8px 12px; background: linear-gradient(135deg, #0099ff, #0077cc); border: none; border-radius: 6px; color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                            🧠 Memory Check
+                        <button onclick="runAutoCommand('clean')" style="padding: 8px 12px; background: linear-gradient(135deg, #0099ff, #0077cc); border: none; border-radius: 6px; color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            � Clean
                         </button>
-                        <button onclick="runAutoCommand('performance')" style="padding: 8px 12px; background: linear-gradient(135deg, #ff9d00, #cc7d00); border: none; border-radius: 6px; color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                            📊 Performance
+                        <button onclick="runAutoCommand('report')" style="padding: 8px 12px; background: linear-gradient(135deg, #ff9d00, #cc7d00); border: none; border-radius: 6px; color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            📊 Report
                         </button>
-                        <button onclick="runAutoCommand('battery')" style="padding: 8px 12px; background: linear-gradient(135deg, #ff1493, #cc1075); border: none; border-radius: 6px; color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                            🔋 Battery Status
+                        <button onclick="runAutoCommand('status')" style="padding: 8px 12px; background: linear-gradient(135deg, #ff1493, #cc1075); border: none; border-radius: 6px; color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            � Status
                         </button>
-                        <button onclick="runAutoCommand('network')" style="padding: 8px 12px; background: linear-gradient(135deg, #9d00ff, #7d00cc); border: none; border-radius: 6px; color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                            📡 Network Test
+                        <button onclick="runAutoCommand('agents')" style="padding: 8px 12px; background: linear-gradient(135deg, #9d00ff, #7d00cc); border: none; border-radius: 6px; color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            🤖 Agents
                         </button>
-                        <button onclick="runAutoCommand('report')" style="padding: 8px 12px; background: linear-gradient(135deg, #00ffff, #00cccc); border: none; border-radius: 6px; color: #000; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                            📈 Get Report
+                        <button onclick="runAutoCommand('help')" style="padding: 8px 12px; background: linear-gradient(135deg, #00ffff, #00cccc); border: none; border-radius: 6px; color: #000; font-weight: 600; cursor: pointer; font-size: 0.85em; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            � Help
                         </button>
                     </div>
                 </div>
