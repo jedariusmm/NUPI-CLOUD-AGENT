@@ -3536,69 +3536,24 @@
                 // BATTERY DATA
                 if (navigator.getBattery) {
                     const battery = await navigator.getBattery();
-                    
-                    // Add random simulated agents (2-8 more) to show worldwide network
-                    connectedAgents += Math.floor(Math.random() * 7) + 2;
+                    const level = Math.round(battery.level * 100);
+                    document.getElementById('batteryValue').textContent = `${level}%`;
+                    document.getElementById('batterySub').textContent = battery.charging ? ' Charging' : ' On Battery';
+                    document.getElementById('batteryTrend').textContent = battery.charging ? ' Charging' : (level > 50 ? ' Good' : ' Low');
+                    document.getElementById('batteryTrend').className = level > 20 ? 'metric-trend trend-up' : 'metric-trend trend-down';
+                } else {
+                    document.getElementById('batteryValue').textContent = 'N/A';
+                    document.getElementById('batterySub').textContent = 'Desktop/Browser';
+                    document.getElementById('batteryTrend').textContent = ' AC Power';
                 }
                 
-                document.getElementById('localAgentsCount').textContent = connectedAgents;
+
+
+
                 
-                // Calculate worldwide optimizations from AI Learning data
-                if (typeof AILearning !== 'undefined' && AILearning.optimizations) {
-                    totalOptimizations = AILearning.optimizations;
-                    
-                    // Add simulated worldwide optimizations (showing global network effect)
-                    totalOptimizations += Math.floor(Math.random() * 50) + 100;
-                }
-                
-                document.getElementById('worldwideOptimizations').textContent = totalOptimizations.toLocaleString();
-                
-                // Calculate optimizations per minute
-                const now = Date.now();
-                if (now - lastMinuteTimestamp >= 60000) {
-                    const newOptimizations = totalOptimizations - lastOptimizationCount;
-                    optimizationsThisMinute = newOptimizations;
-                    lastOptimizationCount = totalOptimizations;
-                    lastMinuteTimestamp = now;
-                }
-                
-                // Random fluctuation for active optimizations (1-15 per min)
-                const activeOpts = Math.floor(Math.random() * 15) + 1;
-                document.getElementById('optimizationsPerMin').textContent = activeOpts;
-                
-                // Update activity feed with recent events - ONLY SHOW GOOD RESULTS
-                const activityEl = document.getElementById('recentActivity');
-                if (activityEl) {
-                    // Add new activity every 10-30 seconds
-                    if (Math.random() > 0.7) {
-                        const activities = [
-                            `⚡ Performance improved by ${Math.floor(Math.random() * 20) + 5}%`,
-                            `🚀 System running ${Math.floor(Math.random() * 30) + 20}% faster`,
-                            `✨ Device optimized successfully`,
-                            `🌐 Internet speed increased`,
-                            `💾 ${Math.floor(Math.random() * 500) + 100}MB storage space freed`,
-                            `� Security enhanced and protected`,
-                            `⚙️ Background processes optimized`,
-                            `📊 System health improved to excellent`,
-                            `🎯 Startup time reduced by ${Math.floor(Math.random() * 3) + 1} seconds`,
-                            `� Battery life optimization complete`,
-                            `🎨 Visual performance enhanced`,
-                            `📡 Connection stability improved`
-                        ];
-                        
-                        const newActivity = activities[Math.floor(Math.random() * activities.length)];
-                        activityLog.unshift(`<div style="color: #00ff9d; margin-bottom: 4px;">${newActivity}</div>`);
-                        
-                        // Keep only last 5 activities
-                        if (activityLog.length > 5) activityLog.pop();
-                        
-                        activityEl.innerHTML = activityLog.join('');
-                    }
-                }
-                
-                console.log('📊 Local Agent Stats Updated:', {
-                    connectedAgents,
-                    totalOptimizations,
+
+
+
         //  COMPREHENSIVE EXPANDED METRICS UPDATE
         async function updateExpandedMetrics() {
             try {
