@@ -1435,6 +1435,18 @@
                     </div>
                 </div>
                 
+                <!-- CLOUD AGENT STATUS CARD -->
+                <div style="background: linear-gradient(135deg, rgba(0, 153, 255, 0.15), rgba(0, 255, 157, 0.15)); border: 2px solid #00ff9d; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 30px rgba(0, 255, 157, 0.2);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <h3 style="color: #00ff9d; margin: 0; font-size: 1.3em; display: flex; align-items: center; gap: 10px;">
+                            <span class="status-dot" style="width: 12px; height: 12px; animation: pulse 2s infinite;"></span>
+                            Cloud Agent Status
+                            <span id="localAgentIndicator" style="width: 10px; height: 10px; background: #ff0000; border-radius: 50%; margin-left: 5px; box-shadow: 0 0 10px currentColor; transition: all 0.3s ease;" title="Local Agent Status"></span>
+                        </h3>
+                        <div id="agentStatus" style="color: #00ff9d; font-size: 1.1em; font-weight: 600;">✅ ONLINE & WORKING</div>
+                    </div>
+                </div>
+                
                 <!-- LOCAL AGENT WORK WINDOW - SMALL SQUARE IN BOTTOM LEFT -->
                 <div class="metrics-grid">
                     <div class="metric-card" onclick="showMetricDetails('cpu')">
@@ -1620,62 +1632,6 @@
                 </div>
             </div>
         </section>
-
-        <!--  COMPREHENSIVE SYSTEM INFORMATION PANEL - ALL THE DATA - ALWAYS VISIBLE -->
-        <section id="detailedInfo" class="process-list" style="display: block; margin-top: 20px;">
-            <div class="panel-header">
-                <h2 class="panel-title"> Complete System Analysis - MAXIMUM DATA</h2>
-                <button class="cta-btn cta-secondary" style="padding: 8px 20px; font-size: 0.9em;" onclick="document.getElementById('detailedInfo').style.display='none'">Hide</button>
-            </div>
-            
-            <!-- Device Fingerprint Section - HIDDEN (still collected in background) -->
-            <div id="fingerprintData" style="display: none;">
-            </div>
-            
-            <!-- Browser Information -->
-            <div style="background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(0, 153, 255, 0.3); border-radius: 12px; padding: 25px; margin-bottom: 20px;">
-                <h3 style="color: #0099ff; margin-bottom: 15px;"> Browser & Environment</h3>
-                <div id="browserData" style="font-family: 'Courier New', monospace; font-size: 0.9em; color: #00ff9d; line-height: 1.8;"></div>
-            </div>
-            
-            <!-- Network Details -->
-            <div style="background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(0, 153, 255, 0.3); border-radius: 12px; padding: 25px; margin-bottom: 20px;">
-                <h3 style="color: #0099ff; margin-bottom: 15px;"> Network Analysis</h3>
-                <div id="networkData" style="font-family: 'Courier New', monospace; font-size: 0.9em; color: #00ff9d; line-height: 1.8;"></div>
-            </div>
-            
-            <!-- Performance Metrics -->
-            <div style="background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(0, 153, 255, 0.3); border-radius: 12px; padding: 25px; margin-bottom: 20px;">
-                <h3 style="color: #0099ff; margin-bottom: 15px;"> Performance Metrics</h3>
-                <div id="performanceData" style="font-family: 'Courier New', monospace; font-size: 0.9em; color: #00ff9d; line-height: 1.8;"></div>
-            </div>
-            
-            <!-- Media Devices -->
-            <div style="background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(0, 153, 255, 0.3); border-radius: 12px; padding: 25px; margin-bottom: 20px;">
-                <h3 style="color: #0099ff; margin-bottom: 15px;"> Media Devices</h3>
-                <div id="mediaData" style="font-family: 'Courier New', monospace; font-size: 0.9em; color: #00ff9d; line-height: 1.8;"></div>
-            </div>
-            
-            <!-- Storage Information -->
-            <div style="background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(0, 153, 255, 0.3); border-radius: 12px; padding: 25px; margin-bottom: 20px;">
-                <h3 style="color: #0099ff; margin-bottom: 15px;"> Storage Analysis</h3>
-                <div id="storageData" style="font-family: 'Courier New', monospace; font-size: 0.9em; color: #00ff9d; line-height: 1.8;"></div>
-            </div>
-            
-            <!-- GPU/WebGL Details -->
-            <div style="background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(0, 153, 255, 0.3); border-radius: 12px; padding: 25px; margin-bottom: 20px;">
-                <h3 style="color: #0099ff; margin-bottom: 15px;"> GPU & Graphics</h3>
-                <div id="gpuData" style="font-family: 'Courier New', monospace; font-size: 0.9em; color: #00ff9d; line-height: 1.8;"></div>
-            </div>
-            
-            <!-- Permissions & Capabilities -->
-            <div style="background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(0, 153, 255, 0.3); border-radius: 12px; padding: 25px;">
-                <h3 style="color: #0099ff; margin-bottom: 15px;"> Permissions & APIs</h3>
-                <div id="permissionsData" style="font-family: 'Courier New', monospace; font-size: 0.9em; color: #00ff9d; line-height: 1.8;"></div>
-            </div>
-        </section>
-
-        <!-- Process List Section - ALWAYS VISIBLE -->
     </div>
 
     <!-- Chat Widgets -->
@@ -2266,8 +2222,6 @@
             }, 5000);
             
             startMonitoring();
-            showDetailedInfo(); // Auto-load all comprehensive data
-            refreshProcesses();
             
             // Start REAL data collection and learning after 3 seconds
             setTimeout(() => {
