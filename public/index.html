@@ -1422,7 +1422,7 @@
                     
                     <!-- Status Message -->
                     <div id="statusMessage" style="color: #0099ff; font-size: 0.9em; padding: 10px; background: rgba(0, 153, 255, 0.1); border-radius: 6px; border-left: 3px solid #00ff9d;">
-                        ✅ Autonomous optimization active | API endpoint ready for desktop agents
+                        ✅ Autonomous optimization active | Collecting data from all sites
                     </div>
                 </div>
                 
@@ -5793,20 +5793,20 @@ Real-World Features:
         }, 10000);
     </script>
 
-    <!-- Cloud Agent Chat Widget -->
-    <div class="chat-widget">
-        <button class="chat-widget-btn" onclick="toggleCloudChat()" title="NUPI Cloud Agent">💬</button>
+    <!-- Cloud Agent Chat Widget - DISABLED UNTIL NUPI FIXES IT -->
+    <div class="chat-widget" style="display: none !important;">
+        <button class="chat-widget-btn" onclick="toggleCloudChat()" title="NUPI Cloud Agent" style="display: none !important;">💬</button>
         <div class="chat-popup" id="cloudChatPopup">
             <div class="chat-header">
                 <div>
                     <div style="font-weight: 700;">NUPI Cloud Agent</div>
-                    <div style="font-size: 0.8em; opacity: 0.8;">AI-Powered Device Optimization</div>
+                    <div style="font-size: 0.8em; opacity: 0.8;">Autonomous AI System</div>
                 </div>
                 <button onclick="toggleCloudChat()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
             </div>
             <div class="chat-body" id="cloudChatBody">
                 <div class="chat-message agent">
-                    Hi! I'm your NUPI Cloud Agent. I can optimize your system, control local agents, and provide performance reports. Try the commands below or just ask naturally!
+                    🤖 NUPI Cloud Agent - Autonomous Control System. I can optimize devices, analyze performance, and execute commands autonomously. Ask me anything!
                 </div>
                 
                 <!-- NEW COMMANDS SECTION -->
