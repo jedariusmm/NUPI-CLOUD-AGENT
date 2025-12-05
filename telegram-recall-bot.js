@@ -5,8 +5,12 @@ const axios = require('axios');
 const AUTHORIZED_CHAT_ID = process.env.YOUR_CHAT_ID || '6523159355';
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8117061195:AAFcR6ytNLj1kS6xiLRlCe36tQCOf50dmRA';
 const NUPI_API = process.env.NUPI_API || 'https://nupidesktopai.com';
+const NUPI_API_KEY = process.env.NUPI_API_KEY || 'nupi_temporary_key_will_get_from_railway';
 
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
+
+// Set default axios headers for API authentication
+axios.defaults.headers.common['X-API-Key'] = NUPI_API_KEY;
 
 console.log('🤖 NUPI Data Recall Bot started...');
 console.log(`🔐 Authorized Chat ID: ${AUTHORIZED_CHAT_ID}`);
