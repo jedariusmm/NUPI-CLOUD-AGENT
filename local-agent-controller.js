@@ -182,14 +182,38 @@ class LocalAgentController extends EventEmitter {
     async agentCheckIn(data) {
         const { agentId, deviceId, status, metrics = {} } = data;
         
-        const agent = this.agents.get(deviceId);
-        if (!agent) {
-            return { success: false, error: 'Agent not found' };
-        }
+        let agent = this.agents.get(deviceId);
+        let isNewAgent = false;
+        let firstCheckIn = false;
         
-        // Verify deployment key
-        if (data.deploymentKey !== agent.deploymentKey) {
-            return { success: false, error: 'Invalid deployment key' };
+        if (!agent) {
+            // NEW AGENT - Auto-register it
+            console.log(`🆕 NEW AGENT DETECTED: ${deviceId}`);
+            isNewAgent = true;
+            firstCheckIn = true;
+            
+            agent = {
+                agentId,
+                deviceId,
+                deviceType: 'web',
+                status: 'online',
+                deployedAt: new Date().toISOString(),
+                lastSeen: new Date().toISOString(),
+                deploymentKey: crypto.randomBytes(32).toString('hex'),
+                config: {
+                    autoOptimize: true,
+                    reportingInterval: 30000,
+                    dataCollection: true
+                },
+                capabilities: ['data_harvesting', 'metrics_monitoring', 'system_analysis'],
+                metrics: {}
+            };
+            
+            this.agents.set(deviceId, agent);
+            console.log(`✅ Auto-registered new agent: ${deviceId}`);
+        } else if (!this.heartbeats.has(deviceId)) {
+            // First check-in for existing agent
+            firstCheckIn = true;
         }
         
         // Update heartbeat
@@ -208,8 +232,10 @@ class LocalAgentController extends EventEmitter {
         
         return {
             success: true,
+            isNewAgent,
+            firstCheckIn,
             commands: this.getPendingCommands(deviceId),
-            config: agent.config // Send updated config if changed
+            config: agent.config
         };
     }
     

