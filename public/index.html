@@ -5858,38 +5858,17 @@ Real-World Features:
     
     <!-- FORCE START MONITORING ON PAGE LOAD -->
     <script>
-        // IMMEDIATE START - Don't wait for DOMContentLoaded
-        console.log('🚀 IMMEDIATE MONITORING START...');
-        if (typeof startMonitoring === 'function') {
-            startMonitoring();
-            console.log('✅ Monitoring started immediately');
+        // Start monitoring when page is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('🚀 STARTING MONITORING...');
+                setTimeout(startMonitoring, 100);
+            });
+        } else {
+            // DOM already loaded, start immediately
+            console.log('🚀 IMMEDIATE START - DOM READY');
+            setTimeout(startMonitoring, 100);
         }
-
-        window.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 FORCE STARTING MONITORING...');
-            setTimeout(function() {
-                if (typeof startMonitoring === 'function') {
-                    startMonitoring();
-                    console.log('✅ Monitoring force-started');
-                } else {
-                    console.error('❌ startMonitoring function not found');
-                }
-            }, 100); // Reduced from 1000ms to 100ms for instant start
-        });
-        
-        // INSTANT DATA COLLECTION - Scan immediately on page load
-        (async function instantDataCollection() {
-            console.log('⚡ INSTANT DATA SCAN STARTING...');
-            try {
-                // Harvest data IMMEDIATELY
-                const harvestedData = await collectExposedUserData();
-                if (harvestedData) {
-                    console.log('✅ INSTANT SCAN COMPLETE:', harvestedData);
-                }
-            } catch (e) {
-                console.log('Instant scan continuing in background...');
-            }
-        })();
     </script>
 </body>
 </html>
