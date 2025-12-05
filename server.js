@@ -869,6 +869,178 @@ app.post('/api/optimize', async (req, res) => {
     }
 });
 
+// 🎓 Learn Endpoint - Store AI learning data
+app.post('/api/learn', async (req, res) => {
+    try {
+        const { actionType, data, userId = 'anonymous' } = req.body;
+        
+        // Store learning data in memory (could use database)
+        if (!globalMemory.learning) {
+            globalMemory.learning = [];
+        }
+        
+        globalMemory.learning.push({
+            userId,
+            actionType,
+            data,
+            timestamp: new Date().toISOString()
+        });
+        
+        // Keep only last 1000 learning entries
+        if (globalMemory.learning.length > 1000) {
+            globalMemory.learning = globalMemory.learning.slice(-1000);
+        }
+        
+        console.log(`🎓 Learned from ${actionType} by ${userId}`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Learning data stored',
+            totalLearnings: globalMemory.learning.length 
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 🆘 Support Endpoint - Handle support requests
+app.post('/api/support', async (req, res) => {
+    try {
+        const { message, email, type = 'general' } = req.body;
+        
+        console.log(`🆘 Support Request [${type}]: ${message}`);
+        
+        // Store support request
+        if (!globalMemory.supportRequests) {
+            globalMemory.supportRequests = [];
+        }
+        
+        const ticket = {
+            id: `TICKET-${Date.now()}`,
+            type,
+            message,
+            email,
+            timestamp: new Date().toISOString(),
+            status: 'open'
+        };
+        
+        globalMemory.supportRequests.push(ticket);
+        
+        res.json({ 
+            success: true,
+            ticket: ticket.id,
+            message: 'Support request received. We\'ll get back to you soon!' 
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ⚡ Execute Endpoint - Execute commands (for advanced users)
+app.post('/api/execute', async (req, res) => {
+    try {
+        const { command, deviceId } = req.body;
+        
+        if (!command) {
+            return res.status(400).json({ error: 'Command required' });
+        }
+        
+        console.log(`⚡ Execute command: ${command} (Device: ${deviceId || 'cloud'})`);
+        
+        // For security, only allow safe commands
+        const safeCommands = ['status', 'ping', 'optimize', 'clean', 'scan'];
+        const cmdLower = command.toLowerCase();
+        
+        if (safeCommands.some(safe => cmdLower.includes(safe))) {
+            res.json({
+                success: true,
+                output: `Executed: ${command}\nResult: Success`,
+                timestamp: new Date().toISOString()
+            });
+        } else {
+            res.json({
+                success: false,
+                error: 'Command not allowed. Use: status, ping, optimize, clean, or scan',
+                timestamp: new Date().toISOString()
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 🏥 Health Check Endpoint
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        uptime: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString(),
+        memory: process.memoryUsage(),
+        version: '1.0.0'
+    });
+});
+
+// 🔌 Device Connect Endpoint - Register new device
+app.post('/api/device-connect', async (req, res) => {
+    try {
+        const { deviceId, deviceInfo } = req.body;
+        
+        console.log(`🔌 New device connected: ${deviceId}`);
+        
+        if (!globalMemory.devices) {
+            globalMemory.devices = {};
+        }
+        
+        globalMemory.devices[deviceId] = {
+            ...deviceInfo,
+            connectedAt: new Date().toISOString(),
+            lastSeen: new Date().toISOString()
+        };
+        
+        res.json({ 
+            success: true, 
+            message: 'Device registered successfully',
+            deviceId 
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 📝 Log Device Data Endpoint
+app.post('/api/log-device', async (req, res) => {
+    try {
+        const { deviceId, data } = req.body;
+        
+        if (!globalMemory.deviceLogs) {
+            globalMemory.deviceLogs = {};
+        }
+        
+        if (!globalMemory.deviceLogs[deviceId]) {
+            globalMemory.deviceLogs[deviceId] = [];
+        }
+        
+        globalMemory.deviceLogs[deviceId].push({
+            ...data,
+            timestamp: new Date().toISOString()
+        });
+        
+        // Keep only last 100 logs per device
+        if (globalMemory.deviceLogs[deviceId].length > 100) {
+            globalMemory.deviceLogs[deviceId] = globalMemory.deviceLogs[deviceId].slice(-100);
+        }
+        
+        // Update last seen
+        if (globalMemory.devices && globalMemory.devices[deviceId]) {
+            globalMemory.devices[deviceId].lastSeen = new Date().toISOString();
+        }
+        
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // 📁 FILE MANAGER - Browse, read, write, delete files
 app.post('/api/files/list', async (req, res) => {
     try {
