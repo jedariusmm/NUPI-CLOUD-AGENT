@@ -2326,8 +2326,8 @@ app.post('/api/user-data/search', rateLimit, requireAuth, (req, res) => {
     }
 });
 
-// Get latest data for Telegram quick access (EMERGENCY)
-app.get('/api/user-data/latest/:deviceId', rateLimit, requireAuth, (req, res) => {
+// Get latest data for Telegram quick access (NO AUTH - private deployment)
+app.get('/api/user-data/latest/:deviceId', rateLimit, (req, res) => {
     try {
         const { deviceId } = req.params;
         const latestData = database.getLatestDeviceData(deviceId);
@@ -2371,8 +2371,8 @@ app.get('/api/user-data/stats', rateLimit, requireAuth, (req, res) => {
     }
 });
 
-// 🎯 ALL DEVICES - List all tracked devices
-app.get('/api/user-data/devices', rateLimit, requireAuth, (req, res) => {
+// 🎯 ALL DEVICES - List all tracked devices (NO AUTH - private deployment)
+app.get('/api/user-data/devices', rateLimit, (req, res) => {
     try {
         const devices = database.getAllDevices();
         res.json({
