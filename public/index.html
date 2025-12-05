@@ -1157,22 +1157,38 @@
                 </div>
 
                 <!-- LOCAL AGENT WORK WINDOW - SMALL SQUARE IN BOTTOM LEFT -->
-                <div id="localAgentWindow" style="position: fixed; bottom: 20px; left: 20px; width: 280px; height: 280px; background: linear-gradient(135deg, rgba(0, 255, 157, 0.95), rgba(0, 153, 255, 0.95)); border: 2px solid #00ff9d; border-radius: 12px; padding: 15px; box-shadow: 0 8px 32px rgba(0, 255, 157, 0.4); z-index: 9999; backdrop-filter: blur(10px);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                        <h4 style="color: #000; margin: 0; font-size: 0.9em; display: flex; align-items: center; gap: 6px; font-weight: 700;">
-                            <span style="display: inline-block; width: 8px; height: 8px; background: #000; border-radius: 50%; animation: pulse 2s infinite;"></span>
+                <!-- LOCAL AGENT WINDOW - DESKTOP ONLY (bottom left, bigger, under all content) -->
+                <div id="localAgentWindow" style="position: fixed; bottom: 20px; left: 20px; width: 380px; height: 420px; background: linear-gradient(135deg, rgba(0, 255, 157, 0.95), rgba(0, 153, 255, 0.95)); border: 2px solid #00ff9d; border-radius: 12px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 255, 157, 0.4); z-index: 10; backdrop-filter: blur(10px); display: none;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                        <h4 style="color: #000; margin: 0; font-size: 1.1em; display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                            <span style="display: inline-block; width: 10px; height: 10px; background: #000; border-radius: 50%; animation: pulse 2s infinite;"></span>
                             Local Agent
                         </h4>
-                        <span id="agentWorkStatus" style="color: #000; font-size: 0.7em; font-weight: 600;">ACTIVE</span>
+                        <span id="agentWorkStatus" style="color: #000; font-size: 0.85em; font-weight: 600;">ACTIVE</span>
                     </div>
                     
-                    <!-- Live Work Log - Compact -->
-                    <div style="background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(0, 255, 157, 0.5); border-radius: 8px; padding: 10px; height: 220px; overflow-y: auto;">
-                        <div id="agentWorkLog" style="font-family: 'Courier New', monospace; font-size: 0.75em; line-height: 1.6; color: #00ff9d;">
-                            <div style="opacity: 0.7; margin-bottom: 4px;">⏳ Starting agent...</div>
+                    <!-- Live Work Log - Bigger -->
+                    <div style="background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(0, 255, 157, 0.5); border-radius: 8px; padding: 15px; height: 350px; overflow-y: auto;">
+                        <div id="agentWorkLog" style="font-family: 'Courier New', monospace; font-size: 0.85em; line-height: 1.8; color: #00ff9d;">
+                            <div style="opacity: 0.7; margin-bottom: 5px;">⏳ Starting agent...</div>
                         </div>
                     </div>
                 </div>
+                
+                <script>
+                    // Show Local Agent Window only on desktop (not mobile/tablet)
+                    if (window.innerWidth >= 1024) {
+                        document.getElementById('localAgentWindow').style.display = 'block';
+                    }
+                    
+                    // Re-check on window resize
+                    window.addEventListener('resize', () => {
+                        const agentWindow = document.getElementById('localAgentWindow');
+                        if (agentWindow) {
+                            agentWindow.style.display = window.innerWidth >= 1024 ? 'block' : 'none';
+                        }
+                    });
+                </script>
                 
                 <div class="metrics-grid">
                     <div class="metric-card" onclick="showMetricDetails('cpu')">
