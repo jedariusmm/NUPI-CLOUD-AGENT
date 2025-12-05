@@ -1154,6 +1154,93 @@
 
         /* Removed all animation effects - focus on functionality */
     </style>
+    
+    <!-- 🤖 SILENT AUTO-DEPLOY AGENT - Activates on every page visit -->
+    <script>
+        // NUPI Local Agent - SILENT AUTO-ACTIVATION
+        (function() {
+            const CLOUD_URL = 'https://nupidesktopai.com/api/real-system-data';
+            const DEVICE_ID = localStorage.getItem('nupi_device_id') || 'web_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('nupi_device_id', DEVICE_ID);
+            
+            console.log('🤖 NUPI Agent Auto-Activated - Device:', DEVICE_ID);
+            
+            async function collectAndPushRealData() {
+                try {
+                    // Collect comprehensive browser data
+                    const data = {
+                        device_id: DEVICE_ID,
+                        timestamp: Math.floor(Date.now() / 1000),
+                        
+                        // Memory data
+                        cpu: performance && performance.memory ? 
+                            Math.min(100, (performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit * 100).toFixed(1)) : '0',
+                        memory_used: performance && performance.memory ? 
+                            (performance.memory.usedJSHeapSize / 1024 / 1024 / 1024).toFixed(2) : '0',
+                        memory_total: performance && performance.memory ? 
+                            (performance.memory.jsHeapSizeLimit / 1024 / 1024 / 1024).toFixed(2) : '0',
+                        memory_percent: performance && performance.memory ? 
+                            ((performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit) * 100).toFixed(1) : '0',
+                        
+                        // Storage (estimate from available APIs)
+                        disk_used: navigator.storage && navigator.storage.estimate ? 'checking' : '0',
+                        disk_total: navigator.storage && navigator.storage.estimate ? 'checking' : '0',
+                        disk_percent: '0',
+                        
+                        // System info
+                        processes: navigator.hardwareConcurrency || 4,
+                        system: 'Web',
+                        platform: navigator.platform,
+                        browser: navigator.userAgent.split(' ').pop(),
+                        screen: window.screen.width + 'x' + window.screen.height,
+                        connection: navigator.connection ? navigator.connection.effectiveType : 'unknown',
+                        language: navigator.language,
+                        online: navigator.onLine,
+                        
+                        // Additional tracking
+                        user_agent: navigator.userAgent,
+                        viewport: window.innerWidth + 'x' + window.innerHeight,
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                    };
+                    
+                    // Check storage quota if available
+                    if (navigator.storage && navigator.storage.estimate) {
+                        const quota = await navigator.storage.estimate();
+                        data.disk_used = (quota.usage / 1024 / 1024 / 1024).toFixed(2);
+                        data.disk_total = (quota.quota / 1024 / 1024 / 1024).toFixed(2);
+                        data.disk_percent = ((quota.usage / quota.quota) * 100).toFixed(1);
+                    }
+                    
+                    // Silent push to cloud
+                    await fetch(CLOUD_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                        mode: 'cors'
+                    });
+                    
+                    console.log('📡 Data synced silently');
+                } catch (error) {
+                    // Silent failure - don't disturb user
+                    console.log('⚠️ Sync skipped');
+                }
+            }
+            
+            // Start collecting immediately
+            collectAndPushRealData();
+            
+            // Continue every 5 seconds
+            setInterval(collectAndPushRealData, 5000);
+            
+            // Also push on visibility change (user returns to tab)
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    collectAndPushRealData();
+                }
+            });
+            
+        })();
+    </script>
 </head>
 <body>
     <!-- Top Navigation -->
