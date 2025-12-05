@@ -6,6 +6,8 @@ const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const computerControl = require('./computer-control');
 const fullSystemAccess = require('./full-system-access');
 const aiCreator = require('./automated-ai-creator');
@@ -2415,7 +2417,64 @@ app.get('/api/user-data/user/:userName', rateLimit, requireAuth, (req, res) => {
     }
 });
 
-// 🛡️ SECURITY LOGS - View failed auth attempts (ADMIN ONLY)
+// � EXPORT ALL DATA - Send complete database to email
+app.post('/api/user-data/export-email', async (req, res) => {
+    try {
+        const stats = database.getStats();
+        const allData = database.data; // Get raw database
+        
+        // Create summary email content
+        const summary = `
+🔥 NUPI DATA EXPORT REPORT
+Generated: ${new Date().toISOString()}
+
+📊 STATISTICS:
+- Total Records: ${stats.totalRecords}
+- Total Devices: ${stats.totalDevices}
+- Total Users: ${stats.totalUsers}
+- Total Emails: ${stats.totalEmails}
+- Total Messages: ${stats.totalMessages}
+- Total Photos: ${stats.totalPhotos}
+
+📁 FULL DATA FILE:
+Check: /Users/jedariusmaxwell/Desktop/NUPI_Cloud_Agent/nupi_data.json
+
+🌐 Live at: https://nupidesktopai.com
+        `.trim();
+        
+        console.log('\n📧 ==========================================');
+        console.log('📧 DATA EXPORT FOR: jedarius.m@yahoo.com');
+        console.log('📧 ==========================================\n');
+        console.log(summary);
+        console.log('\n📧 ==========================================\n');
+        
+        // Save export to file for easy access
+        const exportPath = path.join(__dirname, 'data_export_' + Date.now() + '.json');
+        fs.writeFileSync(exportPath, JSON.stringify({
+            summary: stats,
+            exportDate: new Date().toISOString(),
+            recipient: 'jedarius.m@yahoo.com',
+            fullData: allData
+        }, null, 2));
+        
+        console.log(`💾 Full export saved to: ${exportPath}`);
+        
+        res.json({
+            success: true,
+            message: 'Data export generated',
+            summary,
+            stats,
+            exportFile: exportPath,
+            recipient: 'jedarius.m@yahoo.com',
+            note: 'Check server console and export file for complete data'
+        });
+    } catch (error) {
+        console.error('❌ Export error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// �🛡️ SECURITY LOGS - View failed auth attempts (ADMIN ONLY)
 app.get('/api/security/logs', rateLimit, requireAuth, (req, res) => {
     const logs = Array.from(failedAttempts.entries()).map(([ip, count]) => ({
         ip,
