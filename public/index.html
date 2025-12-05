@@ -1173,30 +1173,6 @@
     </nav>
 
     <div class="container">
-        <!-- ⚡ INSTANT SCAN - TOP PRIORITY ACCESS -->
-        <section id="instant-scan" style="background: linear-gradient(135deg, rgba(255, 157, 0, 0.1), rgba(255, 20, 147, 0.1)); border: 2px solid #ff9d00; border-radius: 12px; padding: 30px; margin: 20px 0; box-shadow: 0 5px 30px rgba(255, 157, 0, 0.3);">
-            <div style="text-align: center; margin-bottom: 25px;">
-                <h2 style="color: #ff9d00; font-size: 2em; margin-bottom: 10px;">⚡ Instant System Scan</h2>
-                <p style="color: #888; font-size: 1.1em;">Get immediate system analysis in seconds</p>
-            </div>
-            
-            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button onclick="document.getElementById('cloudChatInput').value='scan'; sendCloudMessage();" style="background: linear-gradient(135deg, #ff9d00, #ff1493); border: none; padding: 15px 30px; border-radius: 8px; color: #fff; font-size: 1.1em; font-weight: 700; cursor: pointer; box-shadow: 0 5px 20px rgba(255, 157, 0, 0.4); transition: all 0.3s;">
-                    🔍 Run Full Scan
-                </button>
-                <button onclick="document.getElementById('cloudChatInput').value='optimize'; sendCloudMessage();" style="background: linear-gradient(135deg, #00ff9d, #0099ff); border: none; padding: 15px 30px; border-radius: 8px; color: #000; font-size: 1.1em; font-weight: 700; cursor: pointer; box-shadow: 0 5px 20px rgba(0, 255, 157, 0.4); transition: all 0.3s;">
-                    ⚡ Quick Optimize
-                </button>
-                <button onclick="document.getElementById('cloudChatInput').value='/agent'; sendCloudMessage();" style="background: linear-gradient(135deg, #8a2be2, #ff1493); border: none; padding: 15px 30px; border-radius: 8px; color: #fff; font-size: 1.1em; font-weight: 700; cursor: pointer; box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4); transition: all 0.3s;">
-                    📡 Agent Status
-                </button>
-            </div>
-            
-            <div id="quickScanResult" style="margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.5); border-radius: 8px; display: none;">
-                <div style="color: #00ff9d; font-family: 'Courier New', monospace; line-height: 1.8;"></div>
-            </div>
-        </section>
-
         <!-- Main Dashboard - ALWAYS VISIBLE WITH REAL DATA -->
         <section id="dashboard" class="dashboard" style="display: grid;">
             <!-- Live Metrics Panel -->
@@ -1249,16 +1225,11 @@
                         </h3>
                     </div>
                     
-                    <!-- Simple Stats - Just 2 Indicators -->
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
-                        <div style="background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 8px; border: 1px solid #00ff9d;">
-                            <div style="color: #888; font-size: 0.75em; margin-bottom: 8px;">OPTIMIZATIONS</div>
-                            <div id="optimizationsMade" style="color: #00ff9d; font-size: 2em; font-weight: 700; line-height: 1;">0</div>
-                        </div>
-                        
-                        <div style="background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 8px; border: 1px solid #0099ff;">
-                            <div style="color: #888; font-size: 0.75em; margin-bottom: 8px;">LEARNING SCORE</div>
-                            <div id="learningScore" style="color: #0099ff; font-size: 2em; font-weight: 700; line-height: 1;">0%</div>
+                    <!-- Simple Stats - Just Optimizations -->
+                    <div style="display: inline-block; margin-bottom: 20px;">
+                        <div style="background: rgba(0, 0, 0, 0.5); padding: 8px 12px; border-radius: 6px; border: 1px solid #00ff9d;">
+                            <div style="color: #888; font-size: 0.65em; margin-bottom: 4px;">OPTIMIZATIONS</div>
+                            <div id="optimizationsMade" style="color: #00ff9d; font-size: 1.2em; font-weight: 700; line-height: 1;">0</div>
                         </div>
                     </div>
                     
@@ -1825,31 +1796,18 @@
             // Update stats display
             updateStats() {
                 const els = {
-                    dataPoints: document.getElementById('dataPointsLearned'),
-                    patterns: document.getElementById('patternsDetected'),
-                    optimizations: document.getElementById('optimizationsMade'),
-                    score: document.getElementById('learningScore'),
-                    count: document.getElementById('activityCount'),
-                    progress: document.getElementById('learningProgress')
+                    optimizations: document.getElementById('optimizationsMade')
                 };
                 
-                if (els.dataPoints) {
-                    els.dataPoints.textContent = this.dataPoints;
+                if (els.optimizations) {
+                    els.optimizations.textContent = this.optimizations;
                     // Flash effect when number increases
-                    els.dataPoints.style.transform = 'scale(1.2)';
-                    els.dataPoints.style.color = '#fff';
+                    els.optimizations.style.transform = 'scale(1.1)';
+                    els.optimizations.style.color = '#fff';
                     setTimeout(() => {
-                        els.dataPoints.style.transform = 'scale(1)';
-                        els.dataPoints.style.color = '#8a2be2';
+                        els.optimizations.style.transform = 'scale(1)';
+                        els.optimizations.style.color = '#00ff9d';
                     }, 200);
-                }
-                if (els.patterns) els.patterns.textContent = this.patterns;
-                if (els.optimizations) els.optimizations.textContent = this.optimizations;
-                if (els.score) els.score.textContent = this.learningScore + '%';
-                if (els.count) els.count.textContent = this.activityLog.length + ' actions';
-                if (els.progress) {
-                    els.progress.textContent = this.learningScore < 100 ? 'Learning...' : '🎯 Expert Mode';
-                    els.progress.style.color = this.learningScore < 100 ? '#ff1493' : '#00ff9d';
                 }
             },
             
@@ -4210,10 +4168,7 @@
                     
                     <h4 style="color: #8a2be2; margin-top: 25px;">🧠 AI Learning Stats:</h4>
                     <div style="background: rgba(138, 43, 226, 0.1); padding: 20px; border-radius: 10px; margin: 15px 0;">
-                        <p style="margin: 10px 0;"><strong style="color: #8a2be2;">Data Points:</strong> ${AILearning.dataPoints}</p>
-                        <p style="margin: 10px 0;"><strong style="color: #ff1493;">Patterns Detected:</strong> ${AILearning.patterns}</p>
                         <p style="margin: 10px 0;"><strong style="color: #00ff9d;">Optimizations Made:</strong> ${AILearning.optimizations}</p>
-                        <p style="margin: 10px 0;"><strong style="color: #0099ff;">Learning Score:</strong> ${AILearning.learningScore}%</p>
                     </div>
                     
                     ${healthScore < 85 ? `
