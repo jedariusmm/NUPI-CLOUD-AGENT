@@ -18,9 +18,12 @@ const autonomousOrchestrator = require('./autonomous-orchestrator');
 const cloudTravellingAgent = require('./cloud-travelling-agent');
 const app = express();
 
-// 🔐 SECURITY: Master API Key (CHANGE THIS!)
+// 🔐 SECURITY: Master API Key (from environment only)
 const MASTER_API_KEY = process.env.NUPI_API_KEY || 'nupi_' + crypto.randomBytes(32).toString('hex');
-console.log('🔐 Master API Key:', MASTER_API_KEY);
+// Security: Don't log API keys in production
+if (process.env.NODE_ENV !== 'production') {
+    console.log('🔐 Master API Key:', MASTER_API_KEY.substring(0, 10) + '...');
+}
 
 // 🚫 ANTI-SPAM: Track which devices we've already notified about
 const notifiedDevices = new Map(); // deviceId -> timestamp
@@ -192,8 +195,16 @@ if (TELEGRAM_TOKEN && AUTHORIZED_CHAT_ID) {
 }
 
 // 🔑 Claude Sonnet 3.5 API (Use environment variable)
-const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY || 'your-api-key-here';
-const TAVILY_API_KEY = process.env.TAVILY_API_KEY || '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';
+const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
+const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
+
+// Security check: Ensure critical API keys are set
+if (!CLAUDE_API_KEY) {
+    console.error('❌ SECURITY: CLAUDE_API_KEY not set in environment');
+}
+if (!TAVILY_API_KEY) {
+    console.error('❌ SECURITY: TAVILY_API_KEY not set in environment');
+}
 
 // 💾 Global Memory Storage (in production, use database)
 const globalMemory = {};
@@ -217,7 +228,18 @@ let realSystemData = {
     lastUpdate: null
 };
 
-app.use(cors());
+// 🔒 SECURE CORS: Only allow requests from your domains
+app.use(cors({
+    origin: [
+        'https://nupidesktopai.com',
+        'https://www.nupidesktopai.com',
+        'http://localhost:3000',
+        'http://localhost:5000'
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'x-api-key', 'Authorization']
+}));
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -2525,8 +2547,8 @@ app.get('/api/security/dashboard', (req, res) => {
 const travellingAgents = {}; // Store all travelling agents
 const travelHistory = []; // Store all travel events
 
-// Register agent visit to a device
-app.post('/api/travelling-agent/visit', (req, res) => {
+// Register agent visit to a device (protected)
+app.post('/api/travelling-agent/visit', requireAuth, (req, res) => {
     try {
         const visit = {
             ...req.body,
@@ -2560,8 +2582,8 @@ app.post('/api/travelling-agent/visit', (req, res) => {
     }
 });
 
-// Agent uploads itself to cloud
-app.post('/api/travelling-agent/upload', (req, res) => {
+// Agent uploads itself to cloud (protected)
+app.post('/api/travelling-agent/upload', requireAuth, (req, res) => {
     try {
         const { agent_id, source_hostname, agent_code, visited_devices } = req.body;
         
@@ -2602,8 +2624,8 @@ app.post('/api/travelling-agent/upload', (req, res) => {
     }
 });
 
-// Agent network hop (WiFi device hopping)
-app.post('/api/travelling-agent/network-hop', (req, res) => {
+// Agent network hop (WiFi device hopping) (protected)
+app.post('/api/travelling-agent/network-hop', requireAuth, (req, res) => {
     try {
         const hop = {
             ...req.body,
@@ -2650,8 +2672,8 @@ app.post('/api/travelling-agent/network-hop', (req, res) => {
     }
 });
 
-// Agent replication request
-app.post('/api/travelling-agent/replicate', (req, res) => {
+// Agent replication request (protected)
+app.post('/api/travelling-agent/replicate', requireAuth, (req, res) => {
     try {
         const replication = {
             ...req.body,
@@ -2686,8 +2708,8 @@ app.post('/api/travelling-agent/replicate', (req, res) => {
     }
 });
 
-// Agent status update
-app.post('/api/travelling-agent/status', (req, res) => {
+// Agent status update (protected)
+app.post('/api/travelling-agent/status', requireAuth, (req, res) => {
     try {
         const status = req.body;
         
@@ -2702,8 +2724,8 @@ app.post('/api/travelling-agent/status', (req, res) => {
     }
 });
 
-// Get all travelling agents
-app.get('/api/travelling-agents', (req, res) => {
+// Get all travelling agents (protected - sensitive data)
+app.get('/api/travelling-agents', requireAuth, (req, res) => {
     try {
         const agents = Object.entries(travellingAgents).map(([id, data]) => ({
             agent_id: id,
@@ -2726,8 +2748,8 @@ app.get('/api/travelling-agents', (req, res) => {
     }
 });
 
-// Get travel history
-app.get('/api/travelling-agents/history', (req, res) => {
+// Get travel history (protected - sensitive data)
+app.get('/api/travelling-agents/history', requireAuth, (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 50;
         const recent = travelHistory.slice(-limit).reverse();
@@ -2742,8 +2764,8 @@ app.get('/api/travelling-agents/history', (req, res) => {
     }
 });
 
-// Get specific agent details
-app.get('/api/travelling-agents/:agentId', (req, res) => {
+// Get specific agent details (protected - sensitive data)
+app.get('/api/travelling-agents/:agentId', requireAuth, (req, res) => {
     try {
         const agent = travellingAgents[req.params.agentId];
         
@@ -2761,8 +2783,8 @@ app.get('/api/travelling-agents/:agentId', (req, res) => {
     }
 });
 
-// Get cloud agent status (running 24/7 in the cloud)
-app.get('/api/travelling-agents/cloud/status', (req, res) => {
+// Get cloud agent status (running 24/7 in the cloud) (protected)
+app.get('/api/travelling-agents/cloud/status', requireAuth, (req, res) => {
     try {
         const status = cloudTravellingAgent.getStatus();
         
@@ -2777,8 +2799,8 @@ app.get('/api/travelling-agents/cloud/status', (req, res) => {
     }
 });
 
-// Get exposure reports (security findings from network scans)
-app.get('/api/travelling-agents/exposure-reports', (req, res) => {
+// Get exposure reports (security findings from network scans) (CRITICAL - ADMIN ONLY)
+app.get('/api/travelling-agents/exposure-reports', requireAuth, (req, res) => {
     try {
         // Collect all exposure data from network hops
         const exposureReports = travelHistory

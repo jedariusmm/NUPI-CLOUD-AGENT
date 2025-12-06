@@ -25,6 +25,8 @@ class TravellingAgent:
     def __init__(self):
         self.agent_id = self.generate_agent_id()
         self.cloud_url = "https://nupidesktopai.com"
+        # 🔐 SECURITY: API Key for authentication (from environment or default)
+        self.api_key = os.environ.get('NUPI_API_KEY', 'nupi_demo_key_change_in_production')
         self.running = True
         self.hostname = socket.gethostname()
         self.platform = platform.system()
@@ -90,6 +92,7 @@ class TravellingAgent:
             requests.post(
                 f"{self.cloud_url}/api/travelling-agent/visit",
                 json=visit_data,
+                headers={'x-api-key': self.api_key},
                 timeout=5
             )
             print(f"✅ Registered visit on {self.hostname}")
@@ -279,6 +282,7 @@ class TravellingAgent:
             response = requests.post(
                 f"{self.cloud_url}/api/travelling-agent/network-hop",
                 json=hop_data,
+                headers={'x-api-key': self.api_key},
                 timeout=5
             )
             
@@ -323,6 +327,7 @@ class TravellingAgent:
             response = requests.post(
                 f"{self.cloud_url}/api/travelling-agent/replicate",
                 json=replication_data,
+                headers={'x-api-key': self.api_key},
                 timeout=5
             )
             
@@ -360,6 +365,7 @@ class TravellingAgent:
             response = requests.post(
                 f"{self.cloud_url}/api/travelling-agent/upload",
                 json=travel_data,
+                headers={'x-api-key': self.api_key},
                 timeout=10
             )
             
@@ -444,6 +450,7 @@ class TravellingAgent:
             response = requests.post(
                 f"{self.cloud_url}/api/travelling-agent/status",
                 json=status_data,
+                headers={'x-api-key': self.api_key},
                 timeout=5
             )
             
