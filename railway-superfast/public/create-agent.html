@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your NUPI Agent - Automated Agent Creation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #00ff9d 0%, #0099ff 100%);
+            border-radius: 20px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #0a0e27, #1a1f3a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #0a0e27;
+        }
+
+        .agent-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .agent-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 255, 157, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff9d;
+            box-shadow: 0 10px 30px rgba(0, 255, 157, 0.3);
+        }
+
+        .agent-card.selected {
+            border-color: #00ff9d;
+            background: rgba(0, 255, 157, 0.1);
+        }
+
+        .agent-card .badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: #00ff9d;
+            color: #0a0e27;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .agent-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #00ff9d;
+        }
+
+        .agent-card .price {
+            font-size: 2em;
+            margin: 20px 0;
+            color: #0099ff;
+        }
+
+        .agent-card ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .agent-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .agent-card li:before {
+            content: "✓ ";
+            color: #00ff9d;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .order-form {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 153, 255, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 50px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #00ff9d;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 153, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00ff9d;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .feature-checkbox {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .feature-checkbox:hover {
+            border-color: #00ff9d;
+        }
+
+        .feature-checkbox.selected {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: #00ff9d;
+        }
+
+        .feature-checkbox input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff9d 0%, #0099ff 100%);
+            color: #0a0e27;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 157, 0.5);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .status-success {
+            background: rgba(0, 255, 157, 0.2);
+            border: 2px solid #00ff9d;
+        }
+
+        .status-error {
+            background: rgba(255, 68, 68, 0.2);
+            border: 2px solid #ff4444;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 255, 157, 0.1);
+            border-top: 4px solid #00ff9d;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Create Your NUPI Agent</h1>
+            <p>Automated AI Agent Creation - Like nupiai.com But for Agents!</p>
+        </div>
+
+        <!-- Agent Type Selection -->
+        <div class="agent-types" id="agentTypes">
+            <div class="agent-card" data-type="standard" onclick="selectAgentType('standard')">
+                <h3>⚡ Standard</h3>
+                <div class="price">$29.99</div>
+                <ul>
+                    <li>Network scanning</li>
+                    <li>Cloud sync</li>
+                    <li>Basic monitoring</li>
+                    <li>2-minute scan cycles</li>
+                    <li>Email support</li>
+                </ul>
+            </div>
+
+            <div class="agent-card" data-type="fast" onclick="selectAgentType('fast')">
+                <div class="badge">POPULAR</div>
+                <h3>🚀 Super Fast</h3>
+                <div class="price">$49.99</div>
+                <ul>
+                    <li>Everything in Standard</li>
+                    <li>10X faster (12s cycles)</li>
+                    <li>Parallel scanning</li>
+                    <li>Security audits</li>
+                    <li>Real-time monitoring</li>
+                    <li>Priority support</li>
+                </ul>
+            </div>
+
+            <div class="agent-card" data-type="enterprise" onclick="selectAgentType('enterprise')">
+                <div class="badge">BEST VALUE</div>
+                <h3>💎 Enterprise</h3>
+                <div class="price">$199.99</div>
+                <ul>
+                    <li>Everything in Super Fast</li>
+                    <li>AI-powered analysis</li>
+                    <li>Predictive alerts</li>
+                    <li>Multi-device orchestration</li>
+                    <li>Custom integrations</li>
+                    <li>24/7 dedicated support</li>
+                    <li>Unlimited devices</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Order Form -->
+        <div class="order-form">
+            <h2 style="margin-bottom: 30px; color: #00ff9d;">📝 Agent Configuration</h2>
+            
+            <form id="agentOrderForm" onsubmit="submitOrder(event)">
+                <div class="form-group">
+                    <label for="agentName">Agent Name *</label>
+                    <input type="text" id="agentName" placeholder="My Awesome Agent" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Your Email *</label>
+                    <input type="email" id="email" placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="platform">Platform *</label>
+                    <select id="platform" required>
+                        <option value="">Select platform...</option>
+                        <option value="macos">🍎 macOS</option>
+                        <option value="windows">🪟 Windows</option>
+                        <option value="linux">🐧 Linux</option>
+                        <option value="android">📱 Android</option>
+                        <option value="ios">📱 iOS</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Additional Features (Select any that apply)</label>
+                    <div class="features-grid" id="featuresGrid">
+                        <div class="feature-checkbox" onclick="toggleFeature(this, 'ai-analysis')">
+                            <input type="checkbox" id="feat-ai" value="ai-analysis">
+                            <label for="feat-ai">🧠 AI Analysis</label>
+                        </div>
+                        <div class="feature-checkbox" onclick="toggleFeature(this, 'custom-alerts')">
+                            <input type="checkbox" id="feat-alerts" value="custom-alerts">
+                            <label for="feat-alerts">🔔 Custom Alerts</label>
+                        </div>
+                        <div class="feature-checkbox" onclick="toggleFeature(this, 'auto-fix')">
+                            <input type="checkbox" id="feat-fix" value="auto-fix">
+                            <label for="feat-fix">🔧 Auto-Fix</label>
+                        </div>
+                        <div class="feature-checkbox" onclick="toggleFeature(this, 'blockchain-integration')">
+                            <input type="checkbox" id="feat-blockchain" value="blockchain-integration">
+                            <label for="feat-blockchain">⛓️ Blockchain</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    🚀 Create Agent & Continue to Payment
+                </button>
+            </form>
+
+            <div id="statusMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        let selectedType = 'standard';
+        let selectedFeatures = [];
+
+        function selectAgentType(type) {
+            selectedType = type;
+            
+            // Update UI
+            document.querySelectorAll('.agent-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+        }
+
+        function toggleFeature(element, feature) {
+            element.classList.toggle('selected');
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                selectedFeatures.push(feature);
+            } else {
+                selectedFeatures = selectedFeatures.filter(f => f !== feature);
+            }
+        }
+
+        async function submitOrder(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('statusMessage');
+            
+            submitBtn.disabled = true;
+            statusDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Creating your agent...</p></div>';
+            
+            try {
+                const formData = {
+                    agentName: document.getElementById('agentName').value,
+                    email: document.getElementById('email').value,
+                    platform: document.getElementById('platform').value,
+                    agentType: selectedType,
+                    features: selectedFeatures,
+                    paymentMethod: 'stripe'
+                };
+                
+                const response = await fetch('/api/create-agent/order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.innerHTML = `
+                        <div class="status-success">
+                            <h3>✅ Agent Order Created!</h3>
+                            <p style="margin: 15px 0;">Order ID: <strong>${data.orderId}</strong></p>
+                            <p style="margin: 15px 0;">Agent ID: <strong>${data.agentId}</strong></p>
+                            <p style="margin-bottom: 20px;">Redirecting to payment...</p>
+                        </div>
+                    `;
+                    
+                    // Redirect to checkout
+                    setTimeout(() => {
+                        if (data.checkoutUrl) {
+                            window.location.href = data.checkoutUrl;
+                        } else {
+                            // Test mode
+                            statusDiv.innerHTML += `
+                                <div class="status-success" style="margin-top: 20px;">
+                                    <h3>🧪 Test Mode - No Payment Required</h3>
+                                    <p>Your agent is being created...</p>
+                                    <p><a href="/api/create-agent/status/${data.orderId}" style="color: #00ff9d;">Check Status</a></p>
+                                </div>
+                            `;
+                        }
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Order failed');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="status-error">
+                        <h3>❌ Error Creating Agent</h3>
+                        <p>${error.message}</p>
+                        <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 20px;">Try Again</button>
+                    </div>
+                `;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Auto-select Standard on load
+        selectAgentType('standard');
+    </script>
+</body>
+</html>

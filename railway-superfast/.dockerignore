@@ -1,0 +1,6 @@
+*.OLD
+__pycache__
+*.pyc
+.git
+.DS_Store
+nixpacks.toml

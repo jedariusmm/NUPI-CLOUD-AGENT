@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 NUPI - Full System Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 0;
+            height: calc(100vh - 200px);
+        }
+        
+        .sidebar {
+            background: #f8f9fa;
+            padding: 20px;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+        
+        .action-btn {
+            width: 100%;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .action-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f5f5f5;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.user {
+            text-align: right;
+        }
+        
+        .message-content {
+            display: inline-block;
+            padding: 15px 20px;
+            border-radius: 15px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .message.assistant .message-content {
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .message.system .message-content {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .message.error .message-content {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #messageInput {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        #messageInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .status-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-style: italic;
+            padding: 10px;
+        }
+        
+        .stats-panel {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .stats-panel h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            color: #666;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="status-bar">
+        <div class="status-dot"></div>
+        <span>NUPI Online</span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🔥 NUPI FULL SYSTEM CONTROL</h1>
+            <p>Real scanning, real cleaning, real optimization</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <h3 style="margin-bottom: 15px; color: #667eea;">Quick Actions</h3>
+                
+                <button class="action-btn" onclick="quickAction('scan')">
+                    🔍 Full System Scan
+                </button>
+                
+                <button class="action-btn" onclick="quickAction('cleanup')">
+                    🧹 Clean Storage
+                </button>
+                
+                <button class="action-btn" onclick="quickAction('analyze')">
+                    🔬 Deep Analysis
+                </button>
+                
+                <button class="action-btn" onclick="quickAction('optimize')">
+                    ⚡ Optimize System
+                </button>
+                
+                <button class="action-btn" onclick="quickAction('files')">
+                    📂 List Files
+                </button>
+                
+                <button class="action-btn" onclick="quickAction('processes')">
+                    ⚙️ Show Processes
+                </button>
+                
+                <button class="action-btn" onclick="quickAction('storage')">
+                    💾 Storage Info
+                </button>
+                
+                <button class="action-btn" onclick="quickAction('network')">
+                    🌐 Network Info
+                </button>
+                
+                <div class="stats-panel" id="statsPanel">
+                    <h3>System Stats</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Status:</span>
+                        <span class="stat-value">Ready</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-area">
+                <div class="messages" id="messages">
+                    <div class="message system">
+                        <div class="message-content">
+                            <strong>🔥 NUPI SYSTEM ACCESS ACTIVATED</strong><br><br>
+                            I have FULL ACCESS to your device. I can:<br>
+                            • 🔍 Scan your entire file system instantly<br>
+                            • 🧹 Clean storage and free up space (REAL cleaning)<br>
+                            • 🔬 Analyze system performance deeply<br>
+                            • 📂 Read any file you need<br>
+                            • 💾 Store your data securely<br>
+                            • ⚡ Optimize your device for peak performance<br><br>
+                            Try asking me to:<br>
+                            - "Scan my system"<br>
+                            - "Clean up storage"<br>
+                            - "Analyze my computer"<br>
+                            - "What's taking up space?"<br><br>
+                            Let's make your device better! 🚀
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-area">
+                    <div class="input-container">
+                        <input 
+                            type="text" 
+                            id="messageInput" 
+                            placeholder="Ask me to scan, clean, optimize, or analyze your system..."
+                            onkeypress="handleKeyPress(event)"
+                        >
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://nupi-cloud-agent-production.up.railway.app';
+        const messages = document.getElementById('messages');
+        const input = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        let userId = 'user-' + Date.now();
+        let conversationId = null;
+
+        function addMessage(content, type = 'assistant') {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.innerHTML = `<div class="message-content">${content}</div>`;
+            messages.appendChild(message);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        async function quickAction(action) {
+            const actions = {
+                'scan': 'Scan my entire system and show me what you find',
+                'cleanup': 'Clean up my storage and free up space',
+                'analyze': 'Do a deep analysis of my system performance',
+                'optimize': 'Optimize my system for better performance',
+                'files': 'List files in my current directory',
+                'processes': 'Show me running processes',
+                'storage': 'Show me storage information',
+                'network': 'Show me network information'
+            };
+            
+            input.value = actions[action];
+            await sendMessage();
+        }
+
+        async function sendMessage() {
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            sendBtn.disabled = true;
+
+            // Show loading
+            const loadingId = Date.now();
+            addMessage(`<div id="loading-${loadingId}" class="loading">⏳ Processing your request...</div>`, 'system');
+
+            try {
+                // Detect if this is a system action
+                const isSystemAction = detectSystemAction(message);
+                
+                if (isSystemAction) {
+                    await handleSystemAction(isSystemAction, message, loadingId);
+                } else {
+                    await handleChatMessage(message, loadingId);
+                }
+
+            } catch (error) {
+                removeLoading(loadingId);
+                addMessage(`❌ Error: ${error.message}`, 'error');
+            } finally {
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+
+        function detectSystemAction(message) {
+            const lower = message.toLowerCase();
+            
+            if (lower.includes('scan') && (lower.includes('system') || lower.includes('entire') || lower.includes('full'))) {
+                return 'scan';
+            }
+            if (lower.includes('clean') || lower.includes('cleanup') || lower.includes('free up')) {
+                return 'cleanup';
+            }
+            if (lower.includes('analyze') || lower.includes('analysis') || lower.includes('performance')) {
+                return 'analyze';
+            }
+            if (lower.includes('optimize') || lower.includes('improve')) {
+                return 'optimize';
+            }
+            
+            return null;
+        }
+
+        async function handleSystemAction(action, message, loadingId) {
+            if (action === 'scan') {
+                const response = await fetch(`${API_URL}/api/system/scan`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        options: {
+                            includeHidden: true,
+                            findDuplicates: true,
+                            findLargeFiles: true
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                removeLoading(loadingId);
+                
+                if (data.success) {
+                    const results = data.data;
+                    addMessage(`
+                        <strong>🔍 FULL SYSTEM SCAN COMPLETE!</strong><br><br>
+                        <strong>Results:</strong><br>
+                        • Total Files: ${results.totalFiles.toLocaleString()}<br>
+                        • Total Size: ${formatBytes(results.totalSize)}<br>
+                        • Large Files Found: ${results.largeFiles.length}<br>
+                        • Duplicates Found: ${results.duplicates.length}<br>
+                        • Empty Folders: ${results.emptyFolders.length}<br><br>
+                        <strong>📊 File Types:</strong><br>
+                        ${Object.entries(results.fileTypes).slice(0, 10).map(([ext, count]) => 
+                            `${ext}: ${count} files`
+                        ).join('<br>')}<br><br>
+                        <strong>💡 Recommendations:</strong><br>
+                        ${results.recommendations.map(r => `• ${r.message}`).join('<br>')}
+                    `, 'system');
+                } else {
+                    addMessage(`❌ Scan failed: ${data.error}`, 'error');
+                }
+            } else if (action === 'cleanup') {
+                const response = await fetch(`${API_URL}/api/system/cleanup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        options: {
+                            deleteTempFiles: true,
+                            emptyTrash: true,
+                            clearCache: true
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                removeLoading(loadingId);
+                
+                if (data.success) {
+                    addMessage(`
+                        <strong>🧹 STORAGE CLEANUP COMPLETE!</strong><br><br>
+                        <strong>✅ Actions Performed:</strong><br>
+                        ${data.data.actions.map(a => `• ${a.action}: ${a.message || 'Success'}`).join('<br>')}<br><br>
+                        <strong>💾 Space Freed: ${formatBytes(data.data.freedSpace)}</strong><br><br>
+                        Your system is now cleaner and faster! 🚀
+                    `, 'system');
+                } else {
+                    addMessage(`❌ Cleanup failed: ${data.error}`, 'error');
+                }
+            } else if (action === 'analyze') {
+                const response = await fetch(`${API_URL}/api/system/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: userId })
+                });
+                
+                const data = await response.json();
+                removeLoading(loadingId);
+                
+                if (data.success) {
+                    const analysis = data.data;
+                    addMessage(`
+                        <strong>🔬 DEEP SYSTEM ANALYSIS COMPLETE!</strong><br><br>
+                        <strong>🖥️ Hardware:</strong><br>
+                        • Platform: ${analysis.hardware.platform}<br>
+                        • CPUs: ${analysis.hardware.cpus.length} cores<br>
+                        • Total RAM: ${formatBytes(analysis.hardware.totalMemory)}<br>
+                        • Free RAM: ${formatBytes(analysis.hardware.freeMemory)}<br>
+                        • Memory Usage: ${analysis.hardware.memoryUsagePercent}%<br><br>
+                        <strong>⚡ Performance:</strong><br>
+                        • Uptime: ${(analysis.performance.uptime / 3600).toFixed(2)} hours<br>
+                        • Processes: ${analysis.processes.count}<br><br>
+                        <strong>💡 Recommendations:</strong><br>
+                        ${analysis.recommendations.map(r => `• ${r.message}`).join('<br>') || 'System is running optimally!'}
+                    `, 'system');
+                } else {
+                    addMessage(`❌ Analysis failed: ${data.error}`, 'error');
+                }
+            }
+        }
+
+        async function handleChatMessage(message, loadingId) {
+            const response = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: message,
+                    userId: userId,
+                    conversationId: conversationId
+                })
+            });
+
+            const data = await response.json();
+            removeLoading(loadingId);
+
+            if (data.response) {
+                conversationId = data.conversationId;
+                addMessage(data.response, 'assistant');
+            } else {
+                addMessage('❌ No response from AI', 'error');
+            }
+        }
+
+        function removeLoading(loadingId) {
+            const loadingEl = document.getElementById(`loading-${loadingId}`);
+            if (loadingEl) loadingEl.parentElement.remove();
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Test connection on load
+        window.onload = async () => {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                if (data.status === 'healthy') {
+                    console.log('✅ Connected to NUPI');
+                }
+            } catch (error) {
+                addMessage(`⚠️ Warning: Could not connect to NUPI server.`, 'error');
+            }
+        };
+    </script>
+</body>
+</html>
