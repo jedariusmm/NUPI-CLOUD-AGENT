@@ -342,7 +342,7 @@ Be helpful, professional, and concise. Use emojis occasionally. Format responses
         
         messages.push({ role: 'user', content: message });
         
-        // Call Claude Sonnet 3.5
+        // Call Claude Sonnet 4.5 (Most Powerful Model!)
         const response = await fetch('https://api.anthropic.com/v1/messages', {
             method: 'POST',
             headers: {
@@ -351,7 +351,7 @@ Be helpful, professional, and concise. Use emojis occasionally. Format responses
                 'anthropic-version': '2023-06-01'
             },
             body: JSON.stringify({
-                model: 'claude-3-5-sonnet-20241022',
+                model: 'claude-sonnet-4-20250514',
                 max_tokens: 2048,
                 temperature: 0.7,
                 system: contextPrompt,
@@ -447,7 +447,7 @@ Current capabilities:
                 'anthropic-version': '2023-06-01'
             },
             body: JSON.stringify({
-                model: 'claude-3-5-sonnet-20241022',
+                model: 'claude-sonnet-4-20250514',
                 max_tokens: 4096,
                 temperature: 0.7,
                 system: systemPrompt,
@@ -1962,7 +1962,7 @@ app.get('/health', (req, res) => {
     res.json({ 
         status: 'healthy', 
         timestamp: new Date().toISOString(),
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-4-20250514',
         aiCreatorActive: true,
         learningDataDevices: Object.keys(learningDatabase).length,
         localAgents: {
