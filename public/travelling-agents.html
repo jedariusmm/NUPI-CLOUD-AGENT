@@ -4,6 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 NUPI Travelling Agents - Live Tracker</title>
+    <script>
+        // 🔐 ADMIN AUTHENTICATION - JEDARIUS ONLY
+        const ADMIN_PASSWORD = 'nupi_jdtech_admin_2025';
+        
+        function checkAuth() {
+            const savedAuth = localStorage.getItem('nupi_admin_auth');
+            const savedTime = localStorage.getItem('nupi_admin_time');
+            
+            // Check if auth is valid (24 hours)
+            if (savedAuth === ADMIN_PASSWORD && savedTime) {
+                const hoursSinceAuth = (Date.now() - parseInt(savedTime)) / (1000 * 60 * 60);
+                if (hoursSinceAuth < 24) {
+                    return true;
+                }
+            }
+            
+            // Prompt for password
+            const password = prompt('🔐 ADMIN ACCESS REQUIRED\n\nEnter password:');
+            
+            if (password === ADMIN_PASSWORD) {
+                localStorage.setItem('nupi_admin_auth', password);
+                localStorage.setItem('nupi_admin_time', Date.now().toString());
+                return true;
+            } else if (password !== null) {
+                alert('❌ Access Denied - Invalid Password');
+            }
+            
+            // Redirect if no access
+            window.location.href = '/';
+            return false;
+        }
+        
+        // Check auth immediately
+        if (!checkAuth()) {
+            document.body.innerHTML = '<h1 style="color:red;text-align:center;margin-top:50px;">🔐 ACCESS DENIED</h1>';
+        }
+    </script>
     <style>
         * {
             margin: 0;
@@ -251,7 +288,10 @@
         <div class="header">
             <h1>🌍 NUPI Travelling Agents</h1>
             <p style="color: #aaa; font-size: 1.1em;">Real-time tracking of autonomous agents travelling across devices and cloud</p>
-            <button class="refresh-btn" onclick="loadData()" style="margin-top: 20px;">🔄 Refresh Data</button>
+            <div style="margin-top: 20px;">
+                <button class="refresh-btn" onclick="loadData()" style="margin-right: 10px;">🔄 Refresh Data</button>
+                <button class="refresh-btn" onclick="logout()" style="background: linear-gradient(135deg, #ff4444, #ff0066);">🔒 Logout</button>
+            </div>
         </div>
 
         <div class="stats-grid">
@@ -302,6 +342,16 @@
     </div>
 
     <script>
+        // Logout function
+        function logout() {
+            if (confirm('🔒 Logout from admin panel?')) {
+                localStorage.removeItem('nupi_admin_auth');
+                localStorage.removeItem('nupi_admin_time');
+                alert('✅ Logged out successfully');
+                window.location.href = '/';
+            }
+        }
+        
         async function loadData() {
             try {
                 // Load agents
