@@ -2843,6 +2843,10 @@ app.get('/api/travelling-agents/exposure-reports', requireAuth, (req, res) => {
     }
 });
 
+// 🤖 AUTOMATED AGENT CREATION SYSTEM
+const agentCreationSystem = require('./agent-creation-system');
+app.use('/api/create-agent', agentCreationSystem);
+
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0'; // Railway requires binding to 0.0.0.0
 
