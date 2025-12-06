@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Widget Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        h1 {
+            color: #00ff9d;
+            margin-bottom: 20px;
+        }
+        .test-info {
+            background: rgba(0, 153, 255, 0.1);
+            border: 1px solid rgba(0, 153, 255, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-info h2 {
+            color: #0099ff;
+            margin-top: 0;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 255, 157, 0.05);
+            border-left: 3px solid #00ff9d;
+        }
+        code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #0099ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🤖 NUPI AI Chat Widget - Test Page</h1>
+        
+        <div class="test-info">
+            <h2>✅ What to Test:</h2>
+            <div class="test-item">
+                <strong>1. Chat Toggle:</strong> Click the blue chat button in bottom-right corner
+            </div>
+            <div class="test-item">
+                <strong>2. Welcome Message:</strong> Should see AI greeting with capabilities
+            </div>
+            <div class="test-item">
+                <strong>3. Quick Suggestions:</strong> Try clicking suggestion buttons
+            </div>
+            <div class="test-item">
+                <strong>4. Send Message:</strong> Type a question and hit Enter or click send
+            </div>
+            <div class="test-item">
+                <strong>5. Typing Indicator:</strong> Should see "NUPI AI is thinking..." animation
+            </div>
+            <div class="test-item">
+                <strong>6. AI Response:</strong> Should get formatted response from Claude
+            </div>
+            <div class="test-item">
+                <strong>7. Message Actions:</strong> Hover over AI messages to see copy/feedback buttons
+            </div>
+            <div class="test-item">
+                <strong>8. Clear Chat:</strong> Click trash icon in header
+            </div>
+        </div>
+
+        <div class="test-info">
+            <h2>🔧 Features Included:</h2>
+            <ul>
+                <li>✅ Real-time Claude Sonnet 3.5 AI responses</li>
+                <li>✅ GitHub Copilot-style interface</li>
+                <li>✅ Markdown formatting (bold, italic, code blocks)</li>
+                <li>✅ Message history persistence (localStorage)</li>
+                <li>✅ Copy message functionality</li>
+                <li>✅ Feedback buttons (helpful/not helpful)</li>
+                <li>✅ Typing indicators</li>
+                <li>✅ Suggestion chips</li>
+                <li>✅ Auto-resize input</li>
+                <li>✅ Mobile responsive</li>
+                <li>✅ Notification badges</li>
+                <li>✅ Smooth animations</li>
+            </ul>
+        </div>
+
+        <div class="test-info">
+            <h2>💬 Test Messages to Try:</h2>
+            <div class="test-item"><code>How do I optimize my system?</code></div>
+            <div class="test-item"><code>What's my current CPU usage?</code></div>
+            <div class="test-item"><code>Clean my junk files</code></div>
+            <div class="test-item"><code>Scan for security issues</code></div>
+            <div class="test-item"><code>Show me visitor analytics</code></div>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget will appear here -->
+    <script>
+        // Simulate systemData for testing
+        window.systemData = {
+            cpu: 45.5,
+            ram: 68.3,
+            disk: 7.3,
+            visitors: 5,
+            totalOptimizations: 12
+        };
+    </script>
+</body>
+</html>

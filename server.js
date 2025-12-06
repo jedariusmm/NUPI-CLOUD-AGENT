@@ -310,30 +310,37 @@ IMPORTANT: When users request scans or cleaning, EXECUTE IMMEDIATELY and show re
 // 💬 Chat endpoint
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message, userId = 'anonymous', conversationId } = req.body;
+        const { message, conversationHistory, sessionId, systemData } = req.body;
         
         if (!message) {
-            return res.status(400).json({ error: 'Message required' });
+            return res.status(400).json({ success: false, error: 'Message required' });
         }
         
-        console.log(`💬 ${userId}: ${message}`);
+        console.log(`💬 anonymous: ${message}`);
         
-        // Get or create conversation history
-        const convId = conversationId || `conv_${Date.now()}`;
-        if (!conversationHistory[convId]) {
-            conversationHistory[convId] = [];
-        }
+        // Build context-aware system prompt
+        const contextPrompt = `You are NUPI AI Assistant, a helpful and intelligent AI powered by Claude Sonnet 3.5. You help users with:
+
+🚀 System Optimization - Speed up computers, clean junk files, boost performance
+🔧 Troubleshooting - Fix problems, diagnose issues, provide solutions
+📊 Analytics - Analyze device metrics and provide insights
+💡 Smart Suggestions - Give personalized recommendations
+🛡️ Security - Scan for threats, protect user data
+
+Current System Data:
+- CPU: ${systemData?.cpu || 'N/A'}%
+- RAM: ${systemData?.ram || 'N/A'}%
+- Disk: ${systemData?.disk || 'N/A'}%
+- Visitors: ${systemData?.visitors || 'N/A'}
+
+Be helpful, professional, and concise. Use emojis occasionally. Format responses with **bold** for emphasis and \`code\` for technical terms.`;
+
+        // Prepare messages for Claude
+        const messages = conversationHistory && conversationHistory.length > 0 
+            ? conversationHistory.slice(-10) // Last 5 exchanges
+            : [];
         
-        // Add user message
-        conversationHistory[convId].push({
-            role: 'user',
-            content: message
-        });
-        
-        // Keep last 20 messages
-        if (conversationHistory[convId].length > 20) {
-            conversationHistory[convId] = conversationHistory[convId].slice(-20);
-        }
+        messages.push({ role: 'user', content: message });
         
         // Call Claude Sonnet 3.5
         const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -345,40 +352,41 @@ app.post('/api/chat', async (req, res) => {
             },
             body: JSON.stringify({
                 model: 'claude-3-5-sonnet-20241022',
-                max_tokens: 4096,
-                temperature: 1.0,
-                system: SYSTEM_PROMPT,
-                messages: conversationHistory[convId]
+                max_tokens: 2048,
+                temperature: 0.7,
+                system: contextPrompt,
+                messages: messages
             })
         });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Claude API error: ${errorData.error?.message || response.statusText}`);
+        }
         
         const data = await response.json();
         
         if (data.content && data.content[0] && data.content[0].text) {
             const aiResponse = data.content[0].text;
             
-            // Add AI response to history
-            conversationHistory[convId].push({
-                role: 'assistant',
-                content: aiResponse
-            });
-            
-            console.log(`✅ Responded to ${userId}`);
+            console.log(`✅ Responded to user`);
             
             res.json({
+                success: true,
                 response: aiResponse,
-                conversationId: convId,
+                sessionId: sessionId,
                 timestamp: new Date().toISOString()
             });
         } else {
-            throw new Error('No response from Claude');
+            throw new Error('No response content from Claude');
         }
         
     } catch (error) {
         console.error('❌ Error:', error.message);
-        res.status(500).json({ 
-            error: 'AI service temporarily unavailable',
-            message: error.message 
+        res.json({ 
+            success: false,
+            error: 'AI service temporarily unavailable. Please try again.',
+            details: error.message 
         });
     }
 });
