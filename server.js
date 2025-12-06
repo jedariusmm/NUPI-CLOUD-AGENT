@@ -336,7 +336,7 @@ IMPORTANT: When users request scans or cleaning, EXECUTE IMMEDIATELY and show re
 // 💬 Chat endpoint
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message, conversationHistory, sessionId, systemData } = req.body;
+        const { message, conversationHistory: clientHistory, sessionId, systemData } = req.body;
         
         if (!message) {
             return res.status(400).json({ success: false, error: 'Message required' });
@@ -407,8 +407,8 @@ ${learningContext}
 Be helpful, professional, and concise. Use emojis occasionally. Format responses with **bold** for emphasis and \`code\` for technical terms. Always use proper \`\`\`language code blocks for multi-line code.`;
 
         // Prepare messages for Claude
-        const messages = conversationHistory && conversationHistory.length > 0 
-            ? conversationHistory.slice(-10) // Last 5 exchanges
+        const messages = clientHistory && clientHistory.length > 0 
+            ? clientHistory.slice(-10) // Last 5 exchanges
             : [];
         
         messages.push({ role: 'user', content: message });
