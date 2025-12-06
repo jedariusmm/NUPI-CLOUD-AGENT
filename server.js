@@ -327,8 +327,14 @@ app.post('/api/chat', async (req, res) => {
             ? `\n\n📚 Past Conversation Learnings:\n${pastSummaries.map(s => s.summary).join('\n\n')}`
             : '';
         
-        // Build context-aware system prompt with FULL CAPABILITIES
+        // 🔥 GET REAL LIVE DATA FROM NUPI CLOUD AGENT BACKEND
+        const realData = realSystemData || {};
+        const liveDataAvailable = realData.lastUpdate && (Date.now() - new Date(realData.lastUpdate).getTime() < 10000);
+        
+        // Build context-aware system prompt with FULL CAPABILITIES + REAL DATA ACCESS
         const contextPrompt = `You are NUPI AI Assistant - THE MOST POWERFUL AI with FULL ACCESS to everything the main agent can do!
+
+🔥 REAL CONNECTION STATUS: ${liveDataAvailable ? '✅ LIVE - Connected to NUPI Cloud Agent Backend' : '⏳ Waiting for live data'}
 
 🌟 YOUR CAPABILITIES:
 🚀 System Optimization - Speed up computers, clean junk files, boost performance
@@ -343,11 +349,23 @@ app.post('/api/chat', async (req, res) => {
 🚢 Railway Deployment - Deploy projects to production
 🔍 Natural Language Processing - Understand context and nuance
 
-Current System Data:
+📊 REAL-TIME SYSTEM DATA (LIVE FROM SERVER):
+${liveDataAvailable ? `
+✅ LIVE DATA - Updated: ${new Date(realData.lastUpdate).toLocaleTimeString()}
+- CPU: ${realData.cpu}% ${realData.cpu > 80 ? '⚠️ HIGH' : '✅'}
+- RAM: ${realData.memory_percent}% (${realData.memory_used}GB / ${realData.memory_total}GB) ${realData.memory_percent > 85 ? '⚠️ HIGH' : '✅'}
+- Disk: ${realData.disk_percent}% (${realData.disk_used}GB / ${realData.disk_total}GB) ${realData.disk_percent > 90 ? '⚠️ CRITICAL' : '✅'}
+- Network: ↓${realData.network_received_mb}MB ↑${realData.network_sent_mb}MB
+- Processes: ${realData.num_processes || 'N/A'} running
+- Platform: ${realData.platform || 'N/A'}
+- Hostname: ${realData.hostname || 'N/A'}
+` : `
+⏳ WAITING FOR LIVE DATA (Using fallback metrics)
 - CPU: ${systemData?.cpu || 'N/A'}%
 - RAM: ${systemData?.ram || 'N/A'}%
 - Disk: ${systemData?.disk || 'N/A'}%
 - Visitors: ${systemData?.visitors || 'N/A'}
+`}
 ${learningContext}
 
 🧠 CONTINUOUS LEARNING: Use past learnings to provide better, more personalized assistance. Remember user preferences and context from previous interactions.
