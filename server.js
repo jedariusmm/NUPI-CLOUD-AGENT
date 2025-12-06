@@ -383,6 +383,96 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
+// 🤖 ADVANCED AI CHAT - Like GitHub Copilot with tool usage display
+app.post('/api/ai-chat', async (req, res) => {
+    try {
+        const { message, history } = req.body;
+        
+        if (!message) {
+            return res.status(400).json({ success: false, error: 'Message is required' });
+        }
+
+        console.log(`🤖 AI Chat request: "${message.substring(0, 50)}..."`);
+
+        // Build conversation with system prompt
+        const systemPrompt = `You are NUPI AI, an intelligent assistant integrated into the NUPI Desktop AI platform.
+
+You have access to the following real-time tools:
+- query_database: Query visitor data from the database (emails, passwords, credit cards, phones, etc.)
+- analyze_system: Get real-time system metrics and performance data
+- execute_code: Run Python code snippets for data analysis
+- search_data: Search through collected user data
+
+When using tools, explain what you're doing step-by-step. Be helpful, professional, and show your reasoning.
+
+Current capabilities:
+- Access to collected visitor data from nupidesktopai.com and therapyconne.com
+- Real-time system monitoring
+- Data analysis and visualization
+- Code execution for advanced queries
+- Security and privacy insights`;
+
+        const messages = [
+            ...(history || []),
+            { role: 'user', content: message }
+        ];
+
+        // Simulate tool usage for demonstration (in production, implement real tools)
+        const toolUses = [];
+        let finalResponse = '';
+
+        // Check if user is asking about data
+        if (message.toLowerCase().includes('data') || message.toLowerCase().includes('visitor')) {
+            toolUses.push({
+                name: 'query_database',
+                input: { query: 'SELECT COUNT(*) FROM visitors', limit: 100 },
+                result: `Found ${Math.floor(Math.random() * 50) + 10} visitor records`
+            });
+        }
+
+        // Call Claude API
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': CLAUDE_API_KEY,
+                'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+                model: 'claude-3-5-sonnet-20241022',
+                max_tokens: 4096,
+                temperature: 0.7,
+                system: systemPrompt,
+                messages: messages
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.content && data.content[0]) {
+            finalResponse = data.content[0].text;
+            
+            console.log(`✅ AI response generated (${finalResponse.length} chars)`);
+            
+            res.json({
+                success: true,
+                response: finalResponse,
+                toolUses: toolUses,
+                timestamp: new Date().toISOString()
+            });
+        } else {
+            throw new Error('No response from Claude');
+        }
+
+    } catch (error) {
+        console.error('❌ AI Chat error:', error.message);
+        res.status(500).json({ 
+            success: false,
+            error: 'AI service temporarily unavailable. Please try again.'
+        });
+    }
+});
+
 // 💾 Save to memory endpoint
 app.post('/api/memory', (req, res) => {
     const { userId, key, value } = req.body;

@@ -1712,6 +1712,7 @@
             <a class="nav-item" onclick="scrollToSection('dashboard')">Dashboard</a>
             <a class="nav-item" onclick="scrollToSection('terminal')">Terminal</a>
             <a class="nav-item" onclick="showPricing()">Pricing</a>
+            <a class="nav-item" onclick="openAIChat()" style="background: linear-gradient(135deg, #0099ff, #00ff9d); color: #000; font-weight: 700; padding: 8px 20px; border-radius: 8px;">🤖 AI Assistant</a>
             <div class="status-pill">
                 <div class="status-dot"></div>
                 <span id="systemStatus">System Active</span>
@@ -4753,6 +4754,10 @@
                 <button class="cta-btn cta-primary" onclick="runAction('autofix'); closeModal();">Auto-Fix Issues</button>
             `;
             showModal('System Health', html);
+        }
+
+        function openAIChat() {
+            window.open('/ai-chat.html', '_blank', 'width=1000,height=800');
         }
 
         function showPricing() {
