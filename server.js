@@ -413,7 +413,7 @@ Be helpful, professional, and concise. Use emojis occasionally. Format responses
         
         messages.push({ role: 'user', content: message });
         
-        // Call Claude Sonnet 4.5 (Most Powerful Model!)
+        // Call Claude Sonnet 3.5 (SAME AS GITHUB COPILOT CHAT!)
         const response = await fetch('https://api.anthropic.com/v1/messages', {
             method: 'POST',
             headers: {
@@ -423,7 +423,7 @@ Be helpful, professional, and concise. Use emojis occasionally. Format responses
             },
             body: JSON.stringify({
                 model: 'claude-3-5-haiku-20241022',
-                max_tokens: 2048,
+                max_tokens: 8192,
                 temperature: 0.7,
                 system: contextPrompt,
                 messages: messages
