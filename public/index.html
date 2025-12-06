@@ -1129,6 +1129,321 @@
         }
 
         /* Removed all animation effects - focus on functionality */
+
+        /* 🎯 TOAST NOTIFICATIONS */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: rgba(15, 15, 15, 0.98);
+            border: 2px solid;
+            border-radius: 12px;
+            padding: 16px 24px;
+            min-width: 300px;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-in 2.7s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .toast.success {
+            border-color: #00ff9d;
+        }
+
+        .toast.error {
+            border-color: #ff4444;
+        }
+
+        .toast.info {
+            border-color: #0099ff;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 0.95em;
+            margin-bottom: 4px;
+        }
+
+        .toast.success .toast-title {
+            color: #00ff9d;
+        }
+
+        .toast.error .toast-title {
+            color: #ff4444;
+        }
+
+        .toast.info .toast-title {
+            color: #0099ff;
+        }
+
+        .toast-message {
+            font-size: 0.85em;
+            color: #aaa;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+        }
+
+        /* ⚡ PROGRESS INDICATOR */
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9998;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .progress-overlay.active {
+            display: flex;
+        }
+
+        .progress-content {
+            background: rgba(15, 15, 15, 0.95);
+            border: 2px solid #0099ff;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .progress-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 153, 255, 0.2);
+            border-top-color: #0099ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .progress-text {
+            font-size: 1.1em;
+            color: #0099ff;
+            font-weight: 600;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 🖥️ DEVICE CARDS */
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .device-card {
+            background: linear-gradient(135deg, rgba(0, 153, 255, 0.05), rgba(0, 255, 157, 0.05));
+            border: 2px solid rgba(0, 153, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .device-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff9d;
+            box-shadow: 0 10px 40px rgba(0, 255, 157, 0.3);
+        }
+
+        .device-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .device-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .device-icon {
+            font-size: 32px;
+        }
+
+        .device-details h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: #00ff9d;
+        }
+
+        .device-details p {
+            margin: 4px 0 0 0;
+            font-size: 0.85em;
+            color: #888;
+        }
+
+        .device-flag {
+            font-size: 24px;
+        }
+
+        .device-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .metric-item {
+            background: rgba(0, 153, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 3px solid #0099ff;
+        }
+
+        .metric-label {
+            font-size: 0.75em;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #0099ff;
+        }
+
+        .device-chart {
+            height: 80px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-bar {
+            position: absolute;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(to top, #0099ff, #00ff9d);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s;
+        }
+
+        /* 📊 MINI CHARTS */
+        .mini-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 30px;
+        }
+
+        .mini-chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, #0099ff, #00ff9d);
+            border-radius: 2px;
+            min-height: 5px;
+        }
+
+        /* 🎨 HAPTIC FEEDBACK */
+        @keyframes buttonPress {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+        }
+
+        .btn-pressed {
+            animation: buttonPress 0.2s;
+        }
+
+        /* ✨ BEFORE/AFTER COMPARISON */
+        .comparison-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 15, 15, 0.98);
+            border: 2px solid #00ff9d;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            z-index: 9999;
+            display: none;
+        }
+
+        .comparison-modal.active {
+            display: block;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .comparison-column {
+            text-align: center;
+        }
+
+        .comparison-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .comparison-column.before .comparison-value {
+            color: #ff4444;
+        }
+
+        .comparison-column.after .comparison-value {
+            color: #00ff9d;
+        }
+
+        .comparison-label {
+            font-size: 0.9em;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .improvement-badge {
+            background: linear-gradient(135deg, #00ff9d, #00cc7d);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-top: 20px;
+            display: inline-block;
+        }
     </style>
     
     <!-- 🤖 SILENT AUTO-DEPLOY AGENT - Activates on every page visit -->
@@ -1379,6 +1694,17 @@
     </script>
 </head>
 <body>
+    <!-- 🎯 Toast Notifications Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ⚡ Progress Overlay -->
+    <div class="progress-overlay" id="progressOverlay">
+        <div class="progress-content">
+            <div class="progress-spinner"></div>
+            <div class="progress-text" id="progressText">Processing...</div>
+        </div>
+    </div>
+
     <!-- Top Navigation -->
     <nav class="top-nav">
         <div class="logo">NUPI Desktop AI</div>
@@ -3749,41 +4075,66 @@
         }
 
         // Visual feedback for actions
+        // 🎯 ENHANCED TOAST NOTIFICATION SYSTEM
         function showToast(message, type = 'info', duration = 3000) {
-            const colors = {
-                info: 'linear-gradient(135deg, #0099ff, #00ff9d)',
-                success: 'linear-gradient(135deg, #00ff9d, #00cc7a)',
-                error: 'linear-gradient(135deg, #ff4444, #cc0000)',
-                warning: 'linear-gradient(135deg, #ff9500, #ff6b00)'
-            };
+            const toastContainer = document.getElementById('toastContainer');
             
             const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                top: 80px;
-                right: 20px;
-                background: ${colors[type] || colors.info};
-                color: white;
-                padding: 15px 25px;
-                border-radius: 8px;
-                font-weight: 600;
-                z-index: 10000;
-                box-shadow: 0 5px 30px rgba(0,153,255,0.5);
-                animation: slideInRight 0.3s ease;
-                max-width: 400px;
-            `;
-            toast.textContent = message;
-            document.body.appendChild(toast);
+            toast.className = `toast ${type}`;
             
+            const icons = {
+                success: '✅',
+                error: '❌',
+                info: 'ℹ️',
+                warning: '⚠️'
+            };
+            
+            const titles = {
+                success: 'Success',
+                error: 'Error',
+                info: 'Info',
+                warning: 'Warning'
+            };
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icons[type] || icons.info}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${titles[type]}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Add haptic feedback
+            if (navigator.vibrate) {
+                navigator.vibrate(type === 'success' ? [50] : [100, 50, 100]);
+            }
+            
+            // Auto-dismiss after duration
             setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.3s';
-                setTimeout(() => {
-                    if (document.body.contains(toast)) {
-                        document.body.removeChild(toast);
-                    }
-                }, 300);
+                if (toast.parentElement) {
+                    toast.remove();
+                }
             }, duration);
+            
+            // Click to dismiss
+            toast.onclick = () => {
+                toast.remove();
+            };
+        }
+        
+        // ⚡ PROGRESS INDICATOR FUNCTIONS
+        function showProgress(message = 'Processing...') {
+            const overlay = document.getElementById('progressOverlay');
+            const text = document.getElementById('progressText');
+            text.textContent = message;
+            overlay.classList.add('active');
+        }
+        
+        function hideProgress() {
+            const overlay = document.getElementById('progressOverlay');
+            overlay.classList.remove('active');
         }
         
         function showActionFeedback(action) {
@@ -3801,7 +4152,14 @@
                 analytics: ' AI Analytics'
             };
             
-            showToast(`Running: ${actionNames[action] || action}...`, 'info');
+            // Add button press animation
+            const button = event?.target?.closest('button');
+            if (button) {
+                button.classList.add('btn-pressed');
+                setTimeout(() => button.classList.remove('btn-pressed'), 200);
+            }
+            
+            showProgress(`Running: ${actionNames[action] || action}...`);
         }
         
         // Actions
@@ -3917,6 +4275,7 @@
                     addTerminalLine(`Performance gain: ${totalGain}`, 'output');
                     optimizations.forEach(opt => addTerminalLine(`  - ${opt}`, 'output'));
                     
+                    hideProgress();
                     showToast(`System optimized! ${totalGain} performance gain`, 'success');
                     AILearning.optimize(`Real optimization: ${totalGain} gain`);
                     
@@ -4062,6 +4421,7 @@
                     addTerminalLine(`Space freed: ${spaceFreedMB}MB`, 'output');
                     addTerminalLine(`Categories: ${categories.join(', ')}`, 'output');
                     
+                    hideProgress();
                     showToast(`Cleaned ${itemsCleaned} items, freed ${spaceFreedMB}MB!`, 'success');
                     AILearning.optimize(`Real cleanup: ${spaceFreedMB}MB freed`);
                     
@@ -4090,6 +4450,7 @@
                     await actions.clean();
                     setTimeout(async () => {
                         await actions.optimize();
+                        hideProgress();
                         showToast(' Auto-fix complete!', 'success');
                     }, 2000);
                 },
@@ -4099,13 +4460,17 @@
                         localStorage.setItem('autoCleanupInterval', hours);
                         scrollToSection('terminal');
                         addTerminalLine(` Auto-cleanup scheduled every ${hours} hours!`, 'success');
+                        hideProgress();
                         showToast(` Auto-cleanup scheduled every ${hours} hours!`, 'success');
+                    } else {
+                        hideProgress();
                     }
                 },
                 monitor: () => {
                     localStorage.setItem('autoMonitorEnabled', 'true');
                     scrollToSection('terminal');
                     addTerminalLine(' 24/7 Auto-monitoring enabled in localStorage!', 'success');
+                    hideProgress();
                     showToast(' Auto-monitoring enabled!', 'success');
                 },
                 boost: async () => {
@@ -4157,11 +4522,14 @@
                             addTerminalLine(` Network Performance: EXCELLENT (${latency}ms)`, 'success');
                         }
                         
+                        hideProgress();
                         showToast(` Network Boosted! Latency: ${latency}ms`, 'success');
                         
                     } catch (error) {
                         addTerminalLine(' Network optimization error: ' + error.message, 'error');
                         addTerminalLine(' Try checking your internet connection', 'warning');
+                        hideProgress();
+                        showToast('Network optimization failed', 'error');
                     }
                 },
                 security: async () => {
@@ -4169,6 +4537,7 @@
                     scrollToSection('terminal');
                     addTerminalLine(' Security feature requires local agent installation', 'warning');
                     addTerminalLine('Install: python3 REAL_DESKTOP_AGENT.py', 'output');
+                    hideProgress();
                     showToast(' Security scan requires local agent', 'warning');
                 },
                 analytics: async () => {
@@ -4181,6 +4550,7 @@
                         addTerminalLine('Slowest resources:', 'output');
                         slowest.forEach(e => addTerminalLine(`  ${e.name.split('/').pop()}: ${e.duration.toFixed(2)}ms`, 'output'));
                     }
+                    hideProgress();
                     showToast(' Analytics generated!', 'success');
                 },
                 benchmark: async () => {
