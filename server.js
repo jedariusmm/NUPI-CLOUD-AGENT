@@ -196,6 +196,8 @@ const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY || 'your-api-key-here';
 // 💾 Global Memory Storage (in production, use database)
 const globalMemory = {};
 const conversationHistory = {};
+const conversationSummaries = {}; // Store AI-generated summaries for learning
+const userPreferences = {}; // Store learned user preferences
 
 // 🖥️ REAL System Data from Desktop Agent
 let realSystemData = {
@@ -316,24 +318,34 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ success: false, error: 'Message required' });
         }
         
-        console.log(`💬 anonymous: ${message}`);
+        console.log(`💬 Session ${sessionId}: ${message}`);
         
-        // Build context-aware system prompt
-        const contextPrompt = `You are NUPI AI Assistant, a helpful and intelligent AI powered by Claude Sonnet 3.5. You help users with:
+        // Get past learnings/summaries for this session
+        const pastSummaries = conversationSummaries[sessionId] || [];
+        const learningContext = pastSummaries.length > 0 
+            ? `\n\n📚 Past Conversation Learnings:\n${pastSummaries.map(s => s.summary).join('\n\n')}`
+            : '';
+        
+        // Build context-aware system prompt with learnings
+        const contextPrompt = `You are NUPI AI Assistant, a helpful and intelligent AI powered by Claude Sonnet 4.5. You help users with:
 
 🚀 System Optimization - Speed up computers, clean junk files, boost performance
 🔧 Troubleshooting - Fix problems, diagnose issues, provide solutions
 📊 Analytics - Analyze device metrics and provide insights
 💡 Smart Suggestions - Give personalized recommendations
 🛡️ Security - Scan for threats, protect user data
+📁 Code Analysis - Review and fix code files
 
 Current System Data:
 - CPU: ${systemData?.cpu || 'N/A'}%
 - RAM: ${systemData?.ram || 'N/A'}%
 - Disk: ${systemData?.disk || 'N/A'}%
 - Visitors: ${systemData?.visitors || 'N/A'}
+${learningContext}
 
-Be helpful, professional, and concise. Use emojis occasionally. Format responses with **bold** for emphasis and \`code\` for technical terms.`;
+🧠 CONTINUOUS LEARNING: Use past learnings to provide better, more personalized assistance. Remember user preferences and context from previous interactions.
+
+Be helpful, professional, and concise. Use emojis occasionally. Format responses with **bold** for emphasis and \`code\` for technical terms. For code blocks use \`\`\`language format.`;
 
         // Prepare messages for Claude
         const messages = conversationHistory && conversationHistory.length > 0 
@@ -369,13 +381,28 @@ Be helpful, professional, and concise. Use emojis occasionally. Format responses
         if (data.content && data.content[0] && data.content[0].text) {
             const aiResponse = data.content[0].text;
             
-            console.log(`✅ Responded to user`);
+            // 💾 Save conversation to persistent history
+            if (!conversationHistory[sessionId]) {
+                conversationHistory[sessionId] = [];
+            }
+            conversationHistory[sessionId].push(
+                { role: 'user', content: message, timestamp: new Date().toISOString() },
+                { role: 'assistant', content: aiResponse, timestamp: new Date().toISOString() }
+            );
+            
+            // 🧠 Auto-summarize every 10 messages for continuous learning
+            if (conversationHistory[sessionId].length >= 20 && conversationHistory[sessionId].length % 20 === 0) {
+                summarizeConversation(sessionId).catch(err => console.error('❌ Summarization error:', err));
+            }
+            
+            console.log(`✅ Responded to user (Session: ${sessionId}, Total messages: ${conversationHistory[sessionId].length})`);
             
             res.json({
                 success: true,
                 response: aiResponse,
                 sessionId: sessionId,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                totalMessages: conversationHistory[sessionId].length
             });
         } else {
             throw new Error('No response content from Claude');
@@ -505,6 +532,94 @@ app.get('/api/memory/:userId', (req, res) => {
     const memory = globalMemory[userId] || {};
     
     res.json({ memory });
+});
+
+// 🧠 Conversation Summarization Function (AI-powered learning)
+async function summarizeConversation(sessionId) {
+    try {
+        const history = conversationHistory[sessionId];
+        if (!history || history.length < 10) return;
+        
+        console.log(`🧠 Summarizing conversation for session ${sessionId}...`);
+        
+        // Get last 20 messages for summarization
+        const recentMessages = history.slice(-20);
+        const conversationText = recentMessages.map(m => 
+            `${m.role === 'user' ? 'User' : 'AI'}: ${m.content}`
+        ).join('\n\n');
+        
+        // Call Claude to generate summary and extract learnings
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': CLAUDE_API_KEY,
+                'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+                model: 'claude-sonnet-4-20250514',
+                max_tokens: 1024,
+                system: `You are analyzing a conversation to extract key learnings. Summarize:
+1. User's main needs/problems
+2. Topics discussed
+3. User preferences revealed
+4. Important context to remember
+5. Action items or follow-ups needed
+
+Be concise but comprehensive.`,
+                messages: [
+                    { role: 'user', content: `Analyze this conversation and extract key learnings:\n\n${conversationText}` }
+                ]
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            const summary = data.content[0].text;
+            
+            // Store summary
+            if (!conversationSummaries[sessionId]) {
+                conversationSummaries[sessionId] = [];
+            }
+            conversationSummaries[sessionId].push({
+                summary,
+                messageCount: history.length,
+                timestamp: new Date().toISOString()
+            });
+            
+            console.log(`✅ Conversation summarized for ${sessionId}`);
+        }
+    } catch (error) {
+        console.error('❌ Summarization error:', error);
+    }
+}
+
+// 📜 Get conversation history endpoint
+app.get('/api/conversation/:sessionId', (req, res) => {
+    const { sessionId } = req.params;
+    const history = conversationHistory[sessionId] || [];
+    const summaries = conversationSummaries[sessionId] || [];
+    
+    res.json({ 
+        success: true,
+        sessionId,
+        history,
+        summaries,
+        totalMessages: history.length
+    });
+});
+
+// 🧠 Get AI learnings/summaries endpoint
+app.get('/api/learnings/:sessionId', (req, res) => {
+    const { sessionId } = req.params;
+    const summaries = conversationSummaries[sessionId] || [];
+    
+    res.json({
+        success: true,
+        sessionId,
+        summaries,
+        totalSummaries: summaries.length
+    });
 });
 
 // 🖥️ REAL SYSTEM DATA - Receive from Desktop Agent

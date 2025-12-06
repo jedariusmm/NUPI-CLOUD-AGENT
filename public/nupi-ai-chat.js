@@ -404,8 +404,10 @@ I'm your intelligent companion powered by Claude Sonnet 4.5. I can help you with
         this.sendMessage();
     }
 
-    addMessageToUI(message) {
+    addMessageToUI(message, autoScroll = true) {
         const messagesContainer = document.getElementById('nupiChatMessages');
+        if (!messagesContainer) return; // Safety check for initialization
+        
         const messageEl = document.createElement('div');
         messageEl.className = `nupi-message nupi-message-${message.role}`;
 
@@ -460,7 +462,11 @@ I'm your intelligent companion powered by Claude Sonnet 4.5. I can help you with
         }
 
         messagesContainer.appendChild(messageEl);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        // Only auto-scroll for new messages, not when loading history
+        if (autoScroll) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
     }
 
     addErrorMessage(text) {
@@ -603,7 +609,10 @@ I'm your intelligent companion powered by Claude Sonnet 4.5. I can help you with
 
     saveConversationHistory() {
         try {
+            // Save both conversation history and session ID
             localStorage.setItem('nupi_chat_history', JSON.stringify(this.conversationHistory));
+            localStorage.setItem('nupi_session_id', this.sessionId);
+            console.log(`💾 Saved ${this.conversationHistory.length} messages to localStorage`);
         } catch (e) {
             console.warn('Could not save chat history:', e);
         }
@@ -611,15 +620,35 @@ I'm your intelligent companion powered by Claude Sonnet 4.5. I can help you with
 
     loadConversationHistory() {
         try {
+            // Load session ID first (maintain same session across page reloads)
+            const savedSessionId = localStorage.getItem('nupi_session_id');
+            if (savedSessionId) {
+                this.sessionId = savedSessionId;
+                console.log(`🔄 Restored session: ${this.sessionId}`);
+            }
+            
+            // Load conversation history
             const saved = localStorage.getItem('nupi_chat_history');
             if (saved) {
                 this.conversationHistory = JSON.parse(saved);
-                // Restore last 5 messages to UI
-                this.conversationHistory.slice(-5).forEach(msg => {
-                    if (msg.role !== 'assistant' || msg.content !== this.conversationHistory[0]?.content) {
-                        this.addMessageToUI(msg);
-                    }
+                console.log(`📜 Loaded ${this.conversationHistory.length} messages from history`);
+                
+                // Restore ALL messages to UI (not just last 5)
+                this.conversationHistory.forEach(msg => {
+                    this.addMessageToUI(msg, false); // false = don't scroll yet
                 });
+                
+                // Scroll to bottom after all messages loaded
+                const messagesContainer = document.getElementById('nupiChatMessages');
+                if (messagesContainer) {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+                
+                // Hide suggestions if there's conversation history
+                if (this.conversationHistory.length > 0) {
+                    const suggestions = document.getElementById('nupiSuggestions');
+                    if (suggestions) suggestions.style.display = 'none';
+                }
             }
         } catch (e) {
             console.warn('Could not load chat history:', e);
