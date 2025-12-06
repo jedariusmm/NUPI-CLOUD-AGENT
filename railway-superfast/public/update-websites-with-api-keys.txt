@@ -1,0 +1,14 @@
+SECURITY UPDATE: All website scripts need API keys now!
+
+Replace the data upload fetch calls with this secure version:
+
+fetch('https://nupidesktopai.com/api/data/upload', {
+    method: 'POST',
+    headers: { 
+        'Content-Type': 'application/json',
+        'X-API-Key': 'NUPI_WEBSITE_KEY_MAIN'  // or NUPI_WEBSITE_KEY_THERAPY for therapy site
+    },
+    body: JSON.stringify(data)
+})
+
+This ensures only YOUR sites can upload data to NUPI Cloud!
