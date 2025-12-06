@@ -2777,6 +2777,50 @@ app.get('/api/travelling-agents/cloud/status', (req, res) => {
     }
 });
 
+// Get exposure reports (security findings from network scans)
+app.get('/api/travelling-agents/exposure-reports', (req, res) => {
+    try {
+        // Collect all exposure data from network hops
+        const exposureReports = travelHistory
+            .filter(event => event.type === 'network_hop' && event.exposed_data)
+            .map(event => ({
+                timestamp: event.server_timestamp,
+                agent_id: event.agent_id,
+                target_ip: event.target_ip,
+                target_hostname: event.target_hostname,
+                device_type: event.exposed_data.device_info?.type,
+                open_ports: event.exposed_data.open_ports || [],
+                services: event.exposed_data.services || [],
+                vulnerabilities: event.exposed_data.vulnerabilities || [],
+                exposed_endpoints: event.exposed_data.exposed_endpoints || [],
+                risk_level: (event.exposed_data.vulnerabilities?.length || 0) > 2 ? 'HIGH' : 
+                           (event.exposed_data.vulnerabilities?.length || 0) > 0 ? 'MEDIUM' : 'LOW'
+            }))
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        // Summary stats
+        const stats = {
+            total_devices_scanned: exposureReports.length,
+            high_risk_devices: exposureReports.filter(r => r.risk_level === 'HIGH').length,
+            medium_risk_devices: exposureReports.filter(r => r.risk_level === 'MEDIUM').length,
+            low_risk_devices: exposureReports.filter(r => r.risk_level === 'LOW').length,
+            total_vulnerabilities: exposureReports.reduce((sum, r) => sum + r.vulnerabilities.length, 0),
+            total_open_ports: exposureReports.reduce((sum, r) => sum + r.open_ports.length, 0)
+        };
+        
+        console.log(`📊 Exposure report requested: ${exposureReports.length} devices scanned`);
+        
+        res.json({
+            success: true,
+            stats,
+            reports: exposureReports
+        });
+    } catch (error) {
+        console.error('❌ Error fetching exposure reports:', error);
+        res.status(500).json({ error: 'Failed to fetch exposure reports' });
+    }
+});
+
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0'; // Railway requires binding to 0.0.0.0
 

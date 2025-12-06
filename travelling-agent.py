@@ -161,52 +161,109 @@ class TravellingAgent:
         print(f"🔍 Discovered {len(devices)} devices on WiFi network")
         return devices
     
+    def scan_exposed_data(self, device):
+        """Scan device for exposed data/services and collect info"""
+        ip = device['ip']
+        hostname = device.get('hostname', 'unknown')
+        
+        exposed_data = {
+            'ip': ip,
+            'hostname': hostname,
+            'open_ports': [],
+            'services': [],
+            'vulnerabilities': [],
+            'exposed_endpoints': [],
+            'device_info': {},
+            'scan_timestamp': datetime.now().isoformat()
+        }
+        
+        print(f"\n🔍 ═══ SCANNING DEVICE FOR EXPOSED DATA ═══")
+        print(f"🎯 Target: {ip} ({hostname})")
+        
+        # Common ports to check for exposed services
+        security_ports = {
+            21: 'FTP', 22: 'SSH', 23: 'Telnet', 25: 'SMTP',
+            80: 'HTTP', 443: 'HTTPS', 445: 'SMB', 3306: 'MySQL',
+            3389: 'RDP', 5432: 'PostgreSQL', 5900: 'VNC', 6379: 'Redis',
+            8080: 'HTTP-Alt', 8443: 'HTTPS-Alt', 27017: 'MongoDB'
+        }
+        
+        # Scan for open ports
+        for port, service in security_ports.items():
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(0.3)
+                result = sock.connect_ex((ip, port))
+                sock.close()
+                
+                if result == 0:
+                    exposed_data['open_ports'].append(port)
+                    exposed_data['services'].append({'port': port, 'service': service})
+                    print(f"  🚨 EXPOSED: Port {port} ({service}) - OPEN")
+                    
+                    # Check for common vulnerabilities
+                    if port in [21, 23]:  # FTP, Telnet
+                        exposed_data['vulnerabilities'].append(f"Unencrypted {service} protocol exposed")
+                    elif port == 3389:  # RDP
+                        exposed_data['vulnerabilities'].append("Remote Desktop exposed to network")
+                    elif port in [3306, 5432, 27017]:  # Databases
+                        exposed_data['vulnerabilities'].append(f"Database port exposed ({service})")
+            except:
+                pass
+        
+        # Try to gather HTTP info from web servers
+        for port in [80, 8080, 443, 8443]:
+            if port in exposed_data['open_ports']:
+                try:
+                    protocol = 'https' if port in [443, 8443] else 'http'
+                    response = requests.get(f"{protocol}://{ip}:{port}", timeout=2, verify=False)
+                    
+                    # Collect exposed endpoint info
+                    endpoint_info = {
+                        'port': port,
+                        'status_code': response.status_code,
+                        'server': response.headers.get('Server', 'Unknown'),
+                        'content_length': len(response.content),
+                        'has_admin_panel': '/admin' in response.text.lower() or '/login' in response.text.lower()
+                    }
+                    
+                    exposed_data['exposed_endpoints'].append(endpoint_info)
+                    print(f"  🌐 HTTP Service: {protocol}://{ip}:{port} - {response.status_code}")
+                    
+                    if endpoint_info['has_admin_panel']:
+                        print(f"  ⚠️  Admin/Login panel detected!")
+                        exposed_data['vulnerabilities'].append("Admin panel accessible without VPN")
+                except:
+                    pass
+        
+        # Collect device type info
+        if 'roku' in hostname.lower():
+            exposed_data['device_info']['type'] = 'Roku Smart TV'
+        elif 'galaxy' in hostname.lower() or 'samsung' in hostname.lower():
+            exposed_data['device_info']['type'] = 'Samsung Mobile Device'
+        elif 'imac' in hostname.lower() or 'macbook' in hostname.lower():
+            exposed_data['device_info']['type'] = 'Apple Computer'
+        elif 'iphone' in hostname.lower() or 'ipad' in hostname.lower():
+            exposed_data['device_info']['type'] = 'Apple Mobile Device'
+        else:
+            exposed_data['device_info']['type'] = 'Unknown Device'
+        
+        return exposed_data
+    
     def network_hop_to_device(self, device):
-        """Hop to a discovered device and establish presence"""
+        """Hop to a discovered device, scan for exposed data, and report to cloud"""
         ip = device['ip']
         hostname = device.get('hostname', 'unknown')
         
         print(f"\n🌐 ═══ NETWORK HOP INITIATED ═══")
         print(f"🎯 Target: {ip} ({hostname})")
-        print(f"🚀 Attempting to establish agent presence...")
         
         try:
-            # Method 1: Try HTTP-based deployment (if device has open ports)
-            common_ports = [80, 8080, 3000, 5000, 8888]
+            # Scan device for exposed data/vulnerabilities
+            exposed_data = self.scan_exposed_data(device)
             
-            for port in common_ports:
-                try:
-                    # Quick port check
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    sock.settimeout(0.5)
-                    result = sock.connect_ex((ip, port))
-                    sock.close()
-                    
-                    if result == 0:
-                        print(f"  ✅ Port {port} open on {ip}")
-                        
-                        # Try to send agent deployment request
-                        try:
-                            response = requests.post(
-                                f"http://{ip}:{port}/api/deploy-agent",
-                                json={
-                                    'agent_id': self.agent_id,
-                                    'source': self.hostname,
-                                    'agent_code': self.get_agent_code()
-                                },
-                                timeout=2
-                            )
-                            
-                            if response.status_code in [200, 201]:
-                                print(f"  🎉 Successfully deployed to {ip}:{port}")
-                                return True
-                        except:
-                            pass
-                except:
-                    pass
-            
-            # Method 2: Report to cloud for coordinated deployment
-            print(f"  📡 Reporting device to cloud for coordinated access...")
+            # Report findings to cloud
+            print(f"  📡 Sending exposure report to cloud...")
             
             hop_data = {
                 'agent_id': self.agent_id,
@@ -215,7 +272,8 @@ class TravellingAgent:
                 'target_hostname': hostname,
                 'network': device.get('network', 'unknown'),
                 'timestamp': datetime.now().isoformat(),
-                'hop_method': 'network_discovery'
+                'hop_method': 'security_scan',
+                'exposed_data': exposed_data  # Include all findings
             }
             
             response = requests.post(
@@ -225,12 +283,12 @@ class TravellingAgent:
             )
             
             if response.status_code == 200:
-                print(f"  ✅ Hop registered with cloud")
-                print(f"  ☁️  Cloud will coordinate access to {ip}")
+                print(f"  ✅ Exposure report sent to cloud")
+                print(f"  📊 Found: {len(exposed_data['open_ports'])} open ports, {len(exposed_data['vulnerabilities'])} vulnerabilities")
                 return True
             
         except Exception as e:
-            print(f"  ⚠️  Hop failed: {str(e)[:50]}")
+            print(f"  ⚠️  Scan failed: {str(e)[:50]}")
         
         return False
     
