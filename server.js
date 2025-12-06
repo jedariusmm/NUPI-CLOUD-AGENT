@@ -400,7 +400,7 @@ Be helpful, professional, and concise. Use emojis occasionally. Format responses
                 'anthropic-version': '2023-06-01'
             },
             body: JSON.stringify({
-                model: 'claude-3-7-sonnet-20250219',
+                model: 'claude-3-5-haiku-20241022',
                 max_tokens: 2048,
                 temperature: 0.7,
                 system: contextPrompt,
@@ -511,7 +511,7 @@ Current capabilities:
                 'anthropic-version': '2023-06-01'
             },
             body: JSON.stringify({
-                model: 'claude-3-7-sonnet-20250219',
+                model: 'claude-3-5-haiku-20241022',
                 max_tokens: 4096,
                 temperature: 0.7,
                 system: systemPrompt,
@@ -594,7 +594,7 @@ async function summarizeConversation(sessionId) {
                 'anthropic-version': '2023-06-01'
             },
             body: JSON.stringify({
-                model: 'claude-3-7-sonnet-20250219',
+                model: 'claude-3-5-haiku-20241022',
                 max_tokens: 1024,
                 system: `You are analyzing a conversation to extract key learnings. Summarize:
 1. User's main needs/problems
@@ -2114,7 +2114,7 @@ app.get('/health', (req, res) => {
     res.json({ 
         status: 'healthy', 
         timestamp: new Date().toISOString(),
-        model: 'claude-3-7-sonnet-20250219',
+        model: 'claude-3-5-haiku-20241022',
         aiCreatorActive: true,
         learningDataDevices: Object.keys(learningDatabase).length,
         localAgents: {
