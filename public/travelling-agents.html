@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 NUPI Travelling Agents - Live Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            color: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 153, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 20px;
+            border: 2px solid rgba(0, 153, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #0099ff, #00ff9d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid rgba(0, 153, 255, 0.3);
+            text-align: center;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff9d;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0099ff, #00ff9d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.95em;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid rgba(0, 153, 255, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #0099ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .agents-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .agent-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 153, 255, 0.2);
+            transition: border-color 0.3s;
+        }
+
+        .agent-card:hover {
+            border-color: #00ff9d;
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .agent-id {
+            font-family: 'Courier New', monospace;
+            color: #00ff9d;
+            font-weight: 600;
+        }
+
+        .agent-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(0, 255, 157, 0.2);
+            color: #00ff9d;
+            border: 1px solid #00ff9d;
+        }
+
+        .status-cloud {
+            background: rgba(0, 153, 255, 0.2);
+            color: #0099ff;
+            border: 1px solid #0099ff;
+        }
+
+        .agent-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .travel-history {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .travel-event {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid #0099ff;
+            margin-bottom: 10px;
+        }
+
+        .travel-event.cloud-event {
+            border-left-color: #00ff9d;
+        }
+
+        .event-time {
+            color: #888;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .event-details {
+            color: #fff;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #0099ff, #00ff9d);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .map-visualization {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .device-node {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0099ff, #00ff9d);
+            border-radius: 50%;
+            margin: 10px;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .connection-line {
+            height: 2px;
+            background: linear-gradient(90deg, #0099ff, transparent);
+            width: 50px;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 NUPI Travelling Agents</h1>
+            <p style="color: #aaa; font-size: 1.1em;">Real-time tracking of autonomous agents travelling across devices and cloud</p>
+            <button class="refresh-btn" onclick="loadData()" style="margin-top: 20px;">🔄 Refresh Data</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value pulse" id="totalAgents">0</div>
+                <div class="stat-label">Active Agents</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalTravels">0</div>
+                <div class="stat-label">Total Travels</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="cloudAgents">0</div>
+                <div class="stat-label">In Cloud</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="deviceAgents">0</div>
+                <div class="stat-label">On Devices</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                🗺️ Network Visualization
+            </div>
+            <div class="map-visualization" id="mapViz">
+                <p style="color: #aaa;">Loading agent network...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                🤖 Active Travelling Agents
+            </div>
+            <div class="agents-list" id="agentsList">
+                <p style="color: #aaa;">Loading agents...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                📜 Travel History (Recent)
+            </div>
+            <div class="travel-history" id="travelHistory">
+                <p style="color: #aaa;">Loading travel history...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadData() {
+            try {
+                // Load agents
+                const agentsRes = await fetch('/api/travelling-agents');
+                const agentsData = await agentsRes.json();
+                
+                // Load travel history
+                const historyRes = await fetch('/api/travelling-agents/history?limit=50');
+                const historyData = await historyRes.json();
+                
+                // Update stats
+                document.getElementById('totalAgents').textContent = agentsData.total_agents || 0;
+                document.getElementById('totalTravels').textContent = agentsData.total_travels || 0;
+                
+                const cloudCount = agentsData.agents.filter(a => a.in_cloud).length;
+                const deviceCount = agentsData.total_agents - cloudCount;
+                
+                document.getElementById('cloudAgents').textContent = cloudCount;
+                document.getElementById('deviceAgents').textContent = deviceCount;
+                
+                // Render agents
+                renderAgents(agentsData.agents);
+                
+                // Render history
+                renderHistory(historyData.events);
+                
+                // Render visualization
+                renderVisualization(agentsData.agents);
+                
+                console.log('✅ Data loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+            }
+        }
+        
+        function renderAgents(agents) {
+            const container = document.getElementById('agentsList');
+            
+            if (!agents || agents.length === 0) {
+                container.innerHTML = '<p style="color: #aaa;">No travelling agents detected yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = agents.map(agent => `
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-id">Agent ${agent.agent_id.substr(0, 12)}...</span>
+                        <span class="agent-status ${agent.in_cloud ? 'status-cloud' : 'status-active'}">
+                            ${agent.in_cloud ? '☁️ IN CLOUD' : '💻 ON DEVICE'}
+                        </span>
+                    </div>
+                    <div class="agent-info">
+                        <div class="info-item">
+                            <span>📍</span>
+                            <span>${agent.current_location}</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🚀</span>
+                            <span>${agent.visit_count} visits</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🔁</span>
+                            <span>${agent.replications || 0} replications</span>
+                        </div>
+                        <div class="info-item">
+                            <span>⏰</span>
+                            <span>Last seen: ${formatTime(agent.last_seen)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function renderHistory(events) {
+            const container = document.getElementById('travelHistory');
+            
+            if (!events || events.length === 0) {
+                container.innerHTML = '<p style="color: #aaa;">No travel events yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = events.map(event => `
+                <div class="travel-event ${event.type === 'cloud_arrival' ? 'cloud-event' : ''}">
+                    <div class="event-time">${new Date(event.timestamp || event.server_timestamp).toLocaleString()}</div>
+                    <div class="event-details">
+                        <strong>Agent ${event.agent_id.substr(0, 8)}</strong> 
+                        ${event.type === 'cloud_arrival' ? '☁️ arrived in CLOUD' : `📍 visited ${event.hostname}`}
+                        <span style="color: #888;">(${event.platform})</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function renderVisualization(agents) {
+            const container = document.getElementById('mapViz');
+            
+            if (!agents || agents.length === 0) {
+                container.innerHTML = '<p style="color: #aaa;">No agents to visualize</p>';
+                return;
+            }
+            
+            const cloudAgents = agents.filter(a => a.in_cloud);
+            const deviceAgents = agents.filter(a => !a.in_cloud);
+            
+            let html = '<div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 20px;">';
+            
+            // Device nodes
+            deviceAgents.forEach((agent, i) => {
+                html += `<div class="device-node" style="animation-delay: ${i * 0.2}s;" title="${agent.current_location}">💻</div>`;
+                if (i < deviceAgents.length - 1) {
+                    html += '<div class="connection-line"></div>';
+                }
+            });
+            
+            // Cloud node
+            if (cloudAgents.length > 0) {
+                html += '<div class="connection-line"></div>';
+                html += `<div class="device-node" style="width: 80px; height: 80px; font-size: 2em;" title="NUPI Cloud (${cloudAgents.length} agents)">☁️</div>`;
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        function formatTime(timestamp) {
+            if (!timestamp) return 'Never';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000);
+            
+            if (diff < 60) return `${diff}s ago`;
+            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+            return `${Math.floor(diff / 86400)}d ago`;
+        }
+        
+        // Load data on page load
+        loadData();
+        
+        // Auto-refresh every 10 seconds
+        setInterval(loadData, 10000);
+        
+        console.log('🌍 NUPI Travelling Agents Tracker - Live');
+    </script>
+</body>
+</html>

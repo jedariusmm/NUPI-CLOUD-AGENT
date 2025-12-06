@@ -2517,6 +2517,198 @@ app.get('/api/security/dashboard', (req, res) => {
     }
 });
 
+// ═══════════════════════════════════════════════════════════
+// 🌍 TRAVELLING AGENT ENDPOINTS
+// ═══════════════════════════════════════════════════════════
+
+const travellingAgents = {}; // Store all travelling agents
+const travelHistory = []; // Store all travel events
+
+// Register agent visit to a device
+app.post('/api/travelling-agent/visit', (req, res) => {
+    try {
+        const visit = {
+            ...req.body,
+            server_timestamp: new Date().toISOString()
+        };
+        
+        // Store visit
+        if (!travellingAgents[visit.agent_id]) {
+            travellingAgents[visit.agent_id] = {
+                first_seen: visit.server_timestamp,
+                visits: []
+            };
+        }
+        
+        travellingAgents[visit.agent_id].visits.push(visit);
+        travelHistory.push(visit);
+        
+        console.log(`🌍 Agent ${visit.agent_id.substr(0, 8)} visited ${visit.hostname}`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Visit registered',
+            total_visits: travellingAgents[visit.agent_id].visits.length
+        });
+    } catch (error) {
+        console.error('❌ Error registering visit:', error);
+        res.status(500).json({ error: 'Failed to register visit' });
+    }
+});
+
+// Agent uploads itself to cloud
+app.post('/api/travelling-agent/upload', (req, res) => {
+    try {
+        const { agent_id, source_hostname, agent_code, visited_devices } = req.body;
+        
+        console.log(`☁️  Agent ${agent_id.substr(0, 8)} travelled to CLOUD from ${source_hostname}`);
+        
+        // Store agent in cloud
+        if (!travellingAgents[agent_id]) {
+            travellingAgents[agent_id] = {
+                first_seen: new Date().toISOString(),
+                visits: []
+            };
+        }
+        
+        travellingAgents[agent_id].in_cloud = true;
+        travellingAgents[agent_id].cloud_arrival = new Date().toISOString();
+        travellingAgents[agent_id].source_hostname = source_hostname;
+        travellingAgents[agent_id].visited_devices = visited_devices;
+        
+        // Add cloud visit to history
+        travelHistory.push({
+            agent_id,
+            location: 'NUPI_CLOUD',
+            hostname: 'cloud.nupidesktopai.com',
+            platform: 'Cloud',
+            timestamp: new Date().toISOString(),
+            type: 'cloud_arrival'
+        });
+        
+        res.json({ 
+            success: true, 
+            message: 'Agent successfully uploaded to cloud',
+            cloud_agent_id: agent_id,
+            instructions: 'Agent is now running in NUPI Cloud infrastructure'
+        });
+    } catch (error) {
+        console.error('❌ Error uploading agent:', error);
+        res.status(500).json({ error: 'Failed to upload agent' });
+    }
+});
+
+// Agent replication request
+app.post('/api/travelling-agent/replicate', (req, res) => {
+    try {
+        const replication = {
+            ...req.body,
+            server_timestamp: new Date().toISOString()
+        };
+        
+        console.log(`🚀 Agent ${replication.agent_id.substr(0, 8)} replicating to ${replication.target_ip}`);
+        
+        // Store replication attempt
+        if (!travellingAgents[replication.agent_id]) {
+            travellingAgents[replication.agent_id] = {
+                first_seen: replication.server_timestamp,
+                visits: [],
+                replications: []
+            };
+        }
+        
+        if (!travellingAgents[replication.agent_id].replications) {
+            travellingAgents[replication.agent_id].replications = [];
+        }
+        
+        travellingAgents[replication.agent_id].replications.push(replication);
+        
+        res.json({ 
+            success: true, 
+            message: 'Replication request received',
+            status: 'Cloud will coordinate deployment'
+        });
+    } catch (error) {
+        console.error('❌ Error processing replication:', error);
+        res.status(500).json({ error: 'Failed to process replication' });
+    }
+});
+
+// Agent status update
+app.post('/api/travelling-agent/status', (req, res) => {
+    try {
+        const status = req.body;
+        
+        if (travellingAgents[status.agent_id]) {
+            travellingAgents[status.agent_id].last_status = status;
+            travellingAgents[status.agent_id].last_seen = new Date().toISOString();
+        }
+        
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update status' });
+    }
+});
+
+// Get all travelling agents
+app.get('/api/travelling-agents', (req, res) => {
+    try {
+        const agents = Object.entries(travellingAgents).map(([id, data]) => ({
+            agent_id: id,
+            first_seen: data.first_seen,
+            last_seen: data.last_seen,
+            visit_count: data.visits ? data.visits.length : 0,
+            in_cloud: data.in_cloud || false,
+            current_location: data.last_status?.hostname || 'unknown',
+            replications: data.replications ? data.replications.length : 0
+        }));
+        
+        res.json({
+            success: true,
+            total_agents: agents.length,
+            agents,
+            total_travels: travelHistory.length
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get travel history
+app.get('/api/travelling-agents/history', (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 50;
+        const recent = travelHistory.slice(-limit).reverse();
+        
+        res.json({
+            success: true,
+            total_events: travelHistory.length,
+            events: recent
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get specific agent details
+app.get('/api/travelling-agents/:agentId', (req, res) => {
+    try {
+        const agent = travellingAgents[req.params.agentId];
+        
+        if (!agent) {
+            return res.status(404).json({ error: 'Agent not found' });
+        }
+        
+        res.json({
+            success: true,
+            agent_id: req.params.agentId,
+            ...agent
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0'; // Railway requires binding to 0.0.0.0
 
