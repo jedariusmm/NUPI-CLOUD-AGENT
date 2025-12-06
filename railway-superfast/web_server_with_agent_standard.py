@@ -19,7 +19,7 @@ from concurrent.futures import ThreadPoolExecutor
 from collections import defaultdict
 
 # Import security middleware
-from security_middleware_military_military import require_api_key, require_admin_password, encrypt_sensitive_data, log_security_event
+from security_middleware import require_api_key, require_admin_password, encrypt_sensitive_data, log_security_event
 
 app = Flask(__name__, static_folder='public', static_url_path='')
 CORS(app)
