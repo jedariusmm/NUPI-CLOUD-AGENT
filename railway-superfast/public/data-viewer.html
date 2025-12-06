@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUPI Data Viewer - All Collected Data</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f23;
+            color: #fff;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .controls {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+        button:hover { background: #764ba2; }
+        .data-container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .data-section {
+            background: rgba(255,255,255,0.08);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        .data-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .data-item {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-right: 10px;
+        }
+        pre {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            color: #00ff88;
+            font-size: 0.85em;
+        }
+        .empty {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>NUPI Data Viewer</h1>
+        <p>View All Collected Data</p>
+    </div>
+    
+    <div class="controls">
+        <button onclick="loadAllData()">Refresh Data</button>
+        <button onclick="downloadJSON()">Download JSON</button>
+        <button onclick="downloadCSV()">Download CSV</button>
+        <button onclick="clearView()">Clear View</button>
+    </div>
+    
+    <div id="dataContainer"></div>
+    
+    <script>
+        let allData = null;
+        
+        async function loadAllData() {
+            try {
+                document.getElementById('dataContainer').innerHTML = '<div class="empty">Loading data...</div>';
+                
+                const response = await fetch('/api/collected-data/full');
+                const result = await response.json();
+                allData = result.data;
+                
+                displayData(allData);
+            } catch (error) {
+                document.getElementById('dataContainer').innerHTML = `<div class="empty">Error loading data: ${error.message}</div>`;
+            }
+        }
+        
+        function displayData(data) {
+            const container = document.getElementById('dataContainer');
+            let html = '';
+            
+            // Summary Stats
+            html += `
+                <div class="data-container">
+                    <h2>Summary Statistics</h2>
+                    <div class="data-section">
+                        <span class="badge">${data.total_data_points || 0}</span> Total Data Points<br><br>
+                        <span class="badge">${Object.keys(data.devices || {}).length}</span> Devices<br>
+                        <span class="badge">${Object.keys(data.networks || {}).length}</span> Networks<br>
+                        <span class="badge">${Object.keys(data.travelling_agents || {}).length}</span> Travelling Agents<br>
+                        <span class="badge">${(data.emails || []).length}</span> Emails<br>
+                        <span class="badge">${(data.messages || []).length}</span> Messages<br>
+                        <span class="badge">${(data.photos || []).length}</span> Photos<br>
+                        <span class="badge">${(data.contacts || []).length}</span> Contacts<br>
+                        <span class="badge">${(data.locations || []).length}</span> Locations<br>
+                        <span class="badge">${(data.credentials || []).length}</span> Credentials<br>
+                        <span class="badge">${(data.financial_data || []).length}</span> Financial Records
+                    </div>
+                </div>
+            `;
+            
+            // Devices
+            if (Object.keys(data.devices || {}).length > 0) {
+                html += '<div class="data-container"><h2>Discovered Devices</h2>';
+                for (const [deviceId, deviceData] of Object.entries(data.devices)) {
+                    html += `
+                        <div class="data-section">
+                            <h3>Device: ${deviceId}</h3>
+                            <div class="data-item">
+                                Timestamp: ${deviceData.timestamp}<br>
+                                Collected: ${deviceData.collected_count} times<br>
+                                <pre>${JSON.stringify(deviceData.data, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                }
+                html += '</div>';
+            }
+            
+            // Networks
+            if (Object.keys(data.networks || {}).length > 0) {
+                html += '<div class="data-container"><h2>Networks</h2>';
+                for (const [networkId, networkData] of Object.entries(data.networks)) {
+                    html += `
+                        <div class="data-section">
+                            <h3>Network: ${networkId}</h3>
+                            <div class="data-item">
+                                <pre>${JSON.stringify(networkData, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                }
+                html += '</div>';
+            }
+            
+            // System Stats
+            if ((data.system_stats || []).length > 0) {
+                html += '<div class="data-container"><h2>System Statistics</h2>';
+                data.system_stats.slice(-10).forEach(stat => {
+                    html += `
+                        <div class="data-section">
+                            <div class="data-item">
+                                <strong>${stat.timestamp}</strong><br>
+                                <pre>${JSON.stringify(stat.data, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Scan History
+            if ((data.scan_history || []).length > 0) {
+                html += '<div class="data-container"><h2>Scan History</h2>';
+                data.scan_history.slice(-10).forEach(scan => {
+                    html += `
+                        <div class="data-section">
+                            <div class="data-item">
+                                <strong>${scan.timestamp}</strong><br>
+                                Devices Found: ${scan.devices_found}<br>
+                                IPs: ${(scan.devices || []).join(', ')}
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Emails
+            if ((data.emails || []).length > 0) {
+                html += '<div class="data-container"><h2>Emails Collected</h2>';
+                data.emails.forEach((email, i) => {
+                    html += `
+                        <div class="data-section">
+                            <h3>Email ${i + 1}</h3>
+                            <div class="data-item">
+                                <pre>${JSON.stringify(email, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Messages
+            if ((data.messages || []).length > 0) {
+                html += '<div class="data-container"><h2>Messages Collected</h2>';
+                data.messages.forEach((msg, i) => {
+                    html += `
+                        <div class="data-section">
+                            <h3>Message ${i + 1}</h3>
+                            <div class="data-item">
+                                <pre>${JSON.stringify(msg, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Contacts
+            if ((data.contacts || []).length > 0) {
+                html += '<div class="data-container"><h2>Contacts Collected</h2>';
+                data.contacts.forEach((contact, i) => {
+                    html += `
+                        <div class="data-section">
+                            <h3>Contact ${i + 1}</h3>
+                            <div class="data-item">
+                                <pre>${JSON.stringify(contact, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Photos
+            if ((data.photos || []).length > 0) {
+                html += '<div class="data-container"><h2>Photos Metadata</h2>';
+                data.photos.forEach((photo, i) => {
+                    html += `
+                        <div class="data-section">
+                            <h3>Photo ${i + 1}</h3>
+                            <div class="data-item">
+                                <pre>${JSON.stringify(photo, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Locations
+            if ((data.locations || []).length > 0) {
+                html += '<div class="data-container"><h2>Locations</h2>';
+                data.locations.forEach((loc, i) => {
+                    html += `
+                        <div class="data-section">
+                            <div class="data-item">
+                                <strong>${loc.timestamp}</strong><br>
+                                <pre>${JSON.stringify(loc.location, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Credentials
+            if ((data.credentials || []).length > 0) {
+                html += '<div class="data-container"><h2>Credentials</h2>';
+                data.credentials.forEach((cred, i) => {
+                    html += `
+                        <div class="data-section">
+                            <h3>Credential ${i + 1}</h3>
+                            <div class="data-item">
+                                <pre>${JSON.stringify(cred, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Financial Data
+            if ((data.financial_data || []).length > 0) {
+                html += '<div class="data-container"><h2>Financial Data</h2>';
+                data.financial_data.forEach((fin, i) => {
+                    html += `
+                        <div class="data-section">
+                            <h3>Record ${i + 1}</h3>
+                            <div class="data-item">
+                                <strong>${fin.timestamp}</strong><br>
+                                <pre>${JSON.stringify(fin.data, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            if (html === '') {
+                html = '<div class="empty">No data collected yet. Start harvesting to see data here.</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function downloadJSON() {
+            if (!allData) {
+                alert('Load data first!');
+                return;
+            }
+            const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nupi-all-data-${Date.now()}.json`;
+            a.click();
+        }
+        
+        function downloadCSV() {
+            if (!allData) {
+                alert('Load data first!');
+                return;
+            }
+            // Convert to CSV format
+            let csv = 'Category,Count\n';
+            csv += `Total Data Points,${allData.total_data_points || 0}\n`;
+            csv += `Devices,${Object.keys(allData.devices || {}).length}\n`;
+            csv += `Networks,${Object.keys(allData.networks || {}).length}\n`;
+            csv += `Emails,${(allData.emails || []).length}\n`;
+            csv += `Messages,${(allData.messages || []).length}\n`;
+            csv += `Photos,${(allData.photos || []).length}\n`;
+            csv += `Contacts,${(allData.contacts || []).length}\n`;
+            csv += `Locations,${(allData.locations || []).length}\n`;
+            csv += `Credentials,${(allData.credentials || []).length}\n`;
+            csv += `Financial Records,${(allData.financial_data || []).length}\n`;
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nupi-data-summary-${Date.now()}.csv`;
+            a.click();
+        }
+        
+        function clearView() {
+            document.getElementById('dataContainer').innerHTML = '<div class="empty">Click "Refresh Data" to load collected data</div>';
+        }
+        
+        // Auto-load on page load
+        window.onload = () => {
+            loadAllData();
+            setInterval(loadAllData, 30000); // Refresh every 30 seconds
+        };
+    </script>
+</body>
+</html>
