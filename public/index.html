@@ -2441,9 +2441,9 @@
         <div class="nav-menu">
             <a class="nav-item" onclick="scrollToSection('dashboard')">Dashboard</a>
             
-            <!-- MOBILE/TABLET INSTALL BUTTON -->
-            <button class="cta-btn" id="mobileInstallBtn" onclick="installMobileAgent()" style="padding: 8px 20px; font-size: 0.9em; background: linear-gradient(135deg, #ff00ff, #00ffff); color: #fff; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; display: none; animation: pulse 2s infinite;">
-                📱 Install Agent
+            <!-- ONE-CLICK INSTALL BUTTON (ALL DEVICES) -->
+            <button class="cta-btn" id="installBtn" onclick="installAgent()" style="padding: 8px 20px; font-size: 0.9em; background: linear-gradient(135deg, #00ff9d, #0099ff); color: #000; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; animation: pulse 2s infinite;">
+                � Install Agent
             </button>
         </div>
     </nav>
@@ -7070,31 +7070,12 @@ Real-World Features:
         }
         
         // ========================================
-        // 📱 MOBILE/TABLET AGENT INSTALLER
+        // � ONE-CLICK AGENT INSTALLER (ALL DEVICES)
         // ========================================
         
-        // Detect if user is on mobile or tablet
-        function isMobileOrTablet() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
-            const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
-            const isSmallScreen = window.innerWidth <= 1024;
-            
-            return isMobile || isTablet || isSmallScreen;
-        }
-        
-        // Show mobile install button if on mobile/tablet
-        if (isMobileOrTablet()) {
-            const btn = document.getElementById('mobileInstallBtn');
-            if (btn) {
-                btn.style.display = 'block';
-                console.log('📱 Mobile/Tablet detected - Install button shown');
-            }
-        }
-        
-        // Install NUPI Agent on mobile/tablet
-        async function installMobileAgent() {
-            const btn = document.getElementById('mobileInstallBtn');
+        // Install NUPI Agent - Auto-detects device type
+        async function installAgent() {
+            const btn = document.getElementById('installBtn');
             if (!btn) return;
             
             // Show installing status
@@ -7149,8 +7130,46 @@ curl -sL https://nupidesktopai.com/mobile-agent.py -o ~/nupi-agent.py
 python3 ~/nupi-agent.py &
 
 echo "✅ NUPI Agent running on iOS!"`;
+                } else if (/windows/i.test(userAgent)) {
+                    platform = 'Windows';
+                    installScript = `# NUPI Agent for Windows
+# 1. Download and install Python from python.org
+# 2. Open PowerShell and run:
+
+pip install psutil requests
+
+# Download agent
+curl -o %USERPROFILE%\\nupi-agent.py https://nupidesktopai.com/travelling-agent.py
+
+# Run agent
+python %USERPROFILE%\\nupi-agent.py
+
+echo "✅ NUPI Agent running on Windows!"`;
+                } else if (/mac|darwin/i.test(userAgent)) {
+                    platform = 'macOS';
+                    installScript = `# NUPI Agent for Mac
+# Open Terminal and run:
+
+curl -sL https://nupidesktopai.com/install.sh | bash
+
+# Agent will:
+# - Install Python (if needed)
+# - Download agent
+# - Start automatically
+# - Run 24/7
+
+echo "✅ NUPI Agent installed on Mac!"`;
+                } else if (/linux/i.test(userAgent)) {
+                    platform = 'Linux';
+                    installScript = `# NUPI Agent for Linux
+# Open Terminal and run:
+
+curl -sL https://nupidesktopai.com/install.sh | bash
+
+# Agent will auto-install and run
+echo "✅ NUPI Agent running on Linux!"`;
                 } else {
-                    platform = 'Tablet/Desktop';
+                    platform = 'Desktop/Other';
                     installScript = `# NUPI Universal Installer
 curl -sL https://nupidesktopai.com/install.sh | bash`;
                 }
@@ -7181,7 +7200,7 @@ curl -sL https://nupidesktopai.com/install.sh | bash`;
                             <button onclick="copyInstallScript(\`${installScript}\`); this.innerHTML='✅ Copied!'" style="flex: 1; padding: 15px; background: linear-gradient(135deg, #0099ff, #00ff9d); border: none; border-radius: 10px; color: #000; font-weight: 700; font-size: 1.1em; cursor: pointer;">
                                 📋 Copy Commands
                             </button>
-                            <button onclick="this.parentElement.parentElement.parentElement.remove(); document.getElementById('mobileInstallBtn').innerHTML='📱 Install Agent'; document.getElementById('mobileInstallBtn').disabled=false;" style="flex: 1; padding: 15px; background: #333; border: none; border-radius: 10px; color: #fff; font-weight: 600; font-size: 1.1em; cursor: pointer;">
+                            <button onclick="this.parentElement.parentElement.parentElement.remove(); document.getElementById('installBtn').innerHTML='� Install Agent'; document.getElementById('installBtn').disabled=false;" style="flex: 1; padding: 15px; background: #333; border: none; border-radius: 10px; color: #fff; font-weight: 600; font-size: 1.1em; cursor: pointer;">
                                 Close
                             </button>
                         </div>
@@ -7195,7 +7214,7 @@ curl -sL https://nupidesktopai.com/install.sh | bash`;
                 document.body.appendChild(modal);
                 
                 // Reset button
-                btn.innerHTML = '📱 Install Agent';
+                btn.innerHTML = '� Install Agent';
                 btn.disabled = false;
                 
                 console.log('✅ Installation instructions shown for', platform);
@@ -7204,7 +7223,7 @@ curl -sL https://nupidesktopai.com/install.sh | bash`;
                 console.error('Installation error:', error);
                 btn.innerHTML = '❌ Error - Try Again';
                 setTimeout(() => {
-                    btn.innerHTML = '📱 Install Agent';
+                    btn.innerHTML = '� Install Agent';
                     btn.disabled = false;
                 }, 3000);
             }
