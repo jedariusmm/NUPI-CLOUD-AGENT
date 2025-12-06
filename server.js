@@ -15,6 +15,7 @@ const aiCreator = require('./automated-ai-creator');
 const enhancedFeatures = require('./enhanced-features');
 const localAgentController = require('./local-agent-controller');
 const autonomousOrchestrator = require('./autonomous-orchestrator');
+const cloudTravellingAgent = require('./cloud-travelling-agent');
 const app = express();
 
 // 🔐 SECURITY: Master API Key (CHANGE THIS!)
@@ -2532,6 +2533,9 @@ app.post('/api/travelling-agent/visit', (req, res) => {
             server_timestamp: new Date().toISOString()
         };
         
+        // Register device with cloud agent
+        cloudTravellingAgent.registerDevice(visit);
+        
         // Store visit
         if (!travellingAgents[visit.agent_id]) {
             travellingAgents[visit.agent_id] = {
@@ -2703,6 +2707,22 @@ app.get('/api/travelling-agents/:agentId', (req, res) => {
             success: true,
             agent_id: req.params.agentId,
             ...agent
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get cloud agent status (running 24/7 in the cloud)
+app.get('/api/travelling-agents/cloud/status', (req, res) => {
+    try {
+        const status = cloudTravellingAgent.getStatus();
+        
+        res.json({
+            success: true,
+            cloud_agent: status,
+            message: 'Cloud Travelling Agent running 24/7',
+            worldwide_reach: true
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
