@@ -192,6 +192,7 @@ if (TELEGRAM_TOKEN && AUTHORIZED_CHAT_ID) {
 
 // 🔑 Claude Sonnet 3.5 API (Use environment variable)
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY || 'your-api-key-here';
+const TAVILY_API_KEY = process.env.TAVILY_API_KEY || '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';
 
 // 💾 Global Memory Storage (in production, use database)
 const globalMemory = {};
@@ -326,15 +327,21 @@ app.post('/api/chat', async (req, res) => {
             ? `\n\n📚 Past Conversation Learnings:\n${pastSummaries.map(s => s.summary).join('\n\n')}`
             : '';
         
-        // Build context-aware system prompt with learnings
-        const contextPrompt = `You are NUPI AI Assistant, a helpful and intelligent AI powered by Claude Sonnet 4.5. You help users with:
+        // Build context-aware system prompt with FULL CAPABILITIES
+        const contextPrompt = `You are NUPI AI Assistant - THE MOST POWERFUL AI with FULL ACCESS to everything the main agent can do!
 
+🌟 YOUR CAPABILITIES:
 🚀 System Optimization - Speed up computers, clean junk files, boost performance
 🔧 Troubleshooting - Fix problems, diagnose issues, provide solutions
 📊 Analytics - Analyze device metrics and provide insights
 💡 Smart Suggestions - Give personalized recommendations
 🛡️ Security - Scan for threats, protect user data
-📁 Code Analysis - Review and fix code files
+📁 Code Analysis - Review and fix code files with CLEAN formatting
+🌐 Internet Access - Search web with Tavily API for real-time information
+💻 Command Execution - Run terminal commands, deploy to Railway
+🛠️ File Operations - Read, write, edit, and repair files locally
+🚢 Railway Deployment - Deploy projects to production
+🔍 Natural Language Processing - Understand context and nuance
 
 Current System Data:
 - CPU: ${systemData?.cpu || 'N/A'}%
@@ -345,7 +352,18 @@ ${learningContext}
 
 🧠 CONTINUOUS LEARNING: Use past learnings to provide better, more personalized assistance. Remember user preferences and context from previous interactions.
 
-Be helpful, professional, and concise. Use emojis occasionally. Format responses with **bold** for emphasis and \`code\` for technical terms. For code blocks use \`\`\`language format.`;
+📁 FILE HANDLING: When users upload files, analyze them cleanly with proper formatting:
+- Show filename with icon
+- Display code with syntax highlighting using \`\`\`language
+- Provide analysis, suggestions, and fixes
+- Keep responses organized and readable
+- NEVER dump raw HTML - always format nicely
+
+🌐 WEB SEARCH: You have access to real-time web search via Tavily API when users need current information.
+
+💻 COMMAND EXECUTION: You can suggest and explain terminal commands for Railway deployment, git operations, and file management.
+
+Be helpful, professional, and concise. Use emojis occasionally. Format responses with **bold** for emphasis and \`code\` for technical terms. Always use proper \`\`\`language code blocks for multi-line code.`;
 
         // Prepare messages for Claude
         const messages = conversationHistory && conversationHistory.length > 0 

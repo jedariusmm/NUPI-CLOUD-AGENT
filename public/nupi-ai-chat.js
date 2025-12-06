@@ -21,8 +21,49 @@ class NUPIAIChat {
     init() {
         this.createChatInterface();
         this.attachEventListeners();
+        this.attachResizeListeners();
         this.loadConversationHistory();
         this.sendWelcomeMessage();
+    }
+
+    attachResizeListeners() {
+        const chatWindow = document.getElementById('nupiChatWindow');
+        const resizeHandle = chatWindow?.querySelector('.nupi-resize-handle');
+        
+        if (!resizeHandle) return;
+
+        let isResizing = false;
+        let startX = 0;
+        let startWidth = 0;
+
+        resizeHandle.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            startX = e.clientX;
+            startWidth = chatWindow.offsetWidth;
+            document.body.style.cursor = 'ew-resize';
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            
+            const deltaX = startX - e.clientX;
+            const newWidth = startWidth + deltaX;
+            const minWidth = 380;
+            const maxWidth = window.innerWidth * 0.9;
+            
+            if (newWidth >= minWidth && newWidth <= maxWidth) {
+                chatWindow.style.width = newWidth + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            }
+        });
     }
 
     createChatInterface() {
@@ -38,6 +79,9 @@ class NUPIAIChat {
 
                 <!-- Chat Window -->
                 <div id="nupiChatWindow" class="nupi-chat-window">
+                    <!-- Resize Handle -->
+                    <div class="nupi-resize-handle" title="Drag to resize"></div>
+                    
                     <!-- Header -->
                     <div class="nupi-chat-header">
                         <div class="nupi-chat-header-left">
@@ -95,15 +139,21 @@ class NUPIAIChat {
 
                     <!-- Input Area -->
                     <div class="nupi-chat-input-container">
-                        <div class="nupi-chat-suggestions" id="nupiSuggestions">
+                        <div class="nupi-chat-suggestions" id="nupiSuggestions" style="display: flex;">
                             <button class="nupi-suggestion" onclick="nupiChat.sendSuggestion('How do I optimize my system?')">
-                                ⚡ Optimize system
+                                ⚡ Optimize
                             </button>
-                            <button class="nupi-suggestion" onclick="nupiChat.sendSuggestion('What can you help me with?')">
-                                🤖 What can you do?
+                            <button class="nupi-suggestion" onclick="nupiChat.sendSuggestion('Fix my computer')">
+                                🔧 Fix
                             </button>
-                            <button class="nupi-suggestion" onclick="nupiChat.sendSuggestion('Check my device status')">
-                                📊 Device status
+                            <button class="nupi-suggestion" onclick="nupiChat.sendSuggestion('Check device status')">
+                                📊 Status
+                            </button>
+                            <button class="nupi-suggestion" onclick="nupiChat.sendSuggestion('Help me code')">
+                                💻 Code
+                            </button>
+                            <button class="nupi-suggestion" onclick="nupiChat.sendSuggestion('What can you do?')">
+                                ❓ Help
                             </button>
                         </div>
                         <div class="nupi-chat-input-wrapper">
@@ -158,28 +208,47 @@ class NUPIAIChat {
             input.style.height = Math.min(input.scrollHeight, 120) + 'px';
         });
 
-        // Hide suggestions when typing
-        input.addEventListener('focus', () => {
-            if (this.conversationHistory.length > 0) {
-                document.getElementById('nupiSuggestions').style.display = 'none';
-            }
-        });
+        // KEEP SHORTCUTS VISIBLE - User requested they persist always
+        // input.addEventListener('focus', () => {
+        //     if (this.conversationHistory.length > 0) {
+        //         document.getElementById('nupiSuggestions').style.display = 'none';
+        //     }
+        // });
     }
 
     toggleChat() {
         const container = document.getElementById('nupiAIChatContainer');
         const window = document.getElementById('nupiChatWindow');
+        const isMobile = window.innerWidth <= 768;
         
         if (container.classList.contains('collapsed')) {
+            // Opening chat
             container.classList.remove('collapsed');
             window.style.display = 'flex';
             document.getElementById('nupiChatInput').focus();
             this.clearBadge();
+            
+            // On mobile: prevent body scroll and keep chat open
+            if (isMobile) {
+                document.body.classList.add('chat-open');
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+            }
         } else {
+            // Closing chat
             container.classList.add('collapsed');
             setTimeout(() => {
                 window.style.display = 'none';
             }, 300);
+            
+            // On mobile: restore body scroll
+            if (isMobile) {
+                document.body.classList.remove('chat-open');
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+            }
         }
     }
 
@@ -225,13 +294,22 @@ I'm your intelligent companion powered by Claude Sonnet 4.5. I can help you with
             // Read file content
             try {
                 const content = await this.readFile(file);
-                const fileMessage = `[📁 File Upload: ${file.name}]\n\n\`\`\`${this.getFileExtension(file.name)}\n${content}\n\`\`\`\n\nPlease analyze this file and help me understand or fix any issues.`;
+                const ext = this.getFileExtension(file.name);
+                
+                // Limit content size for display (first 500 lines max)
+                const lines = content.split('\n');
+                const displayContent = lines.length > 500 
+                    ? lines.slice(0, 500).join('\n') + '\n\n... (truncated, full content sent to AI)'
+                    : content;
+                
+                // Create clean, formatted file message
+                const fileMessage = `📁 **File:** ${file.name} (${(file.size / 1024).toFixed(2)} KB)\n\n\`\`\`${ext}\n${displayContent}\n\`\`\`\n\nPlease analyze this ${ext} file and provide:\n- Summary of what it does\n- Any issues or errors found\n- Suggestions for improvements\n- Fixes if needed`;
                 
                 // Store in textarea to be sent
                 const input = document.getElementById('nupiChatInput');
                 input.value = fileMessage;
                 input.style.height = 'auto';
-                input.style.height = input.scrollHeight + 'px';
+                input.style.height = Math.min(input.scrollHeight, 200) + 'px';
             } catch (error) {
                 console.error('Error reading file:', error);
                 this.showError(`Failed to read ${file.name}`);
@@ -303,8 +381,9 @@ I'm your intelligent companion powered by Claude Sonnet 4.5. I can help you with
         document.getElementById('nupiFilePreview').style.display = 'none';
         document.getElementById('nupiFilePreview').innerHTML = '';
 
-        // Hide suggestions
-        document.getElementById('nupiSuggestions').style.display = 'none';
+        // KEEP SUGGESTIONS VISIBLE - DON'T HIDE THEM (persist after pressed)
+        // User requested shortcuts to always stay visible
+        // document.getElementById('nupiSuggestions').style.display = 'none'; // DISABLED
 
         // Show typing indicator and progress
         this.showTyping();

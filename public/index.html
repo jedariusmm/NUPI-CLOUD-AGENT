@@ -1499,6 +1499,8 @@
             top: 0;
             right: 0;
             width: 50vw;
+            min-width: 380px;
+            max-width: 90vw;
             height: 100vh;
             background: rgba(10, 10, 10, 0.98);
             border-left: 2px solid rgba(0, 153, 255, 0.3);
@@ -1508,10 +1510,60 @@
             overflow: hidden;
             transition: all 0.3s;
             z-index: 99998;
+            resize: horizontal;
         }
         
         .nupi-chat-window.minimized {
             transform: translateX(100%);
+        }
+
+        /* Resize Handle */
+        .nupi-resize-handle {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 8px;
+            height: 100%;
+            cursor: ew-resize;
+            background: linear-gradient(90deg, rgba(0, 153, 255, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+
+        .nupi-chat-window:hover .nupi-resize-handle {
+            opacity: 1;
+        }
+
+        .nupi-resize-handle:hover {
+            background: linear-gradient(90deg, rgba(0, 153, 255, 0.6), transparent);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .nupi-chat-window {
+                width: 100vw !important;
+                min-width: 100vw !important;
+                max-width: 100vw !important;
+                height: 100vh !important;
+                resize: none;
+                border-left: none;
+            }
+
+            .nupi-chat-window.minimized {
+                transform: translateY(100%);
+            }
+
+            .nupi-resize-handle {
+                display: none;
+            }
+
+            /* Prevent body scroll when chat is open on mobile */
+            body.chat-open {
+                overflow: hidden;
+                position: fixed;
+                width: 100%;
+            }
         }
 
         .nupi-chat-header {
@@ -2028,11 +2080,98 @@
             color: #666;
         }
 
-        @media (max-width: 480px) {
+        /* 📱 MOBILE OPTIMIZATIONS - SERIOUSLY IMPROVED */
+        @media (max-width: 768px) {
+            /* Make cards smaller and responsive */
+            .stat-card, .feature-card, .card {
+                padding: 16px !important;
+                margin: 8px 0 !important;
+            }
+            
+            .stat-value {
+                font-size: 1.8em !important;
+            }
+            
+            .feature-card h3 {
+                font-size: 1.1em !important;
+            }
+            
+            /* Mobile chat window - better sizing */
             .nupi-chat-window {
-                width: calc(100vw - 40px);
-                height: calc(100vh - 120px);
-                bottom: 80px;
+                width: 100vw !important;
+                height: 70vh !important;
+                bottom: 0 !important;
+                right: 0 !important;
+                top: auto !important;
+                border-radius: 20px 20px 0 0 !important;
+                max-height: 70vh !important;
+            }
+            
+            .nupi-chat-toggle {
+                width: 50px !important;
+                height: 50px !important;
+                bottom: 15px !important;
+                right: 15px !important;
+            }
+            
+            /* Keep chat open when clicked (don't auto-close) */
+            .nupi-chat-container:not(.collapsed) .nupi-chat-window {
+                display: flex !important;
+            }
+            
+            /* Prevent body scroll when chat is open */
+            body.chat-open {
+                overflow: hidden !important;
+                position: fixed !important;
+                width: 100% !important;
+            }
+            
+            /* Dashboard grid - single column */
+            .dashboard {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+                padding: 12px !important;
+            }
+            
+            /* Hero section mobile */
+            .hero h1 {
+                font-size: 1.8em !important;
+                padding: 0 16px !important;
+            }
+            
+            .hero p {
+                font-size: 0.95em !important;
+                padding: 0 16px !important;
+            }
+            
+            /* Features grid - single column */
+            .features-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+            
+            /* Modal full screen on mobile */
+            .modal-content {
+                width: 95% !important;
+                max-height: 90vh !important;
+                padding: 20px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Extra small phones */
+            .nupi-chat-window {
+                width: 100vw !important;
+                height: 75vh !important;
+                max-height: 75vh !important;
+            }
+            
+            .stat-card {
+                padding: 12px !important;
+            }
+            
+            .stat-value {
+                font-size: 1.5em !important;
             }
         }
     </style>
