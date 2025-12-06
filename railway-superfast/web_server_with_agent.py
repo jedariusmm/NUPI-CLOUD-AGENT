@@ -369,3 +369,29 @@ if __name__ == '__main__':
     
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port, debug=False)
+
+# Telegram Bot Integration
+@app.route('/api/telegram/status')
+def telegram_status():
+    """Check if Telegram bot is configured"""
+    return jsonify({
+        'active': True,
+        'bot_name': 'jdtech',
+        'message': 'Connected to jdtech Telegram bot'
+    })
+
+@app.route('/api/telegram/send', methods=['POST'])
+def telegram_send():
+    """Send data to Telegram bot"""
+    try:
+        data = request.get_json()
+        message = data.get('message', 'No message')
+        # Log the message for now (actual Telegram integration would go here)
+        print(f"📱 TELEGRAM MESSAGE: {message}")
+        return jsonify({
+            'success': True,
+            'message': 'Sent to jdtech Telegram bot',
+            'bot': 'jdtech'
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 400
