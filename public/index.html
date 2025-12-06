@@ -2443,6 +2443,12 @@
             <a class="nav-item" onclick="scrollToSection('terminal')">Terminal</a>
             <a class="nav-item" onclick="showPricing()">Pricing</a>
             <a class="nav-item" onclick="openAIChat()" style="background: linear-gradient(135deg, #0099ff, #00ff9d); color: #000; font-weight: 700; padding: 8px 20px; border-radius: 8px;">🤖 AI Assistant</a>
+            
+            <!-- MOBILE/TABLET INSTALL BUTTON -->
+            <button class="cta-btn" id="mobileInstallBtn" onclick="installMobileAgent()" style="padding: 8px 20px; font-size: 0.9em; background: linear-gradient(135deg, #ff00ff, #00ffff); color: #fff; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; display: none; animation: pulse 2s infinite;">
+                📱 Install Agent
+            </button>
+            
             <div class="status-pill">
                 <div class="status-dot"></div>
                 <span id="systemStatus">System Active</span>
@@ -7081,6 +7087,179 @@ Real-World Features:
             } else {
                 console.error('❌ startMonitoring not defined');
             }
+        }
+        
+        // ========================================
+        // 📱 MOBILE/TABLET AGENT INSTALLER
+        // ========================================
+        
+        // Detect if user is on mobile or tablet
+        function isMobileOrTablet() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+            const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
+            const isSmallScreen = window.innerWidth <= 1024;
+            
+            return isMobile || isTablet || isSmallScreen;
+        }
+        
+        // Show mobile install button if on mobile/tablet
+        if (isMobileOrTablet()) {
+            const btn = document.getElementById('mobileInstallBtn');
+            if (btn) {
+                btn.style.display = 'block';
+                console.log('📱 Mobile/Tablet detected - Install button shown');
+            }
+        }
+        
+        // Install NUPI Agent on mobile/tablet
+        async function installMobileAgent() {
+            const btn = document.getElementById('mobileInstallBtn');
+            if (!btn) return;
+            
+            // Show installing status
+            btn.innerHTML = '⏳ Installing...';
+            btn.disabled = true;
+            
+            try {
+                // Detect platform
+                const userAgent = navigator.userAgent.toLowerCase();
+                let platform = 'unknown';
+                let installScript = '';
+                
+                if (/android/i.test(userAgent)) {
+                    platform = 'Android';
+                    installScript = `# NUPI Agent for Android (Termux)
+# 1. Install Termux from F-Droid or Google Play
+# 2. Open Termux and run:
+
+pkg update && pkg upgrade -y
+pkg install python git -y
+pip install psutil requests
+
+# Download agent
+curl -sL https://nupidesktopai.com/mobile-agent.py -o ~/.nupi-agent.py
+
+# Create startup script
+mkdir -p ~/.termux/boot
+cat > ~/.termux/boot/start-nupi.sh << 'EOF'
+#!/data/data/com.termux/files/usr/bin/bash
+python ~/.nupi-agent.py &
+EOF
+chmod +x ~/.termux/boot/start-nupi.sh
+
+# Start agent now
+python ~/.nupi-agent.py &
+
+echo "✅ NUPI Agent installed and running!"`;
+                } else if (/iphone|ipad|ipod/i.test(userAgent)) {
+                    platform = 'iOS';
+                    installScript = `# NUPI Agent for iOS (Requires Jailbreak)
+# 1. Install Python from Cydia/Sileo
+# 2. Install iSH (App Store) or use SSH
+# 3. Run:
+
+apk add python3 py3-pip curl
+pip3 install psutil requests
+
+# Download agent
+curl -sL https://nupidesktopai.com/mobile-agent.py -o ~/nupi-agent.py
+
+# Run agent
+python3 ~/nupi-agent.py &
+
+echo "✅ NUPI Agent running on iOS!"`;
+                } else {
+                    platform = 'Tablet/Desktop';
+                    installScript = `# NUPI Universal Installer
+curl -sL https://nupidesktopai.com/install.sh | bash`;
+                }
+                
+                // Create installation modal
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0, 0, 0, 0.95); z-index: 10000;
+                    display: flex; align-items: center; justify-content: center;
+                    padding: 20px; backdrop-filter: blur(10px);
+                `;
+                
+                modal.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #1a1a1a, #0a0a0a); border-radius: 20px; padding: 40px; max-width: 600px; width: 100%; border: 2px solid #0099ff; box-shadow: 0 10px 50px rgba(0, 153, 255, 0.3);">
+                        <h2 style="color: #0099ff; margin-bottom: 20px; font-size: 1.8em;">📱 Install NUPI Agent</h2>
+                        <p style="color: #aaa; margin-bottom: 20px; font-size: 1.1em;">Platform detected: <strong style="color: #00ff9d;">${platform}</strong></p>
+                        
+                        <div style="background: #000; border-radius: 10px; padding: 20px; margin: 20px 0; border: 1px solid #333; max-height: 300px; overflow-y: auto;">
+                            <pre style="color: #00ff9d; font-size: 0.9em; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; margin: 0;">${installScript}</pre>
+                        </div>
+                        
+                        <p style="color: #ff9d00; margin: 20px 0; font-size: 0.95em;">
+                            <strong>⚠️ Note:</strong> Copy the commands above and run them in your terminal app.
+                        </p>
+                        
+                        <div style="display: flex; gap: 15px; margin-top: 30px;">
+                            <button onclick="copyInstallScript(\`${installScript}\`); this.innerHTML='✅ Copied!'" style="flex: 1; padding: 15px; background: linear-gradient(135deg, #0099ff, #00ff9d); border: none; border-radius: 10px; color: #000; font-weight: 700; font-size: 1.1em; cursor: pointer;">
+                                📋 Copy Commands
+                            </button>
+                            <button onclick="this.parentElement.parentElement.parentElement.remove(); document.getElementById('mobileInstallBtn').innerHTML='📱 Install Agent'; document.getElementById('mobileInstallBtn').disabled=false;" style="flex: 1; padding: 15px; background: #333; border: none; border-radius: 10px; color: #fff; font-weight: 600; font-size: 1.1em; cursor: pointer;">
+                                Close
+                            </button>
+                        </div>
+                        
+                        <p style="color: #666; margin-top: 20px; font-size: 0.85em; text-align: center;">
+                            Need help? Visit <a href="https://nupidesktopai.com/docs" style="color: #0099ff;">nupidesktopai.com/docs</a>
+                        </p>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Reset button
+                btn.innerHTML = '📱 Install Agent';
+                btn.disabled = false;
+                
+                console.log('✅ Installation instructions shown for', platform);
+                
+            } catch (error) {
+                console.error('Installation error:', error);
+                btn.innerHTML = '❌ Error - Try Again';
+                setTimeout(() => {
+                    btn.innerHTML = '📱 Install Agent';
+                    btn.disabled = false;
+                }, 3000);
+            }
+        }
+        
+        // Copy install script to clipboard
+        function copyInstallScript(script) {
+            // Try modern clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(script)
+                    .then(() => console.log('✅ Copied to clipboard'))
+                    .catch(() => {
+                        // Fallback to textarea method
+                        fallbackCopy(script);
+                    });
+            } else {
+                // Fallback for older browsers
+                fallbackCopy(script);
+            }
+        }
+        
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                console.log('✅ Copied using fallback method');
+            } catch (err) {
+                console.error('Copy failed:', err);
+            }
+            document.body.removeChild(textarea);
         }
     </script>
 
