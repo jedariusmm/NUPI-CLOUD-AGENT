@@ -69,6 +69,17 @@ class NUPIAIChat {
                         </div>
                     </div>
 
+                    <!-- Progress Bar -->
+                    <div class="nupi-chat-progress" id="nupiChatProgress">
+                        <div class="nupi-chat-progress-bar" id="nupiProgressBar"></div>
+                    </div>
+
+                    <!-- Status Message -->
+                    <div class="nupi-chat-status" id="nupiChatStatus">
+                        <span class="status-icon">🔧</span>
+                        <span id="nupiStatusText">Working...</span>
+                    </div>
+
                     <!-- Messages Container -->
                     <div class="nupi-chat-messages" id="nupiChatMessages">
                         <!-- Messages will be inserted here -->
@@ -96,10 +107,16 @@ class NUPIAIChat {
                             </button>
                         </div>
                         <div class="nupi-chat-input-wrapper">
+                            <input type="file" id="nupiFileUpload" style="display: none;" accept=".js,.py,.html,.css,.json,.txt,.md" multiple onchange="nupiChat.handleFileUpload(event)">
+                            <button class="nupi-chat-attach-btn" title="Attach files" onclick="document.getElementById('nupiFileUpload').click()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
                             <textarea 
                                 id="nupiChatInput" 
                                 class="nupi-chat-input" 
-                                placeholder="Ask NUPI AI anything..."
+                                placeholder="Ask NUPI AI anything... (or paste code/files)"
                                 rows="1"
                             ></textarea>
                             <button class="nupi-chat-send-btn" id="nupiSendBtn" onclick="nupiChat.sendMessage()">
@@ -108,6 +125,7 @@ class NUPIAIChat {
                                 </svg>
                             </button>
                         </div>
+                        <div id="nupiFilePreview" class="nupi-file-preview" style="display: none;"></div>
                         <div class="nupi-chat-footer">
                             <span class="nupi-footer-text">
                                 AI can make mistakes. Verify important info.
@@ -170,19 +188,97 @@ class NUPIAIChat {
             role: 'assistant',
             content: `👋 **Welcome to NUPI AI Assistant!**
 
-I'm your intelligent companion powered by Claude Sonnet 3.5. I can help you with:
+I'm your intelligent companion powered by Claude Sonnet 4.5. I can help you with:
 
 🚀 **System Optimization** - Boost performance, clean junk files
 🔧 **Troubleshooting** - Fix issues, diagnose problems  
 📊 **Analytics** - Analyze your device metrics
 💡 **Smart Suggestions** - Get personalized recommendations
 🛡️ **Security** - Scan for threats, protect your data
+📁 **Code Analysis** - Upload files for review and fixes
 
 **How can I assist you today?**`,
             timestamp: new Date().toISOString()
         };
 
         this.addMessageToUI(welcomeMsg);
+    }
+
+    async handleFileUpload(event) {
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
+
+        const filePreview = document.getElementById('nupiFilePreview');
+        filePreview.style.display = 'block';
+        filePreview.innerHTML = '';
+
+        for (const file of files) {
+            // Show file preview
+            const fileTag = document.createElement('div');
+            fileTag.className = 'nupi-file-tag';
+            fileTag.innerHTML = `
+                <span>📄 ${file.name}</span>
+                <button onclick="nupiChat.removeFile('${file.name}')" title="Remove">×</button>
+            `;
+            filePreview.appendChild(fileTag);
+
+            // Read file content
+            try {
+                const content = await this.readFile(file);
+                const fileMessage = `[📁 File Upload: ${file.name}]\n\n\`\`\`${this.getFileExtension(file.name)}\n${content}\n\`\`\`\n\nPlease analyze this file and help me understand or fix any issues.`;
+                
+                // Store in textarea to be sent
+                const input = document.getElementById('nupiChatInput');
+                input.value = fileMessage;
+                input.style.height = 'auto';
+                input.style.height = input.scrollHeight + 'px';
+            } catch (error) {
+                console.error('Error reading file:', error);
+                this.showError(`Failed to read ${file.name}`);
+            }
+        }
+
+        // Clear file input
+        event.target.value = '';
+    }
+
+    readFile(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(e);
+            reader.readAsText(file);
+        });
+    }
+
+    getFileExtension(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        const langMap = {
+            'js': 'javascript',
+            'py': 'python',
+            'html': 'html',
+            'css': 'css',
+            'json': 'json',
+            'md': 'markdown',
+            'txt': 'text'
+        };
+        return langMap[ext] || ext;
+    }
+
+    removeFile(filename) {
+        const filePreview = document.getElementById('nupiFilePreview');
+        filePreview.style.display = 'none';
+        filePreview.innerHTML = '';
+        document.getElementById('nupiChatInput').value = '';
+    }
+
+    showError(message) {
+        const errorMsg = {
+            role: 'assistant',
+            content: `❌ **Error:** ${message}`,
+            timestamp: new Date().toISOString()
+        };
+        this.addMessageToUI(errorMsg);
     }
 
     async sendMessage() {
@@ -201,17 +297,23 @@ I'm your intelligent companion powered by Claude Sonnet 3.5. I can help you with
         this.addMessageToUI(userMsg);
         this.conversationHistory.push(userMsg);
         
-        // Clear input
+        // Clear input and file preview
         input.value = '';
         input.style.height = 'auto';
+        document.getElementById('nupiFilePreview').style.display = 'none';
+        document.getElementById('nupiFilePreview').innerHTML = '';
 
         // Hide suggestions
         document.getElementById('nupiSuggestions').style.display = 'none';
 
-        // Show typing indicator
+        // Show typing indicator and progress
         this.showTyping();
+        this.showProgress('Analyzing request...');
 
         try {
+            // Simulate progress steps
+            this.updateProgress(30, 'Connecting to AI...');
+
             // Send to NUPI Cloud Agent
             const response = await fetch(this.apiEndpoint, {
                 method: 'POST',
@@ -227,10 +329,15 @@ I'm your intelligent companion powered by Claude Sonnet 3.5. I can help you with
                 })
             });
 
+            this.updateProgress(70, 'Processing response...');
+
             const data = await response.json();
 
-            // Hide typing indicator
+            this.updateProgress(100, 'Complete!');
+
+            // Hide typing indicator and progress
             this.hideTyping();
+            this.hideProgress();
 
             if (data.success && data.response) {
                 const assistantMsg = {
@@ -254,8 +361,42 @@ I'm your intelligent companion powered by Claude Sonnet 3.5. I can help you with
         } catch (error) {
             console.error('Chat error:', error);
             this.hideTyping();
+            this.hideProgress();
             this.addErrorMessage('Connection error. Please check your internet and try again.');
         }
+    }
+
+    showProgress(statusText) {
+        const progress = document.getElementById('nupiChatProgress');
+        const status = document.getElementById('nupiChatStatus');
+        const statusTextEl = document.getElementById('nupiStatusText');
+        
+        progress.classList.add('active');
+        status.classList.add('active');
+        statusTextEl.textContent = statusText;
+        this.updateProgress(10, statusText);
+    }
+
+    updateProgress(percent, statusText) {
+        const progressBar = document.getElementById('nupiProgressBar');
+        const statusTextEl = document.getElementById('nupiStatusText');
+        
+        progressBar.style.width = percent + '%';
+        if (statusText) {
+            statusTextEl.textContent = statusText;
+        }
+    }
+
+    hideProgress() {
+        setTimeout(() => {
+            const progress = document.getElementById('nupiChatProgress');
+            const status = document.getElementById('nupiChatStatus');
+            const progressBar = document.getElementById('nupiProgressBar');
+            
+            progress.classList.remove('active');
+            status.classList.remove('active');
+            progressBar.style.width = '0%';
+        }, 500);
     }
 
     sendSuggestion(suggestion) {
@@ -355,13 +496,30 @@ I'm your intelligent companion powered by Claude Sonnet 3.5. I can help you with
     }
 
     formatMarkdown(text) {
+        // Code blocks ```language\ncode\n```
+        text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+            const language = lang || 'text';
+            return `<div class="nupi-code-block">
+                <div class="nupi-code-header">
+                    <span class="nupi-code-lang">${language}</span>
+                    <button class="nupi-code-copy" onclick="nupiChat.copyCode(this)" title="Copy code">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                        </svg>
+                    </button>
+                </div>
+                <pre><code class="language-${language}">${this.escapeHtml(code.trim())}</code></pre>
+            </div>`;
+        });
+        
         // Bold **text**
         text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         
         // Italic *text*
         text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
         
-        // Code `code`
+        // Inline code `code`
         text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
         
         // Links [text](url)
@@ -371,6 +529,17 @@ I'm your intelligent companion powered by Claude Sonnet 3.5. I can help you with
         text = text.replace(/\n/g, '<br>');
         
         return text;
+    }
+
+    copyCode(button) {
+        const codeBlock = button.closest('.nupi-code-block').querySelector('code');
+        navigator.clipboard.writeText(codeBlock.textContent);
+        
+        // Visual feedback
+        button.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00ff9d"><polyline points="20 6 9 17 4 12"/></svg>';
+        setTimeout(() => {
+            button.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+        }, 2000);
     }
 
     escapeHtml(text) {
