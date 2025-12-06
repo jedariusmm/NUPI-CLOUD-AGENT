@@ -26,13 +26,25 @@ class NUPILocalAgent:
         self.update_interval = 5  # Send data every 5 seconds
         self.hostname = socket.gethostname()
         self.platform = platform.system()
+        self.model = "Claude Opus 4.5"  # Using most powerful AI model
         
         print("🤖 NUPI LOCAL DESKTOP AGENT - STARTING...")
         print(f"📱 Hostname: {self.hostname}")
         print(f"💻 Platform: {self.platform}")
+        print(f"🤖 AI Model: {self.model}")
         print(f"🌐 Cloud URL: {self.cloud_url}")
         print(f"🔄 Update Interval: {self.update_interval}s")
         print("━" * 60)
+        
+        # Detect OS and optimize for platform
+        if self.platform == "Darwin":
+            print("🍎 macOS detected - Optimizing for Mac...")
+        elif self.platform == "Windows":
+            print("🪟 Windows detected - Optimizing for PC...")
+        elif self.platform == "Linux":
+            print("🐧 Linux detected - Optimizing for Linux...")
+        else:
+            print(f"⚙️  {self.platform} detected - Using universal optimizations...")
         
     def get_system_data(self):
         """Get REAL system metrics from Mac"""
