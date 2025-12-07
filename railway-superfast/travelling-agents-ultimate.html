@@ -1120,8 +1120,17 @@
                     }
                 });
                 
+                
+                // FILTER: Only show agents active in last 60 seconds
+                const now = new Date();
                 allAgents.forEach((data, id) => {
-                    createAgent(id, data.location || 'unknown', data.status, data);
+                    const lastSeen = new Date(data.last_seen);
+                    const secondsAgo = (now - lastSeen) / 1000;
+                    
+                    // Only create/update agents seen in last 60 seconds
+                    if (secondsAgo <= 60 || !data.last_seen) {
+                        createAgent(id, data.location || 'unknown', data.status, data);
+                    }
                 });
                 
                 if (statusData.agents) {
