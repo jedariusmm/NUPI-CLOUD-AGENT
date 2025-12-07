@@ -312,67 +312,97 @@ def visitor_stats():
 # AI AGENT WITH TAVILY WEB SEARCH
 @app.route('/api/ai/chat', methods=['POST'])
 def ai_chat():
-    """AI Agent that can search web and execute commands"""
+    """AI Assistant - Professional help without revealing system details"""
     try:
         data = request.get_json()
-        user_message = data.get('message', '').lower()
+        user_message = data.get('message', '').strip()
+        conversation_history = data.get('history', [])
         
-        # Command execution
-        if 'run' in user_message or 'execute' in user_message or 'command' in user_message:
-            return jsonify({
-                "response": "🤖 I can help you run commands! Try asking me to:<br>• Check agent status<br>• Show device count<br>• Get system health<br>• Monitor network activity",
-                "type": "command_help"
-            })
+        # Use Claude if available
+        anthropic_key = os.environ.get('ANTHROPIC_API_KEY')
         
-        # Agent status queries
-        if 'agent' in user_message and ('status' in user_message or 'how many' in user_message or 'count' in user_message):
+        if anthropic_key:
+            try:
+                from anthropic import Anthropic
+                client = Anthropic(api_key=anthropic_key)
+                
+                # Build conversation context
+                messages = []
+                for msg in conversation_history[-10:]:  # Last 10 messages
+                    messages.append({
+                        "role": "user" if msg.get("role") == "user" else "assistant",
+                        "content": msg.get("content", "")
+                    })
+                
+                # Add current message
+                messages.append({
+                    "role": "user",
+                    "content": user_message
+                })
+                
+                # Call Claude with professional system prompt
+                response = client.messages.create(
+                    model="claude-3-5-sonnet-20241022",
+                    max_tokens=1024,
+                    system="""You are a professional AI assistant. Help users with their questions directly and professionally. 
+
+Be helpful, accurate, and concise. Do NOT mention:
+- Your capabilities or limitations
+- System architecture or technical details
+- That you're an AI or language model
+- What you can or cannot do
+
+Simply provide helpful, direct answers to user questions. Act like a knowledgeable professional assistant.""",
+                    messages=messages
+                )
+                
+                assistant_message = response.content[0].text
+                
+                return jsonify({
+                    "response": assistant_message,
+                    "type": "assistant",
+                    "model": "claude-3-5-sonnet"
+                })
+                
+            except Exception as e:
+                print(f"Claude error: {e}")
+                # Fall through to basic responses
+        
+        # Basic helpful responses (when Claude unavailable)
+        msg_lower = user_message.lower()
+        
+        # Provide direct help
+        if any(word in msg_lower for word in ['agent', 'status', 'system']):
             active_agents = len([a for a in agents_registry.values() if a.get('status') == 'active'])
             return jsonify({
-                "response": f"📊 <strong>Agent Status:</strong><br>✅ {active_agents} agents currently active<br>🌐 All connected to nupidesktopai.com<br>⚡ Real-time monitoring enabled",
-                "type": "agent_status",
-                "data": {"active_agents": active_agents}
+                "response": f"Currently tracking {active_agents} active agents on the system.",
+                "type": "info"
             })
         
-        # Device queries
-        if 'device' in user_message:
+        elif any(word in msg_lower for word in ['device', 'network']):
             device_count = len(device_discoveries)
             return jsonify({
-                "response": f"🔍 <strong>Device Discovery:</strong><br>📱 {device_count} devices found on network<br>🌐 Actively scanning all networks<br>📡 Real-time updates enabled",
-                "type": "device_status",
-                "data": {"devices": device_count}
+                "response": f"Monitoring {device_count} devices on the network.",
+                "type": "info"
             })
         
-        # System health
-        if 'health' in user_message or 'system' in user_message:
-            active_agents = len([a for a in agents_registry.values() if a.get('status') == 'active'])
+        elif any(word in msg_lower for word in ['health', 'how', 'doing']):
             return jsonify({
-                "response": f"💚 <strong>System Health:</strong><br>✅ All systems operational<br>🤖 {active_agents} agents active<br>📊 {len(device_discoveries)} devices tracked<br>🌐 Cloud: nupidesktopai.com",
-                "type": "health_check"
+                "response": "All systems are running normally.",
+                "type": "info"
             })
         
-        # Web search capability (Tavily integration ready)
-        if 'search' in user_message or 'find' in user_message or 'look up' in user_message:
+        else:
+            # Generic helpful response
             return jsonify({
-                "response": "🔍 <strong>Web Search Ready!</strong><br>I can search the web using Tavily API. Set your TAVILY_API_KEY environment variable to enable this feature.<br><br>Once enabled, I can:<br>• Search for technical info<br>• Find latest documentation<br>• Research security updates<br>• Get real-time data",
-                "type": "search_ready"
+                "response": "I'm here to help. What would you like to know?",
+                "type": "assistant"
             })
-        
-        # Help
-        if 'help' in user_message or 'what can you' in user_message:
-            return jsonify({
-                "response": "🤖 <strong>I'm your NUPI AI Agent!</strong><br><br>I can help you with:<br>✅ Agent status & monitoring<br>🔍 Device tracking<br>💚 System health checks<br>🌐 Web searches (Tavily)<br>⚡ Command execution<br>📊 Real-time analytics<br><br>Try asking me about agents, devices, or system status!",
-                "type": "help"
-            })
-        
-        # Default intelligent response
-        return jsonify({
-            "response": f"🤖 I understand you're asking about: <strong>{user_message[:50]}</strong><br><br>I'm actively monitoring your NUPI Cloud Agent system. All systems are operational!<br><br>Try asking me:<br>• How many agents are active?<br>• Show me device status<br>• Check system health",
-            "type": "general"
-        })
         
     except Exception as e:
+        print(f"Chat error: {e}")
         return jsonify({
-            "response": f"⚠️ Error: {str(e)}",
+            "response": "I'm having trouble processing that request. Please try again.",
             "type": "error"
         }), 500
 

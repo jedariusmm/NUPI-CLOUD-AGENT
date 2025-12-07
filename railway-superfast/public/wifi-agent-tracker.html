@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Agent Movement Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #0ff;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        #header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #0ff;
+        }
+
+        #stats {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        canvas {
+            display: block;
+            background: #000;
+        }
+
+        #movementLog {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 200px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #0ff;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        .hop {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #0ff;
+            padding-left: 10px;
+        }
+
+        .hop .time {
+            color: #0f0;
+            margin-right: 10px;
+        }
+
+        .hop .from {
+            color: #ff0;
+        }
+
+        .hop .to {
+            color: #0ff;
+            font-weight: bold;
+        }
+
+        .device-node {
+            cursor: pointer;
+        }
+
+        .device-node:hover {
+            filter: brightness(1.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>📡 WiFi Agent Movement Tracker</h1>
+        <div id="stats">
+            <div>Agent: <span id="agentName">Initializing...</span></div>
+            <div>Current Location: <span id="currentLocation">Unknown</span></div>
+            <div>Total Hops: <span id="totalHops">0</span></div>
+            <div>Devices Visited: <span id="devicesVisited">0</span></div>
+        </div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <div id="movementLog">
+        <div style="color: #0f0; margin-bottom: 10px;">📊 Live Movement Log:</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const movementLog = document.getElementById('movementLog');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let devices = new Map();
+        let agent = null;
+        let hops = [];
+        let visitedDevices = new Set();
+
+        // Simulated agent data (replace with real API calls)
+        const knownDevices = [
+            { ip: '192.168.12.1', type: 'Gateway', x: 400, y: 300 },
+            { ip: '192.168.12.158', type: 'Device', x: 600, y: 200 },
+            { ip: '192.168.12.175', type: 'Roku TV', x: 800, y: 300 },
+            { ip: '192.168.12.178', type: 'iMac', x: 600, y: 400 }
+        ];
+
+        // Initialize devices
+        knownDevices.forEach(d => {
+            devices.set(d.ip, d);
+        });
+
+        // Simulate agent movement
+        let currentDeviceIndex = 0;
+        let hopCount = 0;
+        let currentLocation = '192.168.12.178';
+
+        function addHop(from, to, deviceType) {
+            hopCount++;
+            hops.push({ from, to, time: new Date(), deviceType });
+            visitedDevices.add(to);
+
+            // Update stats
+            document.getElementById('totalHops').textContent = hopCount;
+            document.getElementById('devicesVisited').textContent = visitedDevices.size;
+            document.getElementById('currentLocation').textContent = to;
+            document.getElementById('agentName').textContent = 'wifi-traveller-iMac.lan';
+
+            // Add to log
+            const hopDiv = document.createElement('div');
+            hopDiv.className = 'hop';
+            const time = new Date().toLocaleTimeString();
+            hopDiv.innerHTML = `
+                <span class="time">[${time}]</span>
+                🦘 Hop ${hopCount}: 
+                <span class="from">${from}</span> 
+                → 
+                <span class="to">${to}</span>
+                <span style="color: #888"> (${deviceType})</span>
+            `;
+            movementLog.appendChild(hopDiv);
+            movementLog.scrollTop = movementLog.scrollHeight;
+        }
+
+        function drawDevice(ip, type, x, y, isActive) {
+            // Draw device circle
+            ctx.beginPath();
+            ctx.arc(x, y, 30, 0, Math.PI * 2);
+            ctx.fillStyle = isActive ? '#0ff' : '#004444';
+            ctx.fill();
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = isActive ? 3 : 1;
+            ctx.stroke();
+
+            // Draw pulsing effect if active
+            if (isActive) {
+                const pulseRadius = 30 + Math.sin(Date.now() / 200) * 10;
+                ctx.beginPath();
+                ctx.arc(x, y, pulseRadius, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Draw device type
+            ctx.fillStyle = '#0ff';
+            ctx.font = '12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(type, x, y - 45);
+
+            // Draw IP
+            ctx.fillStyle = '#0f0';
+            ctx.font = '10px Courier New';
+            ctx.fillText(ip, x, y + 50);
+        }
+
+        function drawPath() {
+            if (hops.length < 2) return;
+
+            // Draw recent hops with fading trail
+            const recentHops = hops.slice(-10);
+            recentHops.forEach((hop, index) => {
+                const fromDevice = devices.get(hop.from);
+                const toDevice = devices.get(hop.to);
+
+                if (fromDevice && toDevice) {
+                    const alpha = (index + 1) / recentHops.length;
+                    ctx.beginPath();
+                    ctx.moveTo(fromDevice.x, fromDevice.y);
+                    ctx.lineTo(toDevice.x, toDevice.y);
+                    ctx.strokeStyle = `rgba(0, 255, 255, ${alpha * 0.5})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    // Draw arrow
+                    const angle = Math.atan2(toDevice.y - fromDevice.y, toDevice.x - fromDevice.x);
+                    const arrowX = toDevice.x - Math.cos(angle) * 40;
+                    const arrowY = toDevice.y - Math.sin(angle) * 40;
+
+                    ctx.beginPath();
+                    ctx.moveTo(arrowX, arrowY);
+                    ctx.lineTo(
+                        arrowX - Math.cos(angle - Math.PI / 6) * 15,
+                        arrowY - Math.sin(angle - Math.PI / 6) * 15
+                    );
+                    ctx.lineTo(
+                        arrowX - Math.cos(angle + Math.PI / 6) * 15,
+                        arrowY - Math.sin(angle + Math.PI / 6) * 15
+                    );
+                    ctx.closePath();
+                    ctx.fillStyle = `rgba(0, 255, 255, ${alpha})`;
+                    ctx.fill();
+                }
+            });
+        }
+
+        function animate() {
+            // Clear canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw paths first
+            drawPath();
+
+            // Draw all devices
+            devices.forEach((device, ip) => {
+                const isActive = currentLocation === ip;
+                drawDevice(ip, device.type, device.x, device.y, isActive);
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Simulate agent movement
+        function simulateMovement() {
+            const sequence = [
+                { from: '192.168.12.178', to: '192.168.12.1', type: 'Gateway', delay: 2000 },
+                { from: '192.168.12.1', to: '192.168.12.158', type: 'Device', delay: 3000 },
+                { from: '192.168.12.158', to: '192.168.12.175', type: 'Roku TV', delay: 3000 },
+                { from: '192.168.12.175', to: '192.168.12.178', type: 'iMac', delay: 3000 },
+            ];
+
+            let step = 0;
+
+            function nextHop() {
+                if (step < sequence.length) {
+                    const hop = sequence[step];
+                    currentLocation = hop.to;
+                    addHop(hop.from, hop.to, hop.type);
+                    step++;
+                    setTimeout(nextHop, hop.delay);
+                } else {
+                    // Restart the cycle
+                    step = 0;
+                    setTimeout(nextHop, 5000);
+                }
+            }
+
+            nextHop();
+        }
+
+        // Start everything
+        animate();
+        simulateMovement();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

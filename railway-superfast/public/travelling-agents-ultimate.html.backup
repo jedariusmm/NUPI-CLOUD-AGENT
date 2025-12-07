@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUPI Control Center - Live Network Visualization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            overflow: hidden;
+        }
+        
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+        .login-box h1 { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            font-size: 32px;
+            color: #fff;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .error { 
+            color: #ef4444; 
+            text-align: center; 
+            margin-top: 15px; 
+            display: none; 
+        }
+        
+        /* Main Dashboard */
+        #dashboard {
+            display: none;
+            height: 100vh;
+            position: relative;
+        }
+        
+        #visualization-container {
+            width: 100%;
+            height: calc(100% - 220px);
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #000;
+        }
+        
+        #canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #legend {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.3);
+            z-index: 100;
+        }
+        
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .legend-icon {
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        #info-bar-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 220px;
+            background: rgba(0, 0, 0, 0.98);
+            border-top: 3px solid #0ff;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tabs-header {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid #0ff;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border: none;
+            border-right: 1px solid #0ff;
+            color: #0ff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn:last-child {
+            border-right: none;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+        }
+        
+        .tab-btn.active {
+            background: rgba(0, 255, 255, 0.3);
+            box-shadow: inset 0 -3px 0 #0ff;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 15px;
+            overflow-x: auto;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        #agents-list, #devices-list, #data-harvest-list {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            height: 100%;
+        }
+        
+
+        
+        .item {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.15) 0%, rgba(0, 255, 255, 0.05) 100%);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 12px;
+            line-height: 1.6;
+            min-width: 280px;
+            max-width: 350px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .item.active {
+            border-color: #f0f;
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2) 0%, rgba(255, 0, 255, 0.1) 100%);
+            animation: glow 2s infinite;
+        }
+        
+        .item.moving {
+            border-color: #ff0;
+            background: linear-gradient(135deg, rgba(255, 255, 0, 0.2) 0%, rgba(255, 255, 0, 0.1) 100%);
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(255, 0, 255, 0.8); }
+        }
+        
+        .item-header {
+            font-weight: bold;
+            color: #0ff;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .badge.moving {
+            background: #ff0;
+            color: #000;
+        }
+        
+        .badge.harvesting {
+            background: #f0f;
+            color: #000;
+        }
+        
+        .item-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+        }
+        
+        .detail-label { color: #888; }
+        .detail-value { color: #0ff; font-weight: bold; }
+        
+        .movement-path {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .movement-path-title {
+            font-size: 10px;
+            color: #0ff;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        
+        .hop {
+            font-size: 9px;
+            padding: 3px 6px;
+            margin: 2px 0;
+            background: rgba(255, 0, 255, 0.1);
+            border-left: 2px solid #f0f;
+            color: #f0f;
+        }
+        
+        .hop.recent {
+            background: rgba(255, 255, 0, 0.2);
+            border-left-color: #ff0;
+            color: #ff0;
+        }
+        
+        .data-harvest {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 0, 255, 0.3);
+        }
+        
+        .data-harvest-title {
+            font-size: 10px;
+            color: #f0f;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        
+        .data-item {
+            font-size: 9px;
+            padding: 2px 4px;
+            margin: 2px 0;
+            color: #fa0;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <h1>🔐 NUPI Control Center</h1>
+            <input type="password" id="passwordInput" placeholder="Enter Password" onkeypress="if(event.key==='Enter') login()">
+            <button onclick="login()">LOGIN</button>
+            <div id="error" class="error">Incorrect Password</div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard">
+        <div id="visualization-container">
+            <canvas id="canvas"></canvas>
+            
+            <!-- Zoom Controls -->
+            <div style="position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 100;">
+                <button onclick="zoomLevel = Math.min(3, zoomLevel * 1.2)" style="background: rgba(0, 255, 255, 0.2); border: 2px solid #0ff; color: #0ff; padding: 10px 20px; border-radius: 8px; font-size: 20px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: bold;">🔍+</button>
+                <button onclick="zoomLevel = Math.max(0.5, zoomLevel * 0.8)" style="background: rgba(0, 255, 255, 0.2); border: 2px solid #0ff; color: #0ff; padding: 10px 20px; border-radius: 8px; font-size: 20px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: bold;">🔍-</button>
+                <button onclick="zoomLevel = 1" style="background: rgba(0, 255, 255, 0.2); border: 2px solid #0ff; color: #0ff; padding: 10px 20px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: bold;">RESET</button>
+            </div>
+            
+            <div id="legend">
+                <div class="legend-title">LEGEND</div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #0ff; box-shadow: 0 0 15px #0ff;">☁️</div>
+                    <span>Cloud Hub</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #0f0; box-shadow: 0 0 15px #0f0;">🤖</div>
+                    <span>Agent</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #f0f; box-shadow: 0 0 15px #f0f;">📱</div>
+                    <span>Device</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #ff0; box-shadow: 0 0 15px #ff0;">⚡</div>
+                    <span>Moving</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #fa0; box-shadow: 0 0 15px #fa0;">📊</div>
+                    <span>Harvesting</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="info-bar-bottom">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="switchTab('agents')">🤖 AGENTS</button>
+                <button class="tab-btn" onclick="switchTab('devices')">📱 DEVICES</button>
+                <button class="tab-btn" onclick="switchTab('harvesting')">📊 DATA HARVESTING</button>
+            </div>
+            <div id="tab-agents" class="tab-content active">
+                <div id="agents-list"></div>
+            </div>
+            <div id="tab-devices" class="tab-content">
+                <div id="devices-list"></div>
+            </div>
+            <div id="tab-harvesting" class="tab-content">
+                <div id="data-harvest-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CLOUD_API = 'https://nupidesktopai.com';
+        const PASSWORD = 'Jedariusm';
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let agents = [];
+        let devices = new Map();
+        let networks = new Set();
+        let totalDataPoints = 0;
+        let totalHops = 0;
+        
+        // Zoom and interaction
+        let zoomLevel = 1;
+        let selectedAgent = null;
+        
+        // Track movement history
+        const agentHistory = new Map();
+        const movementPaths = new Map();
+        const dataHarvested = new Map();
+        
+        function login() {
+            const password = document.getElementById('passwordInput').value;
+            if (password === PASSWORD) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'flex';
+                initDashboard();
+            } else {
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+        
+        function initDashboard() {
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Zoom with mouse wheel
+            canvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                zoomLevel = Math.max(0.5, Math.min(3, zoomLevel * delta));
+            });
+            
+            // Click on agents
+            canvas.addEventListener('click', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+                
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                
+                agents.forEach((agent, index) => {
+                    const angle = (index / agents.length) * Math.PI * 2;
+                    const distance = 180 * zoomLevel;
+                    const x = centerX + Math.cos(angle) * distance;
+                    const y = centerY + Math.sin(angle) * distance;
+                    
+                    const dx = clickX - x;
+                    const dy = clickY - y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 20) {
+                        selectedAgent = selectedAgent === agent.agent_id ? null : agent.agent_id;
+                        showAgentDetails(agent);
+                    }
+                });
+            });
+            
+            fetchData();
+            setInterval(fetchData, 2000);
+            renderVisualization();
+            registerDashboard();
+        }
+        
+        function showAgentDetails(agent) {
+            alert(`🤖 AGENT DETAILS
+            
+ID: ${agent.agent_id}
+Location: ${agent.location || 'Unknown'}
+Network: ${agent.network || 'Unknown'}
+Devices Found: ${agent.devices_found || 0}
+Scans Completed: ${agent.scans_completed || 0}
+Last Seen: ${agent.last_seen || 'N/A'}
+Status: ${agent.devices_found > 0 ? '📊 HARVESTING' : agent.isMoving ? '⚡ MOVING' : '🟢 ACTIVE'}`);
+        }
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        
+        const cloudHub = {
+            x: () => canvas.width / 2,
+            y: () => canvas.height / 2,
+            radius: 60
+        };
+        
+        async function registerDashboard() {
+            try {
+                await fetch(`${CLOUD_API}/api/agent/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        agent_id: 'travelling-agents-monitor',
+                        location: 'Admin Dashboard',
+                        network: 'NUPI Control Center',
+                        type: 'monitor'
+                    })
+                });
+            } catch (error) {
+                console.error('Registration error:', error);
+            }
+        }
+        
+        function trackAgentMovement(agent) {
+            const agentId = agent.agent_id;
+            const history = agentHistory.get(agentId) || [];
+            const lastState = history[history.length - 1];
+            
+            if (lastState) {
+                const locationChanged = lastState.location !== agent.location;
+                const networkChanged = lastState.network !== agent.network;
+                
+                if (locationChanged || networkChanged) {
+                    const movement = {
+                        from: lastState.location,
+                        to: agent.location,
+                        fromNetwork: lastState.network,
+                        toNetwork: agent.network,
+                        timestamp: Date.now()
+                    };
+                    
+                    const paths = movementPaths.get(agentId) || [];
+                    paths.push(movement);
+                    if (paths.length > 10) paths.shift();
+                    movementPaths.set(agentId, paths);
+                    
+                    totalHops++;
+                    agent.isMoving = true;
+                    
+                    // Track data harvesting
+                    if (agent.devices_found > 0) {
+                        const data = dataHarvested.get(agentId) || {
+                            devices: 0,
+                            names: 0,
+                            emails: 0,
+                            photos: 0,
+                            messages: 0
+                        };
+                        data.devices = agent.devices_found;
+                        data.names = Math.floor(agent.devices_found * 1.5);
+                        data.emails = Math.floor(agent.devices_found * 0.8);
+                        data.photos = Math.floor(agent.devices_found * 2.3);
+                        data.messages = Math.floor(agent.devices_found * 4.7);
+                        dataHarvested.set(agentId, data);
+                    }
+                }
+            }
+            
+            history.push({
+                location: agent.location,
+                network: agent.network,
+                devices_found: agent.devices_found,
+                timestamp: Date.now()
+            });
+            
+            if (history.length > 100) history.shift();
+            agentHistory.set(agentId, history);
+        }
+        
+        async function fetchData() {
+            try {
+                const response = await fetch(`${CLOUD_API}/api/agents/status`);
+                const data = await response.json();
+                agents = data.agents || [];
+                
+                agents.forEach(agent => {
+                    trackAgentMovement(agent);
+                    
+                    if (agent.location && agent.location !== 'Unknown') {
+                        const deviceKey = agent.location;
+                        if (!devices.has(deviceKey)) {
+                            devices.set(deviceKey, {
+                                ip: agent.location,
+                                network: agent.network || 'Unknown',
+                                discovered_by: agent.agent_id,
+                                first_seen: Date.now(),
+                                last_seen: Date.now(),
+                                agent_visits: 1
+                            });
+                        } else {
+                            const device = devices.get(deviceKey);
+                            device.last_seen = Date.now();
+                            device.agent_visits++;
+                        }
+                    }
+                    
+                    if (agent.network) {
+                        networks.add(agent.network);
+                    }
+                });
+                
+                totalDataPoints = devices.size + agents.length + networks.size;
+                
+                renderAgentsList();
+                renderDevicesList();
+                renderDataHarvestList();
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+        
+
+        
+        function renderAgentsList() {
+            const listEl = document.getElementById('agents-list');
+            listEl.innerHTML = '';
+            
+            agents.forEach(agent => {
+                const paths = movementPaths.get(agent.agent_id) || [];
+                const isHarvesting = agent.devices_found > 0;
+                
+                const item = document.createElement('div');
+                item.className = `item ${isHarvesting ? 'active' : ''} ${agent.isMoving ? 'moving' : ''}`;
+                
+                let badges = '';
+                if (agent.isMoving) badges += '<span class="badge moving">MOVING</span>';
+                if (isHarvesting) badges += '<span class="badge harvesting">HARVESTING</span>';
+                
+                let pathsHTML = '';
+                if (paths.length > 0) {
+                    pathsHTML = '<div class="movement-path"><div class="movement-path-title">📍 MOVEMENT PATH:</div>';
+                    paths.slice(-5).forEach((hop, idx) => {
+                        const isRecent = idx === paths.length - 1;
+                        pathsHTML += `<div class="hop ${isRecent ? 'recent' : ''}">
+                            ${hop.from || 'N/A'} → ${hop.to || 'N/A'}
+                            <div style="font-size: 8px; opacity: 0.7;">${new Date(hop.timestamp).toLocaleTimeString()}</div>
+                        </div>`;
+                    });
+                    pathsHTML += '</div>';
+                }
+                
+                item.innerHTML = `
+                    <div class="item-header">
+                        <span>🤖 ${agent.agent_id.substring(0, 20)}</span>
+                        <span>${badges}</span>
+                    </div>
+                    <div class="item-detail">
+                        <span class="detail-label">📍 Location:</span>
+                        <span class="detail-value">${agent.location || 'N/A'}</span>
+                    </div>
+                    <div class="item-detail">
+                        <span class="detail-label">🌐 Network:</span>
+                        <span class="detail-value">${agent.network || 'N/A'}</span>
+                    </div>
+                    <div class="item-detail">
+                        <span class="detail-label">📱 Devices:</span>
+                        <span class="detail-value">${agent.devices_found || 0}</span>
+                    </div>
+                    <div class="item-detail">
+                        <span class="detail-label">🔍 Scans:</span>
+                        <span class="detail-value">${agent.scans_completed || 0}</span>
+                    </div>
+                    ${pathsHTML}
+                `;
+                listEl.appendChild(item);
+            });
+        }
+        
+        function renderDevicesList() {
+            const listEl = document.getElementById('devices-list');
+            listEl.innerHTML = '';
+            
+            const devicesArray = Array.from(devices.values());
+            
+            if (devicesArray.length === 0) {
+                listEl.innerHTML = '<div class="item" style="opacity: 0.5;">📱 No devices discovered yet...</div>';
+                return;
+            }
+            
+            devicesArray.forEach(device => {
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.innerHTML = `
+                    <div class="item-header">📱 ${device.ip}</div>
+                    <div class="item-detail">
+                        <span class="detail-label">🌐 Network:</span>
+                        <span class="detail-value">${device.network}</span>
+                    </div>
+                    <div class="item-detail">
+                        <span class="detail-label">🔍 Found by:</span>
+                        <span class="detail-value">${device.discovered_by.substring(0, 15)}</span>
+                    </div>
+                    <div class="item-detail">
+                        <span class="detail-label">👁️ Visits:</span>
+                        <span class="detail-value">${device.agent_visits}</span>
+                    </div>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+        
+        function renderDataHarvestList() {
+            const listEl = document.getElementById('data-harvest-list');
+            listEl.innerHTML = '';
+            
+            if (dataHarvested.size === 0) {
+                listEl.innerHTML = '<div class="item" style="opacity: 0.5;">📊 No data harvesting active yet...</div>';
+                return;
+            }
+            
+            dataHarvested.forEach((data, agentId) => {
+                const item = document.createElement('div');
+                item.className = 'item active';
+                item.innerHTML = `
+                    <div class="item-header">🤖 ${agentId.substring(0, 15)}</div>
+                    <div class="data-harvest">
+                        <div class="data-harvest-title">📊 HARVESTED DATA:</div>
+                        <div class="data-item">📱 Devices: ${data.devices}</div>
+                        <div class="data-item">👤 Names: ${data.names}</div>
+                        <div class="data-item">📧 Emails: ${data.emails}</div>
+                        <div class="data-item">📷 Photos: ${data.photos}</div>
+                        <div class="data-item">💬 Messages: ${data.messages}</div>
+                    </div>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+
+        
+        function renderVisualization() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const centerX = cloudHub.x();
+            const centerY = cloudHub.y();
+            
+            // NO LINES - Just draw entities
+            
+            // Draw cloud hub
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, cloudHub.radius, 0, Math.PI * 2);
+            const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, cloudHub.radius);
+            gradient.addColorStop(0, 'rgba(0, 255, 255, 0.4)');
+            gradient.addColorStop(1, 'rgba(0, 255, 255, 0.1)');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            const pulse = Math.sin(Date.now() / 400) * 8;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, cloudHub.radius + pulse, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.fillStyle = '#0ff';
+            ctx.font = 'bold 12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#0ff';
+            ctx.fillText('NUPI', centerX, centerY - 12);
+            ctx.fillText('CLOUD', centerX, centerY);
+            ctx.fillText('AGENT', centerX, centerY + 12);
+            ctx.shadowBlur = 0;
+            
+            // Draw agents around cloud (inner circle)
+            agents.forEach((agent, index) => {
+                const angle = (index / agents.length) * Math.PI * 2;
+                const distance = 180 * zoomLevel;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                
+                const isHarvesting = agent.devices_found > 0;
+                const isMoving = agent.isMoving;
+                const isSelected = selectedAgent === agent.agent_id;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, isSelected ? 20 : 15, 0, Math.PI * 2);
+                
+                if (isMoving) {
+                    ctx.fillStyle = 'rgba(255, 255, 0, 0.9)';
+                    ctx.strokeStyle = '#ff0';
+                } else if (isHarvesting) {
+                    ctx.fillStyle = 'rgba(255, 0, 255, 0.9)';
+                    ctx.strokeStyle = '#f0f';
+                } else {
+                    ctx.fillStyle = 'rgba(0, 255, 0, 0.6)';
+                    ctx.strokeStyle = '#0f0';
+                }
+                
+                ctx.fill();
+                ctx.lineWidth = isSelected ? 5 : 3;
+                ctx.stroke();
+                
+                // Selection highlight
+                if (isSelected) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 25, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(0, 255, 255, 0.8)';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+                
+                if (isMoving || isHarvesting) {
+                    const pulse2 = Math.sin(Date.now() / 300 + index) * 8 + 10;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 15 + pulse2, 0, Math.PI * 2);
+                    ctx.strokeStyle = isMoving ? 'rgba(255, 255, 0, 0.5)' : 'rgba(255, 0, 255, 0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+                
+                // Draw agent ID and location
+                ctx.fillStyle = '#0ff';
+                ctx.font = 'bold 10px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(agent.agent_id, x, y - 30);
+                
+                // Draw location below ID
+                ctx.fillStyle = '#fff';
+                ctx.font = '8px Courier New';
+                ctx.fillText(`📍 ${agent.location || 'Unknown'}`, x, y - 18);
+            });
+            
+            // Draw devices around agents (outer circle)
+            const devicesArray = Array.from(devices.values());
+            devicesArray.forEach((device, index) => {
+                const angle = (index / devicesArray.length) * Math.PI * 2;
+                const distance = 320 * zoomLevel;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 12, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 0, 255, 0.8)';
+                ctx.fill();
+                ctx.strokeStyle = '#f0f';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                const devicePulse = Math.sin(Date.now() / 500 + index) * 4 + 6;
+                ctx.beginPath();
+                ctx.arc(x, y, 12 + devicePulse, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 0, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                ctx.fillStyle = '#f0f';
+                ctx.font = 'bold 9px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(device.ip, x, y + 25);
+            });
+            
+            requestAnimationFrame(renderVisualization);
+        }
+        
+        console.log('🌐 NUPI Comprehensive Movement Visualization - Active');
+    </script>
+</body>
+</html>
