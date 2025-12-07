@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌐 NUPI Cloud Agent - Live Movement Tracker</title>
+    <title>🌐 NUPI - COMPREHENSIVE AGENT MOVEMENT VISUALIZATION</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -13,227 +13,328 @@
             overflow: hidden;
         }
         
-        #header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 20, 0, 0.95);
-            padding: 15px;
-            border-bottom: 2px solid #0f0;
-            z-index: 1000;
+        #main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
         
-        #stats {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 10px;
+        #header {
+            background: linear-gradient(135deg, #001a00 0%, #003300 100%);
+            padding: 20px;
+            border-bottom: 3px solid #0f0;
+            box-shadow: 0 5px 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #0f0;
+        }
+        
+        #stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
         
         .stat-box {
             background: rgba(0, 255, 0, 0.1);
-            border: 1px solid #0f0;
-            padding: 10px 20px;
-            border-radius: 5px;
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            padding: 15px;
             text-align: center;
+            transition: all 0.3s;
         }
         
-        .stat-box .label { font-size: 12px; opacity: 0.7; }
-        .stat-box .value { font-size: 24px; font-weight: bold; }
+        .stat-box:hover {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            transform: scale(1.05);
+        }
         
-        #canvas-container {
-            position: fixed;
-            top: 80px;
-            left: 0;
-            right: 0;
-            bottom: 0;
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        #content {
             display: flex;
-        }
-        
-        #visualization {
             flex: 1;
-            background: radial-gradient(circle at center, #001a00 0%, #000 100%);
+            overflow: hidden;
         }
         
-        #agent-list {
-            width: 350px;
+        #visualization-container {
+            flex: 1;
+            position: relative;
+            background: radial-gradient(circle at center, #001a00 0%, #000 70%);
+        }
+        
+        #canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #info-panel {
+            width: 450px;
             background: rgba(0, 20, 0, 0.95);
-            border-left: 2px solid #0f0;
+            border-left: 3px solid #0f0;
             overflow-y: auto;
             padding: 20px;
         }
         
-        .agent-card {
-            background: rgba(0, 255, 0, 0.05);
+        .panel-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0ff;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #0f0;
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        .agent-item {
+            background: linear-gradient(135deg, rgba(0, 255, 0, 0.1) 0%, rgba(0, 255, 0, 0.05) 100%);
             border: 1px solid #0f0;
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
-            animation: pulse 2s infinite;
+            transition: all 0.3s;
         }
         
-        .agent-card.moving {
-            border-color: #ff0;
-            animation: moveGlow 1s infinite;
+        .agent-item:hover {
+            border-color: #0ff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transform: translateX(5px);
+        }
+        
+        .agent-item.active {
+            border-color: #f0f;
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2) 0%, rgba(255, 0, 255, 0.1) 100%);
+            animation: activeGlow 2s infinite;
+        }
+        
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(255, 0, 255, 0.8); }
+        }
+        
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .agent-id {
+            font-weight: bold;
+            color: #0ff;
+            font-size: 14px;
+        }
+        
+        .agent-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .status-online {
+            background: rgba(0, 255, 0, 0.3);
+            border: 1px solid #0f0;
+            color: #0f0;
+        }
+        
+        .status-moving {
+            background: rgba(255, 255, 0, 0.3);
+            border: 1px solid #ff0;
+            color: #ff0;
+            animation: pulse 1s infinite;
         }
         
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            50% { opacity: 0.6; }
         }
         
-        @keyframes moveGlow {
-            0%, 100% { box-shadow: 0 0 5px #ff0; }
-            50% { box-shadow: 0 0 20px #ff0; }
-        }
-        
-        .agent-id {
-            font-size: 16px;
-            font-weight: bold;
-            color: #0ff;
-            margin-bottom: 8px;
-        }
-        
-        .agent-status {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-bottom: 5px;
+        .agent-details {
             font-size: 12px;
+            line-height: 1.8;
         }
         
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.1);
         }
         
-        .status-online { background: #0f0; box-shadow: 0 0 10px #0f0; }
-        .status-warning { background: #ff0; box-shadow: 0 0 10px #ff0; }
-        .status-offline { background: #f00; box-shadow: 0 0 10px #f00; }
+        .detail-label {
+            color: #888;
+        }
         
-        .movement-log {
+        .detail-value {
+            color: #0f0;
+            font-weight: bold;
+        }
+        
+        .movement-path {
             background: rgba(0, 0, 0, 0.5);
             border-radius: 5px;
-            padding: 8px;
-            margin-top: 8px;
-            max-height: 100px;
-            overflow-y: auto;
-            font-size: 10px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 11px;
         }
         
-        .movement-entry {
-            padding: 3px 0;
-            opacity: 0.8;
+        .path-entry {
+            padding: 5px;
+            margin: 3px 0;
+            background: rgba(0, 255, 0, 0.05);
+            border-left: 3px solid #0f0;
+            padding-left: 10px;
         }
         
-        .movement-entry.new {
-            color: #ff0;
-            animation: flash 0.5s;
+        .path-entry.current {
+            border-left-color: #f0f;
+            background: rgba(255, 0, 255, 0.1);
+            animation: flash 1s infinite;
         }
         
         @keyframes flash {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+            50% { opacity: 0.5; }
         }
         
         #legend {
-            position: fixed;
+            position: absolute;
             bottom: 20px;
             left: 20px;
             background: rgba(0, 20, 0, 0.95);
-            border: 1px solid #0f0;
-            border-radius: 8px;
-            padding: 15px;
-            font-size: 12px;
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #0ff;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
         }
         
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 3px;
+        .legend-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
 <body>
-    <div id="header">
-        <h1 style="text-align: center; margin-bottom: 15px;">🌐 NUPI CLOUD AGENT - LIVE MOVEMENT TRACKER</h1>
-        <div id="stats">
-            <div class="stat-box">
-                <div class="label">TOTAL AGENTS</div>
-                <div class="value" id="total-agents">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="label">ONLINE</div>
-                <div class="value" id="online-agents">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="label">MOVING</div>
-                <div class="value" id="moving-agents">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="label">NETWORKS</div>
-                <div class="value" id="networks">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="label">DEVICES</div>
-                <div class="value" id="devices">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="label">HOPS</div>
-                <div class="value" id="total-hops">0</div>
+    <div id="main-container">
+        <div id="header">
+            <h1>🌐 NUPI CLOUD AGENT - COMPREHENSIVE MOVEMENT VISUALIZATION</h1>
+            <div id="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">TOTAL AGENTS</div>
+                    <div class="stat-value" id="stat-total">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">ONLINE</div>
+                    <div class="stat-value" style="color: #0f0;" id="stat-online">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">MOVING NOW</div>
+                    <div class="stat-value" style="color: #ff0;" id="stat-moving">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">NETWORKS</div>
+                    <div class="stat-value" style="color: #0ff;" id="stat-networks">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">DEVICES</div>
+                    <div class="stat-value" style="color: #f0f;" id="stat-devices">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">TOTAL HOPS</div>
+                    <div class="stat-value" style="color: #fa0;" id="stat-hops">0</div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div id="canvas-container">
-        <canvas id="visualization"></canvas>
-        <div id="agent-list"></div>
-    </div>
-    
-    <div id="legend">
-        <div style="font-weight: bold; margin-bottom: 10px;">LEGEND</div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #0ff;"></div>
-            <span>Cloud Hub</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #0f0;"></div>
-            <span>Active Agent</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #ff0;"></div>
-            <span>Moving Agent</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #f0f;"></div>
-            <span>Device/Network</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #fff;"></div>
-            <span>Connection Path</span>
+        
+        <div id="content">
+            <div id="visualization-container">
+                <canvas id="canvas"></canvas>
+                <div id="legend">
+                    <div class="legend-title">LEGEND</div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #0ff; box-shadow: 0 0 15px #0ff;">☁️</div>
+                        <span>Cloud Hub (Center)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #0f0; box-shadow: 0 0 15px #0f0;">🟢</div>
+                        <span>Agent Online</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #f0f; box-shadow: 0 0 15px #f0f;">🔴</div>
+                        <span>Agent Moving</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #fa0; box-shadow: 0 0 15px #fa0;">📱</div>
+                        <span>Device/Network</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #fff; box-shadow: 0 0 10px #fff;">━</div>
+                        <span>Connection Path</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="info-panel">
+                <div class="panel-section">
+                    <div class="section-title">�� ACTIVE AGENTS</div>
+                    <div id="agents-list"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         const CLOUD_API = 'https://nupidesktopai.com';
-        const canvas = document.getElementById('visualization');
+        const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         
         let agents = [];
         let agentHistory = new Map();
+        let movementPaths = new Map();
         let totalHops = 0;
         
-        // Resize canvas
         function resizeCanvas() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
@@ -241,100 +342,205 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
         
-        // Cloud hub position (center)
         const cloudHub = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            radius: 50
+            x: () => canvas.width / 2,
+            y: () => canvas.height / 2,
+            radius: 70
         };
         
-        // Track agent movements
-        function trackMovement(agent) {
+        // Track agent movements and paths
+        function trackAgentMovement(agent) {
             const key = agent.agent_id;
             const history = agentHistory.get(key) || [];
             
-            const currentLoc = {
+            const currentState = {
                 location: agent.location,
                 network: agent.network,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                devices: agent.devices_found || 0
             };
             
-            // Check if location changed
+            // Check if location or network changed
             if (history.length > 0) {
-                const lastLoc = history[history.length - 1];
-                if (lastLoc.location !== currentLoc.location || lastLoc.network !== currentLoc.network) {
-                    totalHops++;
+                const lastState = history[history.length - 1];
+                if (lastState.location !== currentState.location || 
+                    lastState.network !== currentState.network) {
                     agent.isMoving = true;
+                    totalHops++;
+                    
+                    // Store movement path
+                    const path = movementPaths.get(key) || [];
+                    path.push({
+                        from: `${lastState.network} (${lastState.location})`,
+                        to: `${currentState.network} (${currentState.location})`,
+                        timestamp: new Date().toLocaleTimeString()
+                    });
+                    if (path.length > 10) path.shift();
+                    movementPaths.set(key, path);
+                    
                     setTimeout(() => { agent.isMoving = false; }, 3000);
                 }
             }
             
-            history.push(currentLoc);
-            if (history.length > 50) history.shift();
+            history.push(currentState);
+            if (history.length > 100) history.shift();
             agentHistory.set(key, history);
         }
         
-        // Fetch agents
+        // Fetch agents from cloud
         async function fetchAgents() {
             try {
                 const response = await fetch(`${CLOUD_API}/api/agents/status`);
                 const data = await response.json();
                 agents = data.agents || [];
                 
-                agents.forEach(agent => trackMovement(agent));
+                agents.forEach(agent => trackAgentMovement(agent));
                 
-                updateStats(data);
-                renderVisualization();
-                renderAgentList();
+                updateStats();
+                renderAgentsList();
             } catch (error) {
                 console.error('Fetch error:', error);
             }
         }
         
-        // Update stats
-        function updateStats(data) {
-            document.getElementById('total-agents').textContent = data.total_agents || 0;
-            document.getElementById('online-agents').textContent = data.online || 0;
-            document.getElementById('moving-agents').textContent = agents.filter(a => a.isMoving).length;
+        // Update statistics
+        function updateStats() {
+            document.getElementById('stat-total').textContent = agents.length;
+            document.getElementById('stat-online').textContent = agents.filter(a => a.connection_status === 'online').length;
+            document.getElementById('stat-moving').textContent = agents.filter(a => a.isMoving).length;
             
-            const networks = new Set(agents.map(a => a.network));
-            document.getElementById('networks').textContent = networks.size;
+            const networks = new Set(agents.map(a => a.network).filter(Boolean));
+            document.getElementById('stat-networks').textContent = networks.size;
             
-            const devices = agents.reduce((sum, a) => sum + (a.devices_found || 0), 0);
-            document.getElementById('devices').textContent = devices;
+            const totalDevices = agents.reduce((sum, a) => sum + (a.devices_found || 0), 0);
+            document.getElementById('stat-devices').textContent = totalDevices;
             
-            document.getElementById('total-hops').textContent = totalHops;
+            document.getElementById('stat-hops').textContent = totalHops;
+        }
+        
+        // Render agents list in side panel
+        function renderAgentsList() {
+            const listEl = document.getElementById('agents-list');
+            listEl.innerHTML = '';
+            
+            agents.forEach(agent => {
+                const path = movementPaths.get(agent.agent_id) || [];
+                const isActive = agent.connection_status === 'online';
+                
+                const item = document.createElement('div');
+                item.className = `agent-item ${agent.isMoving ? 'active' : ''}`;
+                item.innerHTML = `
+                    <div class="agent-header">
+                        <div class="agent-id">🤖 ${agent.agent_id}</div>
+                        <div class="agent-status ${agent.isMoving ? 'status-moving' : 'status-online'}">
+                            ${agent.isMoving ? '⚡ MOVING' : '✓ ONLINE'}
+                        </div>
+                    </div>
+                    <div class="agent-details">
+                        <div class="detail-row">
+                            <span class="detail-label">📍 Current Location:</span>
+                            <span class="detail-value">${agent.location || 'Unknown'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">🌐 Current Network:</span>
+                            <span class="detail-value">${agent.network || 'Unknown'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">📱 Devices Found:</span>
+                            <span class="detail-value">${agent.devices_found || 0}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">📊 Scans Completed:</span>
+                            <span class="detail-value">${agent.scans_completed || 0}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">⏱️ Last Seen:</span>
+                            <span class="detail-value">${agent.seconds_since_last_seen || 0}s ago</span>
+                        </div>
+                    </div>
+                    ${path.length > 0 ? `
+                        <div class="movement-path">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #0ff;">📍 MOVEMENT PATH:</div>
+                            ${path.slice(-5).reverse().map((p, i) => `
+                                <div class="path-entry ${i === 0 ? 'current' : ''}">
+                                    <div style="font-size: 10px; color: #888;">${p.timestamp}</div>
+                                    <div style="margin-top: 3px;">
+                                        ${p.from}<br>
+                                        <span style="color: #f0f;">→</span> ${p.to}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                `;
+                listEl.appendChild(item);
+            });
         }
         
         // Render visualization
         function renderVisualization() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Update cloud hub position
-            cloudHub.x = canvas.width / 2;
-            cloudHub.y = canvas.height / 2;
+            const centerX = cloudHub.x();
+            const centerY = cloudHub.y();
             
-            // Draw connections first
+            // Draw network zones (background circles)
+            const networks = [...new Set(agents.map(a => a.network).filter(Boolean))];
+            networks.forEach((network, index) => {
+                const angle = (index / networks.length) * Math.PI * 2;
+                const distance = 300;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 80, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 165, 0, 0.05)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 165, 0, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = '#fa0';
+                ctx.font = 'bold 12px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(network.substring(0, 15), x, y);
+            });
+            
+            // Draw connections from cloud to agents
             agents.forEach((agent, index) => {
                 const angle = (index / agents.length) * Math.PI * 2;
-                const distance = 200;
-                const x = cloudHub.x + Math.cos(angle) * distance;
-                const y = cloudHub.y + Math.sin(angle) * distance;
+                const distance = 220;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
                 
                 // Connection line
                 ctx.beginPath();
-                ctx.strokeStyle = agent.isMoving ? 'rgba(255, 255, 0, 0.8)' : 'rgba(255, 255, 255, 0.3)';
-                ctx.lineWidth = agent.isMoving ? 3 : 1;
-                ctx.moveTo(cloudHub.x, cloudHub.y);
+                ctx.moveTo(centerX, centerY);
                 ctx.lineTo(x, y);
+                
+                if (agent.isMoving) {
+                    // Animated dashed line for moving agents
+                    ctx.setLineDash([10, 5]);
+                    ctx.strokeStyle = 'rgba(255, 0, 255, 0.8)';
+                    ctx.lineWidth = 3;
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = '#f0f';
+                } else {
+                    ctx.setLineDash([]);
+                    ctx.strokeStyle = 'rgba(0, 255, 0, 0.3)';
+                    ctx.lineWidth = 2;
+                    ctx.shadowBlur = 0;
+                }
                 ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.shadowBlur = 0;
                 
                 // Animated pulse for moving agents
                 if (agent.isMoving) {
                     const pulse = Math.sin(Date.now() / 200) * 10 + 20;
                     ctx.beginPath();
                     ctx.arc(x, y, pulse, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
+                    ctx.strokeStyle = 'rgba(255, 0, 255, 0.5)';
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
@@ -342,102 +548,88 @@
             
             // Draw cloud hub
             ctx.beginPath();
-            ctx.arc(cloudHub.x, cloudHub.y, cloudHub.radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
+            ctx.arc(centerX, centerY, cloudHub.radius, 0, Math.PI * 2);
+            
+            const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, cloudHub.radius);
+            gradient.addColorStop(0, 'rgba(0, 255, 255, 0.4)');
+            gradient.addColorStop(1, 'rgba(0, 255, 255, 0.1)');
+            ctx.fillStyle = gradient;
             ctx.fill();
+            
             ctx.strokeStyle = '#0ff';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 4;
             ctx.stroke();
             
+            // Pulsing outer ring
+            const pulse = Math.sin(Date.now() / 400) * 8;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, cloudHub.radius + pulse, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Cloud hub text
             ctx.fillStyle = '#0ff';
-            ctx.font = 'bold 14px Courier New';
+            ctx.font = 'bold 18px Courier New';
             ctx.textAlign = 'center';
-            ctx.fillText('CLOUD', cloudHub.x, cloudHub.y - 5);
-            ctx.fillText('HUB', cloudHub.x, cloudHub.y + 10);
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#0ff';
+            ctx.fillText('CLOUD', centerX, centerY - 10);
+            ctx.fillText('HUB', centerX, centerY + 10);
+            ctx.shadowBlur = 0;
             
             // Draw agents
             agents.forEach((agent, index) => {
                 const angle = (index / agents.length) * Math.PI * 2;
-                const distance = 200;
-                const x = cloudHub.x + Math.cos(angle) * distance;
-                const y = cloudHub.y + Math.sin(angle) * distance;
+                const distance = 220;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
                 
                 // Agent circle
                 ctx.beginPath();
-                ctx.arc(x, y, 15, 0, Math.PI * 2);
-                ctx.fillStyle = agent.isMoving ? 'rgba(255, 255, 0, 0.8)' : 'rgba(0, 255, 0, 0.6)';
+                ctx.arc(x, y, 18, 0, Math.PI * 2);
+                
+                if (agent.isMoving) {
+                    ctx.fillStyle = 'rgba(255, 0, 255, 0.9)';
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = '#f0f';
+                } else {
+                    ctx.fillStyle = 'rgba(0, 255, 0, 0.7)';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#0f0';
+                }
                 ctx.fill();
+                
                 ctx.strokeStyle = agent.connection_status === 'online' ? '#0f0' : '#f00';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 3;
                 ctx.stroke();
+                ctx.shadowBlur = 0;
                 
                 // Agent ID
                 ctx.fillStyle = '#fff';
-                ctx.font = '10px Courier New';
+                ctx.font = 'bold 10px Courier New';
                 ctx.textAlign = 'center';
-                const shortId = agent.agent_id.substring(0, 8);
-                ctx.fillText(shortId, x, y - 25);
+                ctx.shadowBlur = 5;
+                ctx.shadowColor = '#000';
+                const shortId = agent.agent_id.substring(0, 12);
+                ctx.fillText(shortId, x, y - 30);
                 
-                // Network info
-                ctx.fillStyle = '#f0f';
-                ctx.fillText(agent.network || 'N/A', x, y + 30);
+                // Current location
+                ctx.font = '9px Courier New';
+                ctx.fillStyle = '#0ff';
+                ctx.fillText(agent.location || 'N/A', x, y + 35);
+                ctx.shadowBlur = 0;
             });
             
             requestAnimationFrame(renderVisualization);
         }
         
-        // Render agent list
-        function renderAgentList() {
-            const listEl = document.getElementById('agent-list');
-            listEl.innerHTML = '<h2 style="margin-bottom: 20px; color: #0ff;">ACTIVE AGENTS</h2>';
-            
-            agents.forEach(agent => {
-                const history = agentHistory.get(agent.agent_id) || [];
-                const statusClass = agent.connection_status === 'online' ? 'status-online' : 
-                                  agent.connection_status === 'warning' ? 'status-warning' : 'status-offline';
-                
-                const card = document.createElement('div');
-                card.className = `agent-card ${agent.isMoving ? 'moving' : ''}`;
-                card.innerHTML = `
-                    <div class="agent-id">🤖 ${agent.agent_id}</div>
-                    <div class="agent-status">
-                        <span class="status-dot ${statusClass}"></span>
-                        <span>${agent.connection_status.toUpperCase()}</span>
-                    </div>
-                    <div class="agent-status">
-                        📍 Location: ${agent.location || 'Unknown'}
-                    </div>
-                    <div class="agent-status">
-                        🌐 Network: ${agent.network || 'Unknown'}
-                    </div>
-                    <div class="agent-status">
-                        🔍 Devices: ${agent.devices_found || 0}
-                    </div>
-                    <div class="agent-status">
-                        ⏱️ Last Seen: ${agent.seconds_since_last_seen || 0}s ago
-                    </div>
-                    <div class="agent-status">
-                        📊 Scans: ${agent.scans_completed || 0}
-                    </div>
-                    ${agent.isMoving ? '<div class="agent-status" style="color: #ff0;">⚡ MOVING NOW</div>' : ''}
-                    <div class="movement-log">
-                        <div style="font-weight: bold; margin-bottom: 5px;">Movement History:</div>
-                        ${history.slice(-5).reverse().map((h, i) => `
-                            <div class="movement-entry ${i === 0 && agent.isMoving ? 'new' : ''}">
-                                → ${h.network} (${h.location || 'N/A'})
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                listEl.appendChild(card);
-            });
-        }
-        
-        // Auto-refresh every 2 seconds
+        // Start everything
         setInterval(fetchAgents, 2000);
         fetchAgents();
+        renderVisualization();
         
-        console.log('🌐 NUPI Cloud Agent Live Tracker - Monitoring all movements...');
+        console.log('�� NUPI Comprehensive Agent Visualization - Active');
     </script>
 </body>
 </html>
