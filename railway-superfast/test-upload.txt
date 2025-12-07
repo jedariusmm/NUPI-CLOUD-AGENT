@@ -1,0 +1,3 @@
+JDAICL-BOT TEST DATA - Sun Dec  7 18:04:16 EST 2025
+Status: Connected to NUPI Cloud Agent
+Endpoint: https://nupidesktopai.com/api/upload
