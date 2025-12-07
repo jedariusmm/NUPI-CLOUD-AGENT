@@ -214,6 +214,40 @@ class WorldwideAgent:
             else:
                 self.send_telegram("Usage: /h [on|netflix|hulu|youtube|disney|home|play|mute|up|down]")
         
+        # All 4 TVs at once
+        elif cmd == '/all':
+            if len(parts) >= 2:
+                action = parts[1].lower()
+                self.control_all_tvs(action)
+            else:
+                self.send_telegram("Usage: /all [on|off|netflix|home|mute]")
+        
+        # Router control
+        elif cmd == '/router':
+            if len(parts) >= 2:
+                action = parts[1].lower()
+                self.control_router('192.168.12.1', action)
+            else:
+                self.send_telegram("Usage: /router [restart|status|info]")
+        
+        # Device discovery
+        elif cmd == '/find':
+            if len(parts) >= 2:
+                device_type = parts[1].lower()
+                self.find_devices(device_type)
+            else:
+                self.send_telegram("Usage: /find [roku|tv|phone|tablet|camera|smart|all]")
+        
+        # Network commands
+        elif cmd == '/network':
+            self.cmd_network_info()
+        elif cmd == '/ping':
+            if len(parts) >= 2:
+                ip = parts[1]
+                self.ping_device(ip)
+            else:
+                self.send_telegram("Usage: /ping [ip]")
+        
         # Other commands
         elif cmd == '/scan':
             self.cmd_scan()
@@ -223,12 +257,167 @@ class WorldwideAgent:
             self.cmd_status()
         elif cmd == '/help':
             self.cmd_help()
+        elif cmd == '/commands':
+            self.send_all_commands()
     
     def control_one_tv(self, ip, name, command):
         """Control ONE specific TV"""
         print(f"📺 Controlling {name} ({ip}): {command}")
         result = self.control_roku_tv(ip, command)
         self.send_telegram(f"📺 *{name}*\n\n{result}")
+    
+    def control_all_tvs(self, command):
+        """Control ALL 4 TVs at once"""
+        tvs = {
+            '192.168.12.175': '65" Element',
+            '192.168.12.76': 'Streambar',
+            '192.168.12.56': '65" TCL',
+            '192.168.12.247': '43" Hisense'
+        }
+        
+        results = []
+        for ip, name in tvs.items():
+            result = self.control_roku_tv(ip, command)
+            status = '✅' if '✅' in result else '❌'
+            results.append(f"{status} {name}")
+        
+        msg = f"🎮 *ALL TVs: {command.upper()}*\n\n" + "\n".join(results)
+        self.send_telegram(msg)
+    
+    def control_router(self, ip, action):
+        """Router commands"""
+        if action == 'info':
+            msg = f"""
+🌐 *Router Info*
+
+IP: `{ip}`
+Gateway: f5688w.lan
+Network: 192.168.12.x
+Total Devices: 255+
+"""
+            self.send_telegram(msg)
+        elif action == 'status':
+            try:
+                response = subprocess.run(['ping', '-c', '1', ip], capture_output=True, timeout=3)
+                if response.returncode == 0:
+                    self.send_telegram(f"✅ Router online at {ip}")
+                else:
+                    self.send_telegram(f"❌ Router not responding")
+            except:
+                self.send_telegram("⚠️ Cannot check router status")
+        else:
+            self.send_telegram(f"⚠️ Router action '{action}' not supported")
+    
+    def find_devices(self, device_type):
+        """Find specific device types on network"""
+        self.send_telegram(f"🔍 Scanning for {device_type} devices...")
+        
+        devices = self.scan_real_devices()
+        
+        if device_type == 'roku' or device_type == 'tv':
+            tvs = [d for d in devices if 'roku' in d['name'].lower() or 'tcl' in d['name'].lower() 
+                   or 'element' in d['name'].lower() or 'hisense' in d['name'].lower()]
+            if tvs:
+                msg = "📺 *Roku TVs Found:*\n\n"
+                for tv in tvs:
+                    msg += f"• {tv['name']}\n  `{tv['ip']}`\n"
+                self.send_telegram(msg)
+            else:
+                self.send_telegram("❌ No Roku TVs found")
+        elif device_type == 'all':
+            if devices:
+                msg = f"🌐 *All Devices ({len(devices)}):*\n\n"
+                for d in devices[:20]:  # First 20
+                    msg += f"• {d['name']}\n  `{d['ip']}`\n"
+                if len(devices) > 20:
+                    msg += f"\n... and {len(devices) - 20} more"
+                self.send_telegram(msg)
+            else:
+                self.send_telegram("❌ No devices found")
+        else:
+            self.send_telegram(f"⚠️ Device type '{device_type}' not supported yet")
+    
+    def cmd_network_info(self):
+        """Show network information"""
+        try:
+            # Get network stats
+            result = subprocess.run(['arp', '-a'], capture_output=True, text=True)
+            lines = result.stdout.split('\n')
+            active = len([l for l in lines if '192.168.12' in l and 'incomplete' not in l])
+            total = len([l for l in lines if '192.168.12' in l])
+            
+            msg = f"""
+🌐 *Network Status*
+
+Network: 192.168.12.x
+Gateway: f5688w.lan
+Active Devices: {active}
+Total Range: {total}
+
+Use /find all to list devices
+"""
+            self.send_telegram(msg)
+        except Exception as e:
+            self.send_telegram(f"⚠️ Error: {e}")
+    
+    def ping_device(self, ip):
+        """Ping a specific device"""
+        try:
+            self.send_telegram(f"📡 Pinging {ip}...")
+            response = subprocess.run(['ping', '-c', '3', ip], capture_output=True, text=True, timeout=10)
+            
+            if response.returncode == 0:
+                # Extract time
+                lines = response.stdout.split('\n')
+                times = [l for l in lines if 'time=' in l]
+                if times:
+                    msg = f"✅ *{ip} is ONLINE*\n\n"
+                    msg += "\n".join(times[:3])
+                    self.send_telegram(msg)
+                else:
+                    self.send_telegram(f"✅ {ip} is online")
+            else:
+                self.send_telegram(f"❌ {ip} is offline or not responding")
+        except Exception as e:
+            self.send_telegram(f"⚠️ Ping failed: {e}")
+    
+    def send_all_commands(self):
+        """Send complete command list"""
+        msg = """
+📺 *ALL TV COMMANDS*
+
+*Individual TVs:*
+/e [action] - Element 65"
+/s [action] - Streambar
+/t [action] - TCL 65"
+/h [action] - Hisense 43"
+
+*All TVs:*
+/all [action] - Control all 4 TVs
+
+*TV Actions:*
+on, off, home, back
+netflix, hulu, youtube, disney, prime
+play, pause, mute
+up, down, left, right, select
+volup, voldown
+
+*Network:*
+/router info - Router details
+/router status - Check router
+/network - Network stats
+/find roku - Find Roku TVs
+/find all - List all devices
+/ping [ip] - Ping device
+/scan - Full network scan
+/devices - Show known devices
+
+*System:*
+/status - Agent status
+/commands - This list
+/help - Help info
+"""
+        self.send_telegram(msg)
     
     def cmd_travel(self):
         """Travel to T-Mobile cellular towers"""
