@@ -331,6 +331,33 @@
             border-radius: 10px;
             z-index: 999;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .controls-panel.collapsed {
+            transform: translateX(-350px);
+            opacity: 0.2;
+        }
+        .collapse-btn {
+            position: absolute;
+            right: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #0f0, #0c0);
+            border: 2px solid #0f0;
+            color: #000;
+            font-weight: bold;
+            padding: 15px 8px;
+            cursor: pointer;
+            border-radius: 0 10px 10px 0;
+            font-size: 18px;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+        .collapse-btn:hover {
+            background: linear-gradient(135deg, #0f0, #0f0);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
+            transform: translateY(-50%) scale(1.1);
         }
         
         .control-btn {
@@ -440,7 +467,8 @@
         </div>
         
         <!-- Controls Panel -->
-        <div class="controls-panel">
+        <div class="controls-panel" id="controlsPanel">
+            <button class="collapse-btn" onclick="toggleControlsPanel()" id="collapseBtn">⏪</button>
             <div class="section-title">🎮 CONTROLS</div>
             <button class="control-btn" onclick="zoomIn()">🔍 Zoom In</button>
             <button class="control-btn" onclick="zoomOut()">🔍 Zoom Out</button>
@@ -1232,6 +1260,26 @@
         function zoomOut() { zoom = Math.max(zoom / 1.4, 0.15); }
         function togglePause() { isPaused = !isPaused; }
         function resetView() { zoom = 1; offsetX = 0; offsetY = 0; }
+        
+        // COLLAPSIBLE CONTROLS
+        function toggleControlsPanel() {
+            const panel = document.getElementById('controlsPanel');
+            const btn = document.getElementById('collapseBtn');
+            panel.classList.toggle('collapsed');
+            btn.textContent = panel.classList.contains('collapsed') ? '⏩' : '⏪';
+            localStorage.setItem('controlsPanelCollapsed', panel.classList.contains('collapsed'));
+        }
+        
+        // Load collapsed state on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const collapsed = localStorage.getItem('controlsPanelCollapsed') === 'true';
+            if (collapsed) {
+                const panel = document.getElementById('controlsPanel');
+                const btn = document.getElementById('collapseBtn');
+                panel.classList.add('collapsed');
+                btn.textContent = '⏩';
+            }
+        });
         function focusCloud() {
             offsetX = canvas.width/2 - nupiCloud.x * zoom;
             offsetY = canvas.height/2 - nupiCloud.y * zoom;
