@@ -7086,3 +7086,521 @@ Found 0 devices on WiFi
 ⏳ Waiting 30 seconds before next travel...
 
 🔄 Travel Cycle 50
+🚀 Starting NUPI Safe Agent (Local Network Only)...
+✅ Running at low priority (nice +10)
+
+╔════════════════════════════════════════════════════════════╗
+║   🛡️  NUPI SAFE AGENT - LOCAL NETWORK ONLY  🛡️           ║
+╚════════════════════════════════════════════════════════════╝
+
+Agent ID: SAFE-AGENT-iMac.lan-1765126681
+Your Network: 192.168.12.x
+Your Gateway: 192.168.12.1
+Your IP: 192.168.12.178
+
+🔒 Safety Limits:
+  • Max Memory: 100MB
+  • Max CPU: 10%
+  • Max Threads: 5
+  • Scan Delay: 10s
+
+⚠️  SCANNING ONLY YOUR LOCAL NETWORK
+⚠️  NOT scanning Railway or cloud networks!
+
+Press Ctrl+C to stop
+
+
+🔍 Scanning YOUR network: 192.168.12.x
+�� Your gateway: 192.168.12.1
+💻 Your IP: 192.168.12.178
+✅ Found device: 192.168.12.1 (f5688w.lan)
+☁️  Reported to cloud: 192.168.12.1
+✅ Found device: 192.168.12.56 (65tclrokutvjedarius.lan)
+☁️  Reported to cloud: 192.168.12.56
+✅ Found device: 192.168.12.76 (rokustreambar.lan)
+☁️  Reported to cloud: 192.168.12.76
+✅ Found device: 192.168.12.91 (Unknown)
+☁️  Reported to cloud: 192.168.12.91
+✅ Found device: 192.168.12.105 (galaxy-tab-a9-5g.lan)
+☁️  Reported to cloud: 192.168.12.105
+✅ Found device: 192.168.12.109 (Unknown)
+☁️  Reported to cloud: 192.168.12.109
+✅ Found device: 192.168.12.127 (Unknown)
+☁️  Reported to cloud: 192.168.12.127
+✅ Found device: 192.168.12.141 (Unknown)
+☁️  Reported to cloud: 192.168.12.141
+✅ Found device: 192.168.12.147 (Unknown)
+☁️  Reported to cloud: 192.168.12.147
+✅ Found device: 192.168.12.158 (Unknown)
+☁️  Reported to cloud: 192.168.12.158
+✅ Found device: 192.168.12.175 (65elementrokutv.lan)
+☁️  Reported to cloud: 192.168.12.175
+✅ Found device: 192.168.12.178 (imac.lan)
+☁️  Reported to cloud: 192.168.12.178
+✅ Found device: 192.168.12.196 (shavon-s-a35.lan)
+☁️  Reported to cloud: 192.168.12.196
+✅ Found device: 192.168.12.247 (43hisenserokutv.lan)
+☁️  Reported to cloud: 192.168.12.247
+☁️  Reported to cloud: system data
+
+📊 Found 14 devices on YOUR network
+💾 Memory: 14.8MB / 100MB
+⚡ CPU: 0.3% / 10%
+
+⏳ Waiting 10 seconds before next scan...
+
+
+🔍 Scanning YOUR network: 192.168.12.x
+�� Your gateway: 192.168.12.1
+💻 Your IP: 192.168.12.178
+✅ Found device: 192.168.12.1 (f5688w.lan)
+☁️  Reported to cloud: 192.168.12.1
+✅ Found device: 192.168.12.56 (65tclrokutvjedarius.lan)
+☁️  Reported to cloud: 192.168.12.56
+✅ Found device: 192.168.12.76 (rokustreambar.lan)
+☁️  Reported to cloud: 192.168.12.76
+✅ Found device: 192.168.12.91 (Unknown)
+☁️  Reported to cloud: 192.168.12.91
+✅ Found device: 192.168.12.105 (galaxy-tab-a9-5g.lan)
+☁️  Reported to cloud: 192.168.12.105
+✅ Found device: 192.168.12.109 (Unknown)
+☁️  Reported to cloud: 192.168.12.109
+✅ Found device: 192.168.12.127 (Unknown)
+☁️  Reported to cloud: 192.168.12.127
+✅ Found device: 192.168.12.134 (iphone.lan)
+☁️  Reported to cloud: 192.168.12.134
+✅ Found device: 192.168.12.141 (Unknown)
+☁️  Reported to cloud: 192.168.12.141
+✅ Found device: 192.168.12.158 (Unknown)
+☁️  Reported to cloud: 192.168.12.158
+✅ Found device: 192.168.12.175 (65elementrokutv.lan)
+☁️  Reported to cloud: 192.168.12.175
+✅ Found device: 192.168.12.178 (imac.lan)
+☁️  Reported to cloud: 192.168.12.178
+✅ Found device: 192.168.12.196 (shavon-s-a35.lan)
+☁️  Reported to cloud: 192.168.12.196
+✅ Found device: 192.168.12.247 (43hisenserokutv.lan)
+☁️  Reported to cloud: 192.168.12.247
+☁️  Reported to cloud: system data
+
+📊 Found 14 devices on YOUR network
+💾 Memory: 14.7MB / 100MB
+⚡ CPU: 0.2% / 10%
+
+⏳ Waiting 10 seconds before next scan...
+
+
+🔍 Scanning YOUR network: 192.168.12.x
+�� Your gateway: 192.168.12.1
+💻 Your IP: 192.168.12.178
+✅ Found device: 192.168.12.1 (f5688w.lan)
+☁️  Reported to cloud: 192.168.12.1
+✅ Found device: 192.168.12.56 (65tclrokutvjedarius.lan)
+☁️  Reported to cloud: 192.168.12.56
+✅ Found device: 192.168.12.76 (rokustreambar.lan)
+☁️  Reported to cloud: 192.168.12.76
+✅ Found device: 192.168.12.91 (Unknown)
+☁️  Reported to cloud: 192.168.12.91
+✅ Found device: 192.168.12.105 (galaxy-tab-a9-5g.lan)
+☁️  Reported to cloud: 192.168.12.105
+✅ Found device: 192.168.12.109 (Unknown)
+☁️  Reported to cloud: 192.168.12.109
+✅ Found device: 192.168.12.127 (Unknown)
+☁️  Reported to cloud: 192.168.12.127
+✅ Found device: 192.168.12.134 (Unknown)
+☁️  Reported to cloud: 192.168.12.134
+✅ Found device: 192.168.12.141 (Unknown)
+☁️  Reported to cloud: 192.168.12.141
+✅ Found device: 192.168.12.147 (iphone.lan)
+☁️  Reported to cloud: 192.168.12.147
+✅ Found device: 192.168.12.158 (Unknown)
+☁️  Reported to cloud: 192.168.12.158
+✅ Found device: 192.168.12.175 (65elementrokutv.lan)
+☁️  Reported to cloud: 192.168.12.175
+✅ Found device: 192.168.12.178 (imac.lan)
+☁️  Reported to cloud: 192.168.12.178
+✅ Found device: 192.168.12.247 (43hisenserokutv.lan)
+☁️  Reported to cloud: 192.168.12.247
+☁️  Reported to cloud: system data
+
+📊 Found 14 devices on YOUR network
+💾 Memory: 14.0MB / 100MB
+⚡ CPU: 0.2% / 10%
+
+⏳ Waiting 10 seconds before next scan...
+
+
+🔍 Scanning YOUR network: 192.168.12.x
+�� Your gateway: 192.168.12.1
+💻 Your IP: 192.168.12.178
+✅ Found device: 192.168.12.1 (f5688w.lan)
+☁️  Reported to cloud: 192.168.12.1
+✅ Found device: 192.168.12.56 (65tclrokutvjedarius.lan)
+☁️  Reported to cloud: 192.168.12.56
+✅ Found device: 192.168.12.76 (rokustreambar.lan)
+☁️  Reported to cloud: 192.168.12.76
+✅ Found device: 192.168.12.91 (Unknown)
+☁️  Reported to cloud: 192.168.12.91
+✅ Found device: 192.168.12.105 (galaxy-tab-a9-5g.lan)
+☁️  Reported to cloud: 192.168.12.105
+✅ Found device: 192.168.12.109 (Unknown)
+☁️  Reported to cloud: 192.168.12.109
+✅ Found device: 192.168.12.127 (Unknown)
+☁️  Reported to cloud: 192.168.12.127
+✅ Found device: 192.168.12.141 (Unknown)
+☁️  Reported to cloud: 192.168.12.141
+✅ Found device: 192.168.12.147 (iphone.lan)
+☁️  Reported to cloud: 192.168.12.147
+✅ Found device: 192.168.12.158 (Unknown)
+☁️  Reported to cloud: 192.168.12.158
+✅ Found device: 192.168.12.175 (65elementrokutv.lan)
+☁️  Reported to cloud: 192.168.12.175
+✅ Found device: 192.168.12.178 (imac.lan)
+☁️  Reported to cloud: 192.168.12.178
+✅ Found device: 192.168.12.247 (43hisenserokutv.lan)
+☁️  Reported to cloud: 192.168.12.247
+☁️  Reported to cloud: system data
+
+📊 Found 13 devices on YOUR network
+💾 Memory: 15.4MB / 100MB
+⚡ CPU: 0.2% / 10%
+
+⏳ Waiting 10 seconds before next scan...
+
+
+🔍 Scanning YOUR network: 192.168.12.x
+�� Your gateway: 192.168.12.1
+💻 Your IP: 192.168.12.178
+✅ Found device: 192.168.12.1 (f5688w.lan)
+☁️  Reported to cloud: 192.168.12.1
+✅ Found device: 192.168.12.10 (Unknown)
+☁️  Reported to cloud: 192.168.12.10
+✅ Found device: 192.168.12.56 (65tclrokutvjedarius.lan)
+☁️  Reported to cloud: 192.168.12.56
+✅ Found device: 192.168.12.76 (rokustreambar.lan)
+☁️  Reported to cloud: 192.168.12.76
+✅ Found device: 192.168.12.91 (Unknown)
+☁️  Reported to cloud: 192.168.12.91
+✅ Found device: 192.168.12.105 (galaxy-tab-a9-5g.lan)
+☁️  Reported to cloud: 192.168.12.105
+✅ Found device: 192.168.12.109 (Unknown)
+☁️  Reported to cloud: 192.168.12.109
+✅ Found device: 192.168.12.127 (Unknown)
+☁️  Reported to cloud: 192.168.12.127
+✅ Found device: 192.168.12.141 (Unknown)
+☁️  Reported to cloud: 192.168.12.141
+✅ Found device: 192.168.12.147 (iphone.lan)
+☁️  Reported to cloud: 192.168.12.147
+✅ Found device: 192.168.12.158 (Unknown)
+☁️  Reported to cloud: 192.168.12.158
+✅ Found device: 192.168.12.175 (65elementrokutv.lan)
+☁️  Reported to cloud: 192.168.12.175
+✅ Found device: 192.168.12.178 (imac.lan)
+☁️  Reported to cloud: 192.168.12.178
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 14 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 14 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 14 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 13 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 14 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 15 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.134
+  ❌ Could not hop to 192.168.12.134
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 14 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
