@@ -127,13 +127,15 @@ class AutonomousSwarmAgent:
                 if result.returncode == 0:
                     # Device is online
                     hostname = self.get_hostname(ip)
+                    device_type = self.detect_device_type(hostname, ip)
                     devices[ip] = {
                         'ip': ip,
                         'hostname': hostname,
+                        'device_type': device_type,
                         'last_seen': datetime.utcnow().isoformat(),
                         'status': 'online'
                     }
-                    print(f"  ✅ Found: {ip} ({hostname})")
+                    print(f"  ✅ Found: {ip} ({hostname}) - {device_type}")
                     
             except:
                 pass
@@ -148,6 +150,41 @@ class AutonomousSwarmAgent:
             return socket.gethostbyaddr(ip)[0]
         except:
             return f"Device-{ip.split('.')[-1]}"
+    
+    def detect_device_type(self, device_name, device_ip):
+        """Detect device type based on hostname"""
+        name_lower = device_name.lower()
+        
+        # Phone detection
+        if any(x in name_lower for x in ['iphone', 'android', 'phone', 'mobile', 'samsung-sm', 'galaxy', 'pixel']):
+            return '📱 Phone'
+        
+        # Tablet detection
+        if any(x in name_lower for x in ['ipad', 'tablet', 'kindle']):
+            return '📱 Tablet'
+        
+        # TV detection
+        if any(x in name_lower for x in ['tv', 'roku', 'firestick', 'appletv', 'chromecast', 'smarttv', 'samsung-tv', 'lg-tv']):
+            return '📺 Smart TV'
+        
+        # Game Console detection
+        if any(x in name_lower for x in ['playstation', 'ps4', 'ps5', 'xbox', 'nintendo', 'switch']):
+            return '🎮 Game Console'
+        
+        # Computer detection
+        if any(x in name_lower for x in ['macbook', 'imac', 'laptop', 'desktop', 'pc', 'workstation', 'thinkpad', 'dell', 'hp-']):
+            return '💻 Computer'
+        
+        # Router/Gateway
+        if any(x in name_lower for x in ['router', 'gateway', 'modem', 'access-point', 'ap-']):
+            return '📡 Router'
+        
+        # IoT devices
+        if any(x in name_lower for x in ['nest', 'alexa', 'echo', 'ring', 'doorbell', 'camera', 'sensor', 'smart-']):
+            return '🏠 IoT Device'
+        
+        # Default
+        return '🖥️ Unknown Device'
     
     def collect_data_from_device(self, ip, hostname):
         """Collect data from device"""

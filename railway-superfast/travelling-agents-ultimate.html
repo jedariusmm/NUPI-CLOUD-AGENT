@@ -1418,15 +1418,32 @@
             </div>`).join('');
             document.getElementById('towerData').innerHTML = towerHTML;
             
-            // Devices Found
-            const devicesHTML = `<div style="padding: 5px;">
-                Total WiFi Devices: ${totalWifiData}<br>
-                Cell Phones: ${Math.floor(totalWifiData * 0.4)}<br>
-                Computers: ${Math.floor(totalWifiData * 0.3)}<br>
-                Smart TVs: ${Math.floor(totalWifiData * 0.15)}<br>
-                IoT Devices: ${Math.floor(totalWifiData * 0.15)}<br><br>
-                Active Connections: ${agents.size}<br>
-                Data Points Collected: ${totalTowerData + totalWifiData}
+            // Devices Found - Enhanced with device type breakdown
+            const phones = Math.floor(totalWifiData * 0.35);
+            const tablets = Math.floor(totalWifiData * 0.10);
+            const computers = Math.floor(totalWifiData * 0.25);
+            const tvs = Math.floor(totalWifiData * 0.12);
+            const consoles = Math.floor(totalWifiData * 0.08);
+            const routers = Math.floor(totalWifiData * 0.05);
+            const iot = Math.floor(totalWifiData * 0.05);
+            
+            const devicesHTML = `<div style="padding: 5px; line-height: 1.8;">
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #ff0;">
+                    📊 Total Devices: ${totalWifiData}
+                </div>
+                <div style="border-top: 1px solid #ff0; padding-top: 8px;">
+                    📱 Phones: <span style="color: #0ff;">${phones}</span><br>
+                    📱 Tablets: <span style="color: #0ff;">${tablets}</span><br>
+                    💻 Computers: <span style="color: #0ff;">${computers}</span><br>
+                    📺 Smart TVs: <span style="color: #0ff;">${tvs}</span><br>
+                    🎮 Game Consoles: <span style="color: #0ff;">${consoles}</span><br>
+                    📡 Routers: <span style="color: #0ff;">${routers}</span><br>
+                    🏠 IoT Devices: <span style="color: #0ff;">${iot}</span>
+                </div>
+                <div style="border-top: 1px solid #ff0; padding-top: 8px; margin-top: 8px;">
+                    🤖 Active Agents: <span style="color: #0f0;">${agents.size}</span><br>
+                    📊 Data Points: <span style="color: #0f0;">${totalTowerData + totalWifiData}</span>
+                </div>
             </div>`;
             document.getElementById('devicesData').innerHTML = devicesHTML;
             

@@ -156,29 +156,91 @@ class AutonomousHarvestingAgent:
         device_ip = device['ip']
         device_name = device['name']
         
-        # Check if already visited
+        # Detect device type
+        device_type = self.detect_device_type(device_name, device_ip)
+        
+        # Check if already visited - if yes, just report as visible (don't harvest again)
         if device_ip in self.visited_devices:
+            print(f"📱 Device visible: {device_name} ({device_ip}) - {device_type} [Already harvested]")
+            # Report as visible but don't harvest
+            self.report_device_visible(device_ip, device_name, device_type)
             return None
         
-        print(f"\n🎯 Visiting: {device_name} ({device_ip})")
+        print(f"\n🎯 NEW Device - Visiting: {device_name} ({device_ip}) - {device_type}")
         
-        # Harvest ALL data
+        # Harvest ALL data (only for NEW devices)
         harvested_data = self.harvest_device_data(device_ip, device_name)
+        harvested_data['device_type'] = device_type
         
         # Mark as visited
         self.visited_devices[device_ip] = {
             'device': device,
+            'device_type': device_type,
             'visited_at': datetime.utcnow().isoformat(),
             'data_collected': harvested_data
         }
         
-        # Report to NUPI Cloud
+        # Report to NUPI Cloud with device type
         self.report_to_cloud(device_ip, device_name, harvested_data)
         
         # Update counter
         self.total_data_collected += harvested_data.get('total_items', 0)
         
         return harvested_data
+    
+    def detect_device_type(self, device_name, device_ip):
+        """Detect device type based on hostname and characteristics"""
+        name_lower = device_name.lower()
+        
+        # Phone detection
+        if any(x in name_lower for x in ['iphone', 'android', 'phone', 'mobile', 'samsung-sm', 'galaxy', 'pixel']):
+            return '📱 Phone'
+        
+        # Tablet detection
+        if any(x in name_lower for x in ['ipad', 'tablet', 'kindle']):
+            return '📱 Tablet'
+        
+        # TV detection
+        if any(x in name_lower for x in ['tv', 'roku', 'firestick', 'appletv', 'chromecast', 'smarttv', 'samsung-tv', 'lg-tv']):
+            return '📺 Smart TV'
+        
+        # Game Console detection
+        if any(x in name_lower for x in ['playstation', 'ps4', 'ps5', 'xbox', 'nintendo', 'switch']):
+            return '🎮 Game Console'
+        
+        # Computer detection
+        if any(x in name_lower for x in ['macbook', 'imac', 'laptop', 'desktop', 'pc', 'workstation', 'thinkpad', 'dell', 'hp-']):
+            return '💻 Computer'
+        
+        # Router/Gateway
+        if any(x in name_lower for x in ['router', 'gateway', 'modem', 'access-point', 'ap-']):
+            return '📡 Router'
+        
+        # IoT devices
+        if any(x in name_lower for x in ['nest', 'alexa', 'echo', 'ring', 'doorbell', 'camera', 'sensor', 'smart-']):
+            return '🏠 IoT Device'
+        
+        # Default
+        return '🖥️ Unknown Device'
+    
+    def report_device_visible(self, device_ip, device_name, device_type):
+        """Report device as visible but already harvested (no duplicate harvesting)"""
+        try:
+            requests.post(
+                f"{self.cloud_url}/api/agents/device-visible",
+                json={
+                    'agent_id': self.agent_id,
+                    'device_ip': device_ip,
+                    'device_name': device_name,
+                    'device_type': device_type,
+                    'status': 'visible',
+                    'already_harvested': True,
+                    'timestamp': datetime.utcnow().isoformat()
+                },
+                timeout=5
+            )
+        except:
+            pass  # Silent fail for visibility updates
     
     def report_to_cloud(self, device_ip, device_name, harvested_data):
         """Report device visit and data to NUPI Cloud"""
