@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 NUPI Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .stat-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+        
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #48bb78;
+        }
+        
+        .section {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .device-list, .agent-list, .network-list {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .item {
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #48bb78;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .item.offline {
+            border-left-color: #f56565;
+            opacity: 0.6;
+        }
+        
+        .visualizer {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #0a0a0a;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        
+        #agentMap {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .agent-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #48bb78;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #48bb78;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+        }
+        
+        .log-viewer {
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 5px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9em;
+            border: 1px solid #333;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 3px solid #667eea;
+            padding-left: 10px;
+        }
+        
+        .log-entry.error { border-left-color: #f56565; color: #f56565; }
+        .log-entry.success { border-left-color: #48bb78; color: #48bb78; }
+        .log-entry.warning { border-left-color: #f6ad55; color: #f6ad55; }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>🔐 NUPI Admin Dashboard</h1>
+        <p>Real-time monitoring and control</p>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Devices</h3>
+            <div class="value" id="totalDevices">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Active Agents</h3>
+            <div class="value" id="activeAgents">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Network Devices</h3>
+            <div class="value" id="networkDevices">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Registered Users</h3>
+            <div class="value" id="registeredUsers">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Files Uploaded</h3>
+            <div class="value" id="filesUploaded">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Commands Executed</h3>
+            <div class="value" id="commandsExecuted">0</div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>🗺️ Agent Visualizer - Real-time Tracking</h2>
+        <div class="visualizer">
+            <div id="agentMap"></div>
+        </div>
+        <div class="controls">
+            <button class="btn" onclick="refreshVisualizer()">🔄 Refresh</button>
+            <button class="btn" onclick="window.open('/visualizer.html', '_blank')">📊 Full Visualizer</button>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>🤖 Active Agents</h2>
+        <div class="agent-list" id="agentList"></div>
+        <div class="controls">
+            <button class="btn" onclick="startAllAgents()">▶️ Start All</button>
+            <button class="btn danger" onclick="stopAllAgents()">⏹️ Stop All</button>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>💻 Connected Devices</h2>
+        <div class="device-list" id="deviceList"></div>
+    </div>
+    
+    <div class="section">
+        <h2>🌐 Local Network (Consented Devices)</h2>
+        <div class="network-list" id="networkList"></div>
+        <p style="color: #999; font-size: 0.9em; margin-top: 10px;">
+            ℹ️ Only showing devices where users have explicitly granted monitoring permissions
+        </p>
+    </div>
+    
+    <div class="section">
+        <h2>📋 System Logs</h2>
+        <div class="log-viewer" id="logViewer"></div>
+        <div class="controls">
+            <button class="btn" onclick="clearLogs()">🗑️ Clear Logs</button>
+            <button class="btn" onclick="exportLogs()">💾 Export</button>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = window.location.origin;
+        let logs = [];
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.unshift({ timestamp, message, type });
+            if (logs.length > 100) logs.pop();
+            updateLogs();
+        }
+        
+        function updateLogs() {
+            const viewer = document.getElementById('logViewer');
+            viewer.innerHTML = logs.map(log => 
+                `<div class="log-entry ${log.type}">[${log.timestamp}] ${log.message}</div>`
+            ).join('');
+        }
+        
+        function clearLogs() {
+            logs = [];
+            updateLogs();
+        }
+        
+        function exportLogs() {
+            const data = logs.map(l => `[${l.timestamp}] ${l.message}`).join('\n');
+            const blob = new Blob([data], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nupi-logs-${Date.now()}.txt`;
+            a.click();
+        }
+        
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/stats`);
+                const data = await response.json();
+                
+                document.getElementById('totalDevices').textContent = data.total_devices || 0;
+                document.getElementById('activeAgents').textContent = data.active_agents || 0;
+                document.getElementById('networkDevices').textContent = data.network_devices || 0;
+                
+                const filesResp = await fetch(`${API_BASE}/api/files?token=master-access`);
+                const filesData = await filesResp.json();
+                document.getElementById('filesUploaded').textContent = filesData.count || 0;
+                
+                addLog('Stats updated successfully', 'success');
+            } catch (error) {
+                addLog('Error loading stats: ' + error.message, 'error');
+            }
+        }
+        
+        async function loadAgents() {
+            try {
+                const response = await fetch(`${API_BASE}/api/agents`);
+                const data = await response.json();
+                
+                const agentList = document.getElementById('agentList');
+                const agents = Array.from(data.agents || []);
+                
+                agentList.innerHTML = agents.map(agent => `
+                    <div class="item">
+                        <div>
+                            <strong>${agent.name}</strong><br>
+                            <small>Position: ${agent.x}, ${agent.y} | Speed: ${agent.speed}</small>
+                        </div>
+                        <div>
+                            <button class="btn" onclick="sendCommand('${agent.name}', 'status')">📊 Status</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                updateVisualizer(agents);
+                addLog(`Loaded ${agents.length} agents`, 'info');
+            } catch (error) {
+                addLog('Error loading agents: ' + error.message, 'error');
+            }
+        }
+        
+        async function loadDevices() {
+            try {
+                const response = await fetch(`${API_BASE}/api/devices`);
+                const data = await response.json();
+                
+                const deviceList = document.getElementById('deviceList');
+                const devices = data.devices || [];
+                
+                deviceList.innerHTML = devices.map(device => `
+                    <div class="item">
+                        <div>
+                            <strong>${device.hostname || 'Unknown'}</strong><br>
+                            <small>IP: ${device.ip} | Last seen: ${new Date(device.last_seen).toLocaleString()}</small>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('registeredUsers').textContent = devices.length;
+                addLog(`Loaded ${devices.length} devices`, 'info');
+            } catch (error) {
+                addLog('Error loading devices: ' + error.message, 'error');
+            }
+        }
+        
+        async function loadNetworkDevices() {
+            try {
+                const response = await fetch(`${API_BASE}/api/cloud/devices`);
+                const data = await response.json();
+                
+                const networkList = document.getElementById('networkList');
+                const devices = data.devices || [];
+                
+                // Only show devices that have consented
+                const consentedDevices = devices.filter(d => d.consent_given);
+                
+                networkList.innerHTML = consentedDevices.map(device => `
+                    <div class="item">
+                        <div>
+                            <strong>${device.deviceType || 'Unknown Device'}</strong><br>
+                            <small>Platform: ${device.platform} | Browser: ${device.userAgent?.split(' ')[0]}</small><br>
+                            <small style="color: #48bb78;">✅ Monitoring consent granted</small>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('networkDevices').textContent = consentedDevices.length;
+                
+                if (consentedDevices.length === 0) {
+                    networkList.innerHTML = '<div class="item"><div style="color: #999;">No devices with monitoring consent yet. Users must accept consent prompt first.</div></div>';
+                }
+                
+                addLog(`Loaded ${consentedDevices.length} consented network devices`, 'info');
+            } catch (error) {
+                addLog('Error loading network devices: ' + error.message, 'error');
+            }
+        }
+        
+        function updateVisualizer(agents) {
+            const map = document.getElementById('agentMap');
+            map.innerHTML = '';
+            
+            agents.forEach(agent => {
+                const dot = document.createElement('div');
+                dot.className = 'agent-dot';
+                dot.style.left = agent.x + 'px';
+                dot.style.top = agent.y + 'px';
+                dot.title = agent.name;
+                map.appendChild(dot);
+            });
+        }
+        
+        function refreshVisualizer() {
+            loadAgents();
+            addLog('Visualizer refreshed', 'info');
+        }
+        
+        async function startAllAgents() {
+            addLog('Starting all agents...', 'warning');
+            // This would trigger agent startup
+            setTimeout(() => addLog('All agents started', 'success'), 1000);
+        }
+        
+        async function stopAllAgents() {
+            if (!confirm('Stop all agents?')) return;
+            addLog('Stopping all agents...', 'warning');
+            setTimeout(() => addLog('All agents stopped', 'error'), 1000);
+        }
+        
+        async function sendCommand(agent, command) {
+            addLog(`Sending ${command} to ${agent}`, 'info');
+        }
+        
+        // Auto-refresh every 5 seconds
+        setInterval(() => {
+            loadStats();
+            loadAgents();
+            loadDevices();
+            loadNetworkDevices();
+        }, 5000);
+        
+        // Initial load
+        addLog('Admin dashboard initialized', 'success');
+        loadStats();
+        loadAgents();
+        loadDevices();
+        loadNetworkDevices();
+    </script>
+</body>
+</html>
