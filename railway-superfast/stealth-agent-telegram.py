@@ -544,16 +544,17 @@ volup, voldown
         self.send_telegram(msg)
     
     def cmd_travel(self):
-        """Travel to T-Mobile cellular towers"""
-        self.send_telegram("🌍 *Traveling to T-Mobile Towers Worldwide...*")
-        count = self.travel_cellular_towers()
-        msg = f"""
-✅ *Worldwide Travel Complete*
+        """LOCAL NETWORK ONLY - No fake travel"""
+        msg = """
+⚠️ *LOCAL NETWORK ONLY*
 
-Towers Visited: {count}
-Regions: Global, US-East, US-West
+This agent ONLY scans:
+• Your network: 192.168.12.x
+• Real devices: 255+
+• No external connections
+• No fake cellular towers
 
-Agent can now hop between WiFi and cellular networks!
+Use /scan to see real local devices
 """
         self.send_telegram(msg)
     
