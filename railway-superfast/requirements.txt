@@ -5,3 +5,4 @@ psutil==5.9.6
 user-agents==2.2.0
 python-dotenv==1.0.0
 flask-cors==4.0.0
+anthropic==0.39.0

@@ -7113,207 +7113,501 @@ Real-World Features:
 
     </script>
 
-    <!-- NUPI AI CHAT WIDGET -->
-    <style>
-        #nupi-chat-widget {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: all 0.3s ease;
+    <!-- NUPI AI CHAT WIDGET - Professional & Adjustable -->
+<style>
+    /* Chat Widget Button */
+    #nupi-chat-btn {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999999;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+    }
+    #nupi-chat-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 12px 48px rgba(102, 126, 234, 0.6);
+    }
+    #nupi-chat-btn svg {
+        width: 32px;
+        height: 32px;
+        fill: white;
+    }
+    #nupi-chat-btn.active {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+    
+    /* Chat Container - Adjustable */
+    #nupi-chat-window {
+        position: fixed;
+        bottom: 100px;
+        right: 24px;
+        width: 420px;
+        height: 650px;
+        background: #1a1a2e;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        display: none;
+        flex-direction: column;
+        z-index: 999998;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        resize: both;
+        min-width: 320px;
+        min-height: 400px;
+        max-width: 800px;
+        max-height: 900px;
+    }
+    #nupi-chat-window.open {
+        display: flex;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        #nupi-chat-window {
+            width: calc(100vw - 20px) !important;
+            height: calc(100vh - 120px) !important;
+            right: 10px;
+            bottom: 80px;
+            max-width: none !important;
+            resize: none;
         }
-        #nupi-chat-widget:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        #nupi-chat-btn {
+            right: 16px;
+            bottom: 16px;
         }
-        #nupi-chat-widget svg {
-            width: 30px;
-            height: 30px;
-            fill: white;
-        }
-        #nupi-chat-container {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 380px;
-            height: 550px;
-            background: #1a1a2e;
-            border-radius: 20px;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
-            display: none;
-            flex-direction: column;
-            z-index: 9999;
-            overflow: hidden;
-        }
-        #nupi-chat-container.active {
-            display: flex;
-        }
-        .nupi-chat-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            color: white;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .nupi-chat-close {
-            cursor: pointer;
-            font-size: 24px;
-            line-height: 20px;
-        }
-        .nupi-chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: #16213e;
-        }
-        .nupi-message {
-            margin-bottom: 15px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            max-width: 80%;
-            animation: slideIn 0.3s ease;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .nupi-message.user {
-            background: #667eea;
-            color: white;
-            margin-left: auto;
-            text-align: right;
-        }
-        .nupi-message.agent {
-            background: #0f3460;
-            color: #e0e0e0;
-        }
-        .nupi-chat-input-container {
-            padding: 20px;
-            background: #1a1a2e;
-            border-top: 1px solid #2d2d44;
-        }
-        .nupi-chat-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #667eea;
-            border-radius: 25px;
-            background: #16213e;
-            color: white;
-            font-size: 14px;
-            outline: none;
-        }
-        .nupi-chat-input::placeholder {
-            color: #8b8b9f;
-        }
-    </style>
+    }
+    
+    /* Header with Controls */
+    .nupi-chat-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: move;
+        user-select: none;
+    }
+    .nupi-chat-title {
+        font-weight: 600;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .nupi-chat-status {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    .nupi-chat-controls {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+    .nupi-chat-control-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    .nupi-chat-control-btn:hover {
+        background: rgba(255,255,255,0.3);
+    }
+    .nupi-chat-control-btn svg {
+        width: 16px;
+        height: 16px;
+        fill: white;
+    }
+    
+    /* Messages Area */
+    .nupi-messages-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: #16213e;
+        scrollbar-width: thin;
+        scrollbar-color: #667eea #16213e;
+    }
+    .nupi-messages-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    .nupi-messages-container::-webkit-scrollbar-track {
+        background: #16213e;
+    }
+    .nupi-messages-container::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 4px;
+    }
+    
+    .nupi-msg {
+        margin-bottom: 16px;
+        animation: msgSlideIn 0.3s ease;
+        max-width: 85%;
+    }
+    @keyframes msgSlideIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .nupi-msg.user {
+        margin-left: auto;
+    }
+    .nupi-msg-content {
+        padding: 14px 18px;
+        border-radius: 16px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    .nupi-msg.user .nupi-msg-content {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-bottom-right-radius: 4px;
+        margin-left: auto;
+    }
+    .nupi-msg.agent .nupi-msg-content {
+        background: #0f3460;
+        color: #e0e0e0;
+        border-bottom-left-radius: 4px;
+    }
+    .nupi-msg-time {
+        font-size: 11px;
+        color: #8b8b9f;
+        margin-top: 4px;
+        padding: 0 4px;
+    }
+    .nupi-typing {
+        display: flex;
+        gap: 4px;
+        padding: 12px 18px;
+        background: #0f3460;
+        border-radius: 16px;
+        width: fit-content;
+    }
+    .nupi-typing span {
+        width: 8px;
+        height: 8px;
+        background: #667eea;
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+    }
+    .nupi-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .nupi-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-10px); }
+    }
+    
+    /* Input Area */
+    .nupi-input-area {
+        padding: 20px;
+        background: #1a1a2e;
+        border-top: 1px solid #2d2d44;
+    }
+    .nupi-input-wrapper {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+    #nupi-input {
+        flex: 1;
+        padding: 14px 18px;
+        border: 2px solid #667eea;
+        border-radius: 24px;
+        background: #16213e;
+        color: white;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.2s;
+    }
+    #nupi-input:focus {
+        border-color: #764ba2;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    #nupi-input::placeholder {
+        color: #8b8b9f;
+    }
+    #nupi-send-btn {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    #nupi-send-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    }
+    #nupi-send-btn svg {
+        width: 20px;
+        height: 20px;
+        fill: white;
+    }
+    
+    /* Quick Actions */
+    .nupi-quick-actions {
+        display: flex;
+        gap: 8px;
+        padding: 12px 20px;
+        overflow-x: auto;
+        background: #1a1a2e;
+    }
+    .nupi-quick-btn {
+        padding: 8px 16px;
+        background: #16213e;
+        border: 1px solid #667eea;
+        border-radius: 20px;
+        color: #667eea;
+        font-size: 13px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+    .nupi-quick-btn:hover {
+        background: #667eea;
+        color: white;
+    }
+</style>
 
-    <div id="nupi-chat-widget" onclick="toggleNupiChat()">
-        <svg viewBox="0 0 24 24">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
-        </svg>
-    </div>
+<!-- Chat Button -->
+<button id="nupi-chat-btn" onclick="nupiToggleChat()">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+</button>
 
-    <div id="nupi-chat-container">
-        <div class="nupi-chat-header">
-            <span>🤖 NUPI AI Agent</span>
-            <span class="nupi-chat-close" onclick="toggleNupiChat()">×</span>
+<!-- Chat Window -->
+<div id="nupi-chat-window">
+    <div class="nupi-chat-header" id="nupi-drag-header">
+        <div class="nupi-chat-title">
+            <span class="nupi-chat-status"></span>
+            🤖 NUPI AI Agent
         </div>
-        <div class="nupi-chat-messages" id="nupi-messages">
-            <div class="nupi-message agent">
-                👋 Hi! I'm your NUPI AI Agent. I can help you with:
-                <br>• Agent status & monitoring
-                <br>• Device tracking
-                <br>• System information
-                <br>• Real-time data insights
+        <div class="nupi-chat-controls">
+            <button class="nupi-chat-control-btn" onclick="nupiMinimize()" title="Minimize">
+                <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg>
+            </button>
+            <button class="nupi-chat-control-btn" onclick="nupiToggleChat()" title="Close">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+        </div>
+    </div>
+    
+    <div class="nupi-messages-container" id="nupi-messages">
+        <div class="nupi-msg agent">
+            <div class="nupi-msg-content">
+                👋 <strong>Hi! I'm your NUPI AI Agent</strong><br><br>
+                I have complete capabilities including:<br>
+                ✅ Real-time system monitoring<br>
+                ✅ Agent & device tracking<br>
+                ✅ Claude AI integration<br>
+                ✅ Web search & analysis<br>
+                ✅ Command execution<br><br>
+                <strong>Try asking me anything!</strong>
             </div>
-        </div>
-        <div class="nupi-chat-input-container">
-            <input type="text" class="nupi-chat-input" id="nupi-chat-input" 
-                   placeholder="Ask me anything..." 
-                   onkeypress="if(event.key==='Enter') sendNupiMessage()">
+            <div class="nupi-msg-time">Just now</div>
         </div>
     </div>
+    
+    <div class="nupi-quick-actions">
+        <button class="nupi-quick-btn" onclick="nupiQuickSend('How many agents are active?')">📊 Agent Status</button>
+        <button class="nupi-quick-btn" onclick="nupiQuickSend('Show device count')">🔍 Devices</button>
+        <button class="nupi-quick-btn" onclick="nupiQuickSend('System health check')">💚 Health</button>
+        <button class="nupi-quick-btn" onclick="nupiQuickSend('Help me')">❓ Help</button>
+    </div>
+    
+    <div class="nupi-input-area">
+        <div class="nupi-input-wrapper">
+            <input type="text" id="nupi-input" placeholder="Ask me anything..." onkeypress="if(event.key==='Enter') nupiSend()">
+            <button id="nupi-send-btn" onclick="nupiSend()">
+                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
 
-    <script>
-        function toggleNupiChat() {
-            const container = document.getElementById('nupi-chat-container');
-            container.classList.toggle('active');
-            if (container.classList.contains('active')) {
-                document.getElementById('nupi-chat-input').focus();
-            }
+<script>
+// Chat State
+let nupiChatOpen = false;
+let nupiConversationHistory = [];
+let nupiDragEnabled = false;
+let nupiDragPos = {x: 0, y: 0};
+
+// Toggle Chat
+function nupiToggleChat() {
+    nupiChatOpen = !nupiChatOpen;
+    const window = document.getElementById('nupi-chat-window');
+    const btn = document.getElementById('nupi-chat-btn');
+    
+    if (nupiChatOpen) {
+        window.classList.add('open');
+        btn.classList.add('active');
+        document.getElementById('nupi-input').focus();
+    } else {
+        window.classList.remove('open');
+        btn.classList.remove('active');
+    }
+}
+
+// Minimize
+function nupiMinimize() {
+    nupiToggleChat();
+}
+
+// Quick Send
+function nupiQuickSend(message) {
+    document.getElementById('nupi-input').value = message;
+    nupiSend();
+}
+
+// Send Message
+async function nupiSend() {
+    const input = document.getElementById('nupi-input');
+    const message = input.value.trim();
+    if (!message) return;
+    
+    // Add user message
+    nupiAddMessage(message, 'user');
+    input.value = '';
+    
+    // Add to history
+    nupiConversationHistory.push({role: 'user', content: message});
+    
+    // Show typing indicator
+    nupiShowTyping();
+    
+    try {
+        const response = await fetch('/api/ai/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                message: message,
+                history: nupiConversationHistory
+            })
+        });
+        
+        const data = await response.json();
+        
+        // Remove typing
+        nupiHideTyping();
+        
+        // Add AI response
+        nupiAddMessage(data.response, 'agent');
+        
+        // Update history
+        nupiConversationHistory.push({role: 'assistant', content: data.response});
+        
+        // Keep history reasonable size
+        if (nupiConversationHistory.length > 20) {
+            nupiConversationHistory = nupiConversationHistory.slice(-20);
         }
+        
+    } catch (error) {
+        console.error('NUPI AI Error:', error);
+        nupiHideTyping();
+        nupiAddMessage('⚠️ Connection error. Please check your internet and try again.', 'agent');
+    }
+}
 
-        async function sendNupiMessage() {
-            const input = document.getElementById('nupi-chat-input');
-            const message = input.value.trim();
-            if (!message) return;
+// Add Message
+function nupiAddMessage(text, type) {
+    const container = document.getElementById('nupi-messages');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `nupi-msg ${type}`;
+    
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+    
+    msgDiv.innerHTML = `
+        <div class="nupi-msg-content">${text}</div>
+        <div class="nupi-msg-time">${time}</div>
+    `;
+    
+    container.appendChild(msgDiv);
+    container.scrollTop = container.scrollHeight;
+}
 
-            // Add user message
-            addNupiMessage(message, 'user');
-            input.value = '';
+// Typing Indicator
+let typingDiv = null;
+function nupiShowTyping() {
+    const container = document.getElementById('nupi-messages');
+    typingDiv = document.createElement('div');
+    typingDiv.className = 'nupi-msg agent';
+    typingDiv.id = 'nupi-typing-indicator';
+    typingDiv.innerHTML = '<div class="nupi-typing"><span></span><span></span><span></span></div>';
+    container.appendChild(typingDiv);
+    container.scrollTop = container.scrollHeight;
+}
 
-            // Show typing indicator
-            addNupiMessage('🤖 Thinking...', 'agent', 'typing-indicator');
+function nupiHideTyping() {
+    if (typingDiv) {
+        typingDiv.remove();
+        typingDiv = null;
+    }
+}
 
-            try {
-                // Call real AI backend
-                const response = await fetch('/api/ai/chat', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({message: message})
-                });
-                
-                const data = await response.json();
-                
-                // Remove typing indicator
-                const typingIndicator = document.querySelector('.typing-indicator');
-                if (typingIndicator) typingIndicator.remove();
-                
-                // Add AI response
-                addNupiMessage(data.response, 'agent');
-                
-            } catch (error) {
-                console.error('AI Error:', error);
-                const typingIndicator = document.querySelector('.typing-indicator');
-                if (typingIndicator) typingIndicator.remove();
-                addNupiMessage('⚠️ Connection error. Please try again.', 'agent');
-            }
-        }
+// Draggable Window (Desktop only)
+const header = document.getElementById('nupi-drag-header');
+const chatWindow = document.getElementById('nupi-chat-window');
 
-        function addNupiMessage(text, type, extraClass = '') {
-            const messagesDiv = document.getElementById('nupi-messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `nupi-message ${type} ${extraClass}`;
-            messageDiv.innerHTML = text;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
+header.addEventListener('mousedown', (e) => {
+    if (window.innerWidth <= 768) return; // Disable on mobile
+    nupiDragEnabled = true;
+    nupiDragPos = {
+        x: e.clientX - chatWindow.offsetLeft,
+        y: e.clientY - chatWindow.offsetTop
+    };
+    header.style.cursor = 'grabbing';
+});
 
-         active agents</strong> across the network. All systems operational!`;
-            }
-            if (message.includes('device') || message.includes('track')) {
-                return `🔍 Found <strong>${document.querySelectorAll('.stat-value')[1]?.textContent || '0'} devices</strong> on the network. Real-time monitoring active.`;
-            }
-            if (message.includes('help') || message.includes('what')) {
-                return `I can help you monitor:<br>• Active agents & their locations<br>• Network devices<br>• System health<br>• Real-time data collection<br><br>Try asking about agents or devices!`;
-            }
-            if (message.includes('hello') || message.includes('hi')) {
-                return `👋 Hello! Your NUPI Cloud Agent is running smoothly. How can I assist you today?`;
-            }
-            return `🤖 I understand you're asking about "${message}". The NUPI system is actively monitoring all agents and collecting real-time data. Check the dashboard for live stats!`;
-        }
-    </script>
+document.addEventListener('mousemove', (e) => {
+    if (!nupiDragEnabled) return;
+    e.preventDefault();
+    chatWindow.style.right = 'auto';
+    chatWindow.style.bottom = 'auto';
+    chatWindow.style.left = (e.clientX - nupiDragPos.x) + 'px';
+    chatWindow.style.top = (e.clientY - nupiDragPos.y) + 'px';
+});
+
+document.addEventListener('mouseup', () => {
+    nupiDragEnabled = false;
+    header.style.cursor = 'move';
+});
+
+// Keyboard shortcut: Ctrl/Cmd + K to open chat
+document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        if (!nupiChatOpen) nupiToggleChat();
+    }
+});
+
+console.log('🤖 NUPI AI Chat Widget loaded - Press Ctrl/Cmd+K to open');
+</script>
 
 </body>
 </html>
