@@ -333,7 +333,9 @@
             z-index: 999;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
             transition: transform 0.3s ease, opacity 0.3s ease;
-        }
+        
+            display: none;
+            display: none;}
         .controls-panel.collapsed {
             transform: translateX(-350px);
             opacity: 0.2;
@@ -526,7 +528,9 @@
             padding: 15px;
             z-index: 5000;
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
-        }
+        
+            display: none;
+            display: none;}
         
         .menu-btn {
             display: block;
@@ -557,6 +561,58 @@
         /* Hide panels by default */
         .controls-panel.hidden {
             display: none !important;
+        }
+
+    
+        /* Always-visible toggle button */
+        .show-menu-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #0ff, #08f);
+            border: 2px solid #0ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            z-index: 10000;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .show-menu-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(0, 255, 255, 1);
+        }
+
+    
+        /* Always-visible toggle button */
+        .show-menu-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #0ff, #08f);
+            border: 2px solid #0ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            z-index: 10000;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .show-menu-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(0, 255, 255, 1);
         }
 
     </style>
@@ -602,6 +658,14 @@
         </div>
         
         
+    
+    <!-- Always-visible menu toggle button -->
+    <button class="show-menu-btn" onclick="toggleMainMenu()" title="Show Menu">☰</button>
+
+    
+    <!-- Always-visible menu toggle button -->
+    <button class="show-menu-btn" onclick="toggleMainMenu()" title="Show Menu">☰</button>
+
     <!-- Floating Menu -->
     <div class="floating-menu" id="floatingMenu">
         <button class="menu-btn" onclick="togglePanel('controlsPanel')">🎮 Controls</button>
@@ -2082,6 +2146,32 @@
                 if (panel) panel.classList.add('hidden');
             });
         });
+
+
+        function toggleMainMenu() {
+            const menu = document.getElementById('floatingMenu');
+            const controls = document.getElementById('controlsPanel');
+            
+            if (menu.style.display === 'none' || !menu.style.display) {
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = 'none';
+                if (controls) controls.style.display = 'none';
+            }
+        }
+
+
+        function toggleMainMenu() {
+            const menu = document.getElementById('floatingMenu');
+            const controls = document.getElementById('controlsPanel');
+            
+            if (menu.style.display === 'none' || !menu.style.display) {
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = 'none';
+                if (controls) controls.style.display = 'none';
+            }
+        }
 
     </script>
     
