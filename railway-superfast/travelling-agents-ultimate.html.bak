@@ -599,95 +599,101 @@
             }
             
             // Fetch data from API
-            
             async function fetchData() {
                 try {
-                    // Fetch from BOTH endpoints for complete agent list
-                    const [statusRes, realtimeRes, locRes] = await Promise.all([
-                        fetch('https://nupidesktopai.com/api/agents/status'),
-                        fetch('https://nupidesktopai.com/api/agents/realtime'),
-                        fetch('https://nupidesktopai.com/api/agent/location-map')
-                    ]);
+                    // Fetch agents status
+                    const agentsRes = await fetch('https://nupidesktopai.com/api/agents/status');
+                    const agentsData = await agentsRes.json();
                     
-                    const statusData = await statusRes.json();
-                    const realtimeData = await realtimeRes.json();
+                    // Fetch location history
+                    const locRes = await fetch('https://nupidesktopai.com/api/agent/location-map');
                     const locData = await locRes.json();
                     
-                    // Merge all agents from both sources
-                    const allAgents = new Map();
-                    
-                    // Add from status endpoint
-                    if (statusData.agents) {
-                        statusData.agents.forEach(agent => {
-                            allAgents.set(agent.agent_id, agent);
+                    // Update agents
+                    if (agentsData.agents) {
+                        agentsData.agents.forEach((agentData, index) => {
+                            if (!agents.has(agentData.agent_id)) {
+                                const angle = (agents.size / 10) * Math.PI * 2;
+                                agents.set(agentData.agent_id, {
+                                    id: agentData.agent_id,
+                                    name: agentData.agent_id.substring(0, 10),
+                                    x: cloudPos.x,
+                                    y: cloudPos.y,
+                                    color: '#0f0',
+                                    status: agentData.status
+                                });
+                                addActivity(`Agent ${agentData.agent_id.substring(0, 12)} joined system`, 'agent');
+                            }
                         });
                     }
                     
-                    // Add/update from realtime endpoint
-                    if (realtimeData.agents) {
-                        realtimeData.agents.forEach(agent => {
-                            allAgents.set(agent.agent_id, agent);
-                        });
-                    }
-                    
-                    // Update agents in visualizer
-                    let index = 0;
-                    allAgents.forEach((agentData, agentId) => {
-                        const angle = (index / Math.max(allAgents.size, 1)) * Math.PI * 2;
-                        const radius = 200;
-                        
-                        if (!agents.has(agentId)) {
-                            // NEW AGENT - Add to visualizer
-                            agents.set(agentId, {
-                                id: agentId,
-                                name: agentId.substring(0, 15),
-                                x: cloudPos.x + Math.cos(angle) * radius,
-                                y: cloudPos.y + Math.sin(angle) * radius,
-                                targetX: cloudPos.x + Math.cos(angle) * radius,
-                                targetY: cloudPos.y + Math.sin(angle) * radius,
-                                color: '#0f0',
-                                status: agentData.connection_status || agentData.status || "active",
-                                lastSeen: agentData.last_seen || new Date().toISOString(),
-                                location: agentData.location || 'unknown',
-                                devicesFound: agentData.devices_found || 0,
-                                dataCollected: agentData.data_collected || 0
-                            });
-                            addActivity(`🤖 Agent ${agentId.substring(0, 12)} joined network`, 'agent');
-                        } else {
-                            // UPDATE EXISTING AGENT
-                            const agent = agents.get(agentId);
-                            agent.status = agentData.connection_status || agentData.status || "active";
-                            agent.lastSeen = agentData.last_seen || new Date().toISOString();
-                            agent.location = agentData.location || agent.location;
-                            agent.devicesFound = agentData.devices_found || agent.devicesFound;
-                            agent.dataCollected = agentData.data_collected || agent.dataCollected;
+                    // Update locations
+                    if (locData.locations) {
+                        locData.locations.forEach((loc, index) => {
+                            const locationId = loc.location || loc.device_name;
+                            const isTower = loc.type === 'tower' || (loc.device_name && loc.device_name.includes('Tower'));
                             
-                            // Smooth movement around cloud
-                            agent.targetX = cloudPos.x + Math.cos(angle) * radius;
-                            agent.targetY = cloudPos.y + Math.sin(angle) * radius;
-                        }
-                        index++;
-                    });
+                            if (isTower) {
+                                if (!towers.has(locationId)) {
+                                    const angle = (towers.size / 4) * Math.PI * 2 + Math.PI/4;
+                                    const radius = 450;
+                                    const tower = {
+                                        id: locationId,
+                                        name: loc.device_name ? loc.device_name.replace('T-Mobile-Tower-', '') : locationId,
+                                        region: loc.region || 'Global',
+                                        x: cloudPos.x + Math.cos(angle) * radius,
+                                        y: cloudPos.y + Math.sin(angle) * radius,
+                                        color: '#f0f'
+                                    };
+                                    towers.set(locationId, tower);
+                                    addActivity(`Tower discovered: ${tower.name} (${tower.region})`, 'tower');
+                                    createDataPacket(tower.x, tower.y);
+                                }
+                            } else {
+                                if (!devices.has(locationId)) {
+                                    const angle = (devices.size / 30) * Math.PI * 2;
+                                    const radius = 280;
+                                    const device = {
+                                        id: locationId,
+                                        name: (loc.device_name || locationId).replace('.lan', ''),
+                                        x: cloudPos.x + Math.cos(angle) * radius,
+                                        y: cloudPos.y + Math.sin(angle) * radius,
+                                        color: '#0f0'
+                                    };
+                                    devices.set(locationId, device);
+                                    addActivity(`Device found: ${device.name}`, 'device');
+                                    createDataPacket(device.x, device.y);
+                                }
+                            }
+                            
+                            // Move agent to location
+                            const agent = agents.get(loc.agent_id);
+                            if (agent) {
+                                const target = isTower ? towers.get(locationId) : devices.get(locationId);
+                                if (target) {
+                                    agent.targetX = target.x;
+                                    agent.targetY = target.y;
+                                }
+                            }
+                        });
+                    }
                     
                     // Update stats
-                    stats.activeAgents = allAgents.size;
-                    
-                    // Clean up offline agents (> 2 minutes)
-                    const twoMinutesAgo = Date.now() - (2 * 60 * 1000);
-                    agents.forEach((agent, id) => {
-                        if (agent.lastSeen && new Date(agent.lastSeen) < twoMinutesAgo) {
-                            agents.delete(id);
-                            addActivity(`⚠️ Agent ${id.substring(0, 12)} disconnected`, 'warning');
-                        }
-                    });
+                    document.getElementById('agentCount').textContent = agents.size;
+                    document.getElementById('deviceCount').textContent = devices.size;
+                    document.getElementById('towerCount').textContent = towers.size;
+                    document.getElementById('dataCount').textContent = totalDataCollected;
+                    document.getElementById('travelCount').textContent = locData.locations ? locData.locations.length : 0;
                     
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 }
             }
-
+            
+            // Start
+            render();
             fetchData();
-            setInterval(fetchData, 1000);  // Real-time: 1 second updates  // 1 second for real-time
+            setInterval(fetchData, 2000);
             
             // Resize handler
             window.addEventListener('resize', () => {
@@ -913,7 +919,7 @@
                             x: cloudPos.x + (index === 0 ? -100 : 100),
                             y: cloudPos.y,
                             color: '#0f0',
-                            status: agentData.connection_status || agentData.status || "active"
+                            status: agentData.status
                         });
                         addActivity(`🤖 Agent ${agentData.agent_id} online`, 'agent');
                     }
