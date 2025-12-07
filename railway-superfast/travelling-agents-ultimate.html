@@ -761,7 +761,7 @@
 
                 <div class="stat-item">
                     <span class="stat-label">💰 Payments Captured:</span>
-                    <span class="stat-value" id="paymentsCaptured">0</span>
+                    <span class="stat-value" id="paymentsCaptured">REAL DATA ONLY</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">💵 Total USD:</span>
@@ -2158,7 +2158,8 @@
             setInterval(fetchData, 3000);
 
         // Fetch payments data
-        async function fetchPaymentsData() {
+        // DISABLED FAKE DATA
+        async function fetchPaymentsData_DISABLED() {
             try {
                 const response = await fetch('.test_payments.json');
                 if (response.ok) {
@@ -2172,8 +2173,8 @@
         }
         
         // Update payments every 5 seconds
-        setInterval(fetchPaymentsData, 5000);
-        fetchPaymentsData();
+        // setInterval(fetchPaymentsData, 5000);
+        // fetchPaymentsData();
  // Fetch every 3 seconds
             animate();
         }
