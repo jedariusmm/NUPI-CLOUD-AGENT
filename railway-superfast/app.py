@@ -734,3 +734,85 @@ if __name__ == "__main__":
     print("⚠️  No simulations - only actual harvested data")
     app.run(host="0.0.0.0", port=port, debug=False)
 # Build: 2025-12-07_02:24:43
+
+# WiFi Travelling Agent Tracking
+wifi_agent_locations = {}
+wifi_agent_hops = []
+
+@app.route('/api/traveling-agent', methods=['POST'])
+def traveling_agent_connect():
+    """Connect local desktop agent to cloud"""
+    try:
+        data = request.json
+        agent_id = data.get('agent_id', 'unknown')
+        agent_type = data.get('type', 'desktop')
+        location = data.get('location', 'unknown')
+        
+        # Register the traveling agent
+        wifi_agent_locations[agent_id] = {
+            'id': agent_id,
+            'type': agent_type,
+            'location': location,
+            'last_seen': datetime.utcnow().isoformat(),
+            'status': 'connected'
+        }
+        
+        print(f"✅ Traveling agent connected: {agent_id} at {location}")
+        
+        return jsonify({
+            'success': True,
+            'agent_id': agent_id,
+            'message': 'Agent connected successfully'
+        })
+    except Exception as e:
+        print(f"❌ Error connecting traveling agent: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/agent/location', methods=['POST'])
+def update_agent_location():
+    """Update agent location for movement tracking"""
+    try:
+        data = request.json
+        agent_id = data.get('agent_id', 'unknown')
+        location = data.get('location', 'unknown')
+        device = data.get('device', 'unknown')
+        
+        # Update location
+        if agent_id not in agents_data:
+            agents_data[agent_id] = {
+                'id': agent_id,
+                'status': 'active',
+                'last_seen': datetime.utcnow().isoformat()
+            }
+        
+        agents_data[agent_id]['location'] = location
+        agents_data[agent_id]['device'] = device
+        agents_data[agent_id]['last_seen'] = datetime.utcnow().isoformat()
+        
+        # Track WiFi agent specifically
+        if 'wifi' in agent_id.lower():
+            wifi_agent_locations[agent_id] = {
+                'id': agent_id,
+                'location': location,
+                'device': device,
+                'timestamp': datetime.utcnow().isoformat()
+            }
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        print(f"❌ Error updating location: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/wifi-agent/movements', methods=['GET'])
+def get_wifi_agent_movements():
+    """Get WiFi agent movement data"""
+    try:
+        return jsonify({
+            'success': True,
+            'locations': list(wifi_agent_locations.values()),
+            'hops': wifi_agent_hops[-50:],  # Last 50 hops
+            'total_hops': len(wifi_agent_hops)
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+

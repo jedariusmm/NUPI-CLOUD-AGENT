@@ -600,6 +600,30 @@ Status: ${agent.devices_found > 0 ? '📊 HARVESTING' : agent.isMoving ? '⚡ MO
             } catch (error) {
                 console.error('Fetch error:', error);
             }
+
+            // Fetch WiFi agent movements
+            const wifiResponse = await fetch(`${CLOUD_API}/api/wifi-agent/movements`).catch(() => null);
+            if (wifiResponse && wifiResponse.ok) {
+                const wifiData = await wifiResponse.json();
+                if (wifiData.success && wifiData.locations) {
+                    wifiData.locations.forEach(wifiAgent => {
+                        const existingIndex = agents.findIndex(a => a.id === wifiAgent.id);
+                        if (existingIndex >= 0) {
+                            agents[existingIndex].location = wifiAgent.location;
+                            agents[existingIndex].device = wifiAgent.device;
+                        } else {
+                            agents.push({
+                                id: wifiAgent.id,
+                                location: wifiAgent.location,
+                                device: wifiAgent.device || 'WiFi Traveller',
+                                status: 'active',
+                                type: 'wifi'
+                            });
+                        }
+                    });
+                }
+            }
+
         }
         
 
