@@ -86,6 +86,44 @@
             height: 100%;
         }
         
+        #legend {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.3);
+            z-index: 100;
+        }
+        
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .legend-icon {
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
         #info-bar-bottom {
             position: fixed;
             bottom: 0;
@@ -242,6 +280,29 @@
     <div id="dashboard">
         <div id="visualization-container">
             <canvas id="canvas"></canvas>
+            <div id="legend">
+                <div class="legend-title">LEGEND</div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #0ff; box-shadow: 0 0 15px #0ff;">☁️</div>
+                    <span>Cloud Hub</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #0f0; box-shadow: 0 0 15px #0f0;">🤖</div>
+                    <span>Agent</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #f0f; box-shadow: 0 0 15px #f0f;">📱</div>
+                    <span>Device</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #ff0; box-shadow: 0 0 15px #ff0;">⚡</div>
+                    <span>Moving</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #fa0; box-shadow: 0 0 15px #fa0;">📊</div>
+                    <span>Harvesting</span>
+                </div>
+            </div>
         </div>
         
         <div id="info-bar-bottom">
