@@ -256,22 +256,100 @@ Use /scan to find devices
         self.send_telegram(msg)
     
     def cmd_control(self, ip, action):
-        """Control a device"""
+        """Control a device with REAL commands"""
         if ip not in self.wifi_devices:
             self.send_telegram(f"⚠️ Device `{ip}` not found. Use /scan first.")
             return
         
         device = self.wifi_devices[ip]
-        msg = f"""
-🎮 *Controlling Device*
+        device_name = device['name'].lower()
+        
+        # REAL ROKU TV CONTROL
+        if 'roku' in device_name or 'tcl' in device_name or 'element' in device_name or 'hisense' in device_name:
+            result = self.control_roku_tv(ip, action)
+            msg = f"""
+📺 *REAL Roku TV Control*
+
+IP: `{ip}`
+Device: {device['name']}
+Command: {action}
+
+{result}
+"""
+        else:
+            # Generic device
+            msg = f"""
+🎮 *Device Control Attempted*
 
 IP: `{ip}`
 Name: {device['name']}
 Action: {action}
 
-✅ Command sent!
+⚠️ Device type not recognized for direct control.
+Roku TVs detected on network - use their IPs.
 """
+        
         self.send_telegram(msg)
+    
+    def control_roku_tv(self, ip, action):
+        """REAL Roku TV API Control"""
+        roku_port = 8060
+        base_url = f"http://{ip}:{roku_port}"
+        
+        # Roku keypress commands
+        roku_commands = {
+            'home': 'Home',
+            'back': 'Back',
+            'up': 'Up',
+            'down': 'Down',
+            'left': 'Left',
+            'right': 'Right',
+            'select': 'Select',
+            'ok': 'Select',
+            'play': 'Play',
+            'pause': 'Play',
+            'rewind': 'Rev',
+            'forward': 'Fwd',
+            'info': 'Info',
+            'power': 'PowerOff',
+            'poweroff': 'PowerOff',
+            'poweron': 'PowerOn',
+            'volumeup': 'VolumeUp',
+            'volumedown': 'VolumeDown',
+            'mute': 'VolumeMute',
+            'netflix': 'launch/12',
+            'hulu': 'launch/2285',
+            'youtube': 'launch/837',
+            'disney': 'launch/291097',
+            'prime': 'launch/13',
+            'hbo': 'launch/61322'
+        }
+        
+        action_lower = action.lower().strip()
+        
+        try:
+            if action_lower in roku_commands:
+                cmd = roku_commands[action_lower]
+                
+                # Launch app or send keypress
+                if cmd.startswith('launch/'):
+                    url = f"{base_url}/launch/{cmd.split('/')[1]}"
+                    response = requests.post(url, timeout=5)
+                else:
+                    url = f"{base_url}/keypress/{cmd}"
+                    response = requests.post(url, timeout=5)
+                
+                if response.status_code == 200:
+                    return f"✅ REAL Command Executed!\nSent: {action} to Roku TV"
+                else:
+                    return f"⚠️ Command sent but got response: {response.status_code}"
+            else:
+                # Show available commands
+                available = ', '.join(list(roku_commands.keys())[:15])
+                return f"⚠️ Unknown command: {action}\n\nAvailable: {available}..."
+                
+        except Exception as e:
+            return f"❌ Roku API Error: {str(e)}\nMake sure TV is on network."
     
     def cmd_shutdown(self, ip):
         """Shutdown device"""
