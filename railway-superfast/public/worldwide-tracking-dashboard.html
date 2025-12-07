@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Worldwide Visitor Tracking - NUPI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            padding: 2rem;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .subtitle { opacity: 0.8; font-size: 1.1rem; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #10b981;
+        }
+        .stat-label {
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+        
+        .visitors-table {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        th {
+            background: rgba(255,255,255,0.1);
+            font-weight: bold;
+        }
+        tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .country-flag {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+        .device-icon {
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .refresh-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+        .refresh-btn:hover {
+            background: #059669;
+        }
+        
+        .live-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌍 Worldwide Visitor Tracking</h1>
+        <div class="subtitle">
+            <span class="live-indicator"></span>
+            Live monitoring - All visitors to nupidesktopai.com
+        </div>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value" id="totalVisitors">0</div>
+            <div class="stat-label">Total Visitors</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="totalCountries">0</div>
+            <div class="stat-label">Countries</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="totalDevices">0</div>
+            <div class="stat-label">Devices</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="scanCount">0</div>
+            <div class="stat-label">Scans Completed</div>
+        </div>
+    </div>
+    
+    <button class="refresh-btn" onclick="loadData()">🔄 Refresh Data</button>
+    
+    <div class="visitors-table">
+        <h2 style="margin-bottom: 1rem;">Recent Visitors (Last 50)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Location</th>
+                    <th>IP Address</th>
+                    <th>Device</th>
+                    <th>Browser</th>
+                    <th>Page</th>
+                </tr>
+            </thead>
+            <tbody id="visitorsTable">
+                <tr><td colspan="6" style="text-align:center;">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        async function loadData() {
+            try {
+                // Get visitor stats
+                const statsResp = await fetch('/api/visitors/stats');
+                const stats = await statsResp.json();
+                
+                document.getElementById('totalVisitors').textContent = stats.total_visitors || 0;
+                document.getElementById('totalCountries').textContent = Object.keys(stats.by_country || {}).length;
+                document.getElementById('totalDevices').textContent = Object.keys(stats.by_device || {}).length;
+                document.getElementById('scanCount').textContent = stats.total_visitors || 0;
+                
+                // Get recent visitors
+                const visitorsResp = await fetch('/api/visitors/all');
+                const visitors = await visitorsResp.json();
+                
+                const tbody = document.getElementById('visitorsTable');
+                tbody.innerHTML = '';
+                
+                if (visitors.visitors && visitors.visitors.length > 0) {
+                    visitors.visitors.reverse().forEach(v => {
+                        const row = tbody.insertRow();
+                        
+                        // Time
+                        const time = new Date(v.timestamp).toLocaleTimeString();
+                        row.insertCell().textContent = time;
+                        
+                        // Location with flag
+                        const location = v.location || {};
+                        const locationCell = row.insertCell();
+                        locationCell.innerHTML = `${location.city || 'Unknown'}, ${location.country || 'Unknown'}`;
+                        
+                        // IP
+                        row.insertCell().textContent = v.ip_address || 'Unknown';
+                        
+                        // Device
+                        const device = v.device || {};
+                        const deviceCell = row.insertCell();
+                        deviceCell.innerHTML = `<span class="device-icon">${device.type || 'Unknown'}</span>`;
+                        
+                        // Browser
+                        row.insertCell().textContent = device.browser || 'Unknown';
+                        
+                        // Page
+                        row.insertCell().textContent = v.path || '/';
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No visitors yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+        
+        // Load data on page load
+        loadData();
+        
+        // Auto-refresh every 5 seconds
+        setInterval(loadData, 5000);
+    </script>
+</body>
+</html>
