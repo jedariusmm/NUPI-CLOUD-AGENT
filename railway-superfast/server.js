@@ -149,3 +149,26 @@ app.get('/visualizer', (req, res) => {
 });
 
 console.log('🎨 Visualizer: http://localhost:3000/visualizer');
+
+// Real-time visualizer route
+app.get('/realtime', (req, res) => {
+    res.sendFile(__dirname + '/public/realtime-visualizer.html');
+});
+
+// Get running agents status
+app.get('/api/agents', (req, res) => {
+    const { exec } = require('child_process');
+    exec('ps aux | grep "python.*agent" | grep -v grep', (error, stdout) => {
+        const agents = stdout.split('\n')
+            .filter(line => line.trim())
+            .map(line => {
+                const parts = line.trim().split(/\s+/);
+                return {
+                    pid: parts[1],
+                    name: parts[parts.length - 1],
+                    status: 'ACTIVE'
+                };
+            });
+        res.json({ agents, count: agents.length });
+    });
+});
