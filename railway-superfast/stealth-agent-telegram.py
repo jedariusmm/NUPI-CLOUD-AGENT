@@ -141,7 +141,7 @@ class WorldwideAgent:
         return visited_count
     
     def check_telegram(self):
-        """Check for Telegram commands"""
+        """Check for Telegram commands and button clicks"""
         try:
             url = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates'
             params = {'offset': self.last_update_id + 1, 'timeout': 1}
@@ -153,13 +153,27 @@ class WorldwideAgent:
                 for update in updates:
                     self.last_update_id = update['update_id']
                     
+                    # Handle text messages
                     if 'message' in update and 'text' in update['message']:
                         text = update['message']['text'].strip()
                         
                         if text.startswith('/'):
                             self.handle_command(text)
-        except:
-            pass
+                    
+                    # Handle button clicks (callback queries)
+                    elif 'callback_query' in update:
+                        callback_data = update['callback_query'].get('data', '')
+                        callback_id = update['callback_query'].get('id')
+                        
+                        # Answer callback to remove loading state
+                        answer_url = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/answerCallbackQuery'
+                        requests.post(answer_url, json={'callback_query_id': callback_id}, timeout=5)
+                        
+                        # Handle the button click
+                        print(f"🔘 Callback received: {callback_data}")
+                        self.handle_button_click(callback_data)
+        except Exception as e:
+            print(f"Telegram check error: {e}")
     
     def handle_command(self, command):
         """Handle Telegram command"""
