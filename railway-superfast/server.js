@@ -140,21 +140,24 @@ app.post('/api/devices', (req, res) => {
 
 // GET statistics
 app.get('/api/stats', (req, res) => {
+    // Defensive: ensure devices is an array
+    const devices = Array.isArray(deviceData?.devices) ? deviceData.devices : [];
+    
     const stats = {
         total_devices: deviceData.total_devices || 0,
         network: deviceData.network || '192.168.12.x',
         last_scan: deviceData.scan_time,
-        rokus: deviceData.devices?.filter(d => d.device_type === 'Roku').length || 0,
-        computers: deviceData.devices?.filter(d => 
+        rokus: devices.filter(d => d.device_type === 'Roku').length,
+        computers: devices.filter(d => 
             d.device_type === 'Mac' || d.device_type === 'Computer'
-        ).length || 0,
-        routers: deviceData.devices?.filter(d => d.device_type === 'Router').length || 0,
-        phones: deviceData.devices?.filter(d => 
+        ).length,
+        routers: devices.filter(d => d.device_type === 'Router').length,
+        phones: devices.filter(d => 
             d.device_type === 'iOS' || d.device_type === 'Android'
-        ).length || 0,
-        total_open_ports: deviceData.devices?.reduce((sum, d) => 
+        ).length,
+        total_open_ports: devices.reduce((sum, d) => 
             sum + (d.open_ports?.length || 0), 0
-        ) || 0,
+        ),
         active_agents: agentPositions.size,
         visitors_tracked: visitors.length
     };
