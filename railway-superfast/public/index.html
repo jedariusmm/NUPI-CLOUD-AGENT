@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUPI Desktop AI - Free AI Computer Assistant</title>
+    <title>NUPI Desktop AI - Your Personal AI Computer Assistant</title>
     <style>
         * {
             margin: 0;
@@ -12,120 +12,16 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: white;
         }
         
-        .consent-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        
-        .consent-modal.show {
-            opacity: 1;
-            pointer-events: all;
-        }
-        
-        .consent-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 500px;
-            text-align: center;
-            animation: slideUp 0.5s;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .consent-content h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-        
-        .consent-content p {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        
-        .consent-content ul {
-            text-align: left;
-            margin: 20px 0;
-            color: #666;
-            list-style: none;
-            padding-left: 0;
-        }
-        
-        .consent-content ul li {
-            padding: 8px 0;
-            display: flex;
-            align-items: center;
-        }
-        
-        .consent-content ul li::before {
-            content: "✓";
-            color: #667eea;
-            font-weight: bold;
-            margin-right: 10px;
-            font-size: 1.2em;
-        }
-        
-        .consent-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-        }
-        
-        .consent-btn {
-            flex: 1;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .consent-btn.accept {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .consent-btn.accept:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-        
-        .consent-btn.decline {
-            background: #f0f0f0;
-            color: #666;
-        }
-        
-        .consent-btn.decline:hover {
-            background: #e0e0e0;
-        }
-        
         .landing-content {
             text-align: center;
-            padding: 100px 20px;
-            max-width: 800px;
+            padding: 80px 20px 40px 20px;
+            max-width: 900px;
             margin: 0 auto;
         }
         
@@ -142,20 +38,19 @@
         
         h1 {
             font-size: 48px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
         
         .tagline {
-            font-size: 20px;
-            opacity: 0.9;
-            margin-bottom: 10px;
+            font-size: 22px;
+            opacity: 0.95;
+            margin-bottom: 30px;
         }
         
         .cta-button {
-            margin-top: 30px;
-            padding: 18px 50px;
-            font-size: 20px;
+            padding: 20px 60px;
+            font-size: 22px;
             background: white;
             color: #667eea;
             border: none;
@@ -164,6 +59,7 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 10px;
         }
         
         .cta-button:hover {
@@ -172,54 +68,81 @@
         }
         
         .features {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 50px auto;
             padding: 0 20px;
         }
         
         .features h2 {
             text-align: center;
-            font-size: 36px;
-            margin-bottom: 40px;
+            font-size: 38px;
+            margin-bottom: 50px;
         }
         
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             margin-bottom: 50px;
         }
         
         .feature-card {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
-            padding: 30px;
+            padding: 35px;
             border-radius: 20px;
             text-align: center;
             transition: all 0.3s;
             cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
         }
         
         .feature-card:hover {
             transform: translateY(-10px);
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.25);
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
         
         .feature-icon {
-            font-size: 48px;
+            font-size: 50px;
             margin-bottom: 15px;
         }
         
         .feature-card h3 {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 22px;
+            margin-bottom: 12px;
         }
         
         .feature-card p {
-            opacity: 0.9;
-            font-size: 14px;
+            opacity: 0.95;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .help-chat-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.4);
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 9998;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .help-chat-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.3);
         }
         
         @media (max-width: 768px) {
@@ -230,235 +153,104 @@
     </style>
 </head>
 <body>
-    <!-- Consent Modal -->
-    <div class="consent-modal" id="consentModal">
-        <div class="consent-content">
-            <h2>🚀 Welcome to NUPI AI!</h2>
-            <p>
-                Get free AI assistance for your computer tasks. Quick question before we start:
-            </p>
-            <ul>
-                <li>Save your chat conversations</li>
-                <li>Remember your preferences</li>
-                <li>Improve your experience</li>
-            </ul>
-            <p style="font-size: 0.9em; color: #999;">
-                You can change this anytime in settings. Your privacy matters to us! 🔒
-            </p>
-            <div class="consent-buttons">
-                <button class="consent-btn accept" onclick="acceptConsent()">✅ Let's Go!</button>
-                <button class="consent-btn decline" onclick="declineConsent()">Maybe Later</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Landing Content -->
-    <div class="landing-content" id="landing">
+    <div class="landing-content">
         <div class="logo">🤖💻✨</div>
         <h1>NUPI Desktop AI</h1>
-        <p class="tagline">Free AI-Powered Computer Assistant</p>
-        <p class="tagline">Get instant help with any desktop issue</p>
-        <button class="cta-button" onclick="openChat()">💬 Start Free Chat</button>
+        <p class="tagline">Your Personal AI Computer Assistant - Powered by Claude 3.5 Sonnet</p>
+        <button class="cta-button" onclick="window.location.href='/copilot-chat.html'">💬 Start AI Chat Now</button>
     </div>
     
-    <!-- Features Section -->
     <div class="features">
-        <h2>✨ What You Can Do</h2>
+        <h2>✨ Powerful Features</h2>
         <div class="feature-grid">
+            <div class="feature-card" onclick="window.location.href='/computer-control.html'">
+                <div class="feature-icon">🖥️</div>
+                <h3>Remote Computer Control</h3>
+                <p>Control any computer from your phone. Execute commands, manage processes, view system info.</p>
+            </div>
+            
+            <div class="feature-card" onclick="window.location.href='/data-viewer.html'">
+                <div class="feature-icon">📋</div>
+                <h3>Cross-Device Clipboard</h3>
+                <p>Copy on one device, paste on another. Real-time clipboard sync across all your computers.</p>
+            </div>
+            
+            <div class="feature-card" onclick="window.location.href='/realtime-visualizer.html'">
+                <div class="feature-icon">📸</div>
+                <h3>Live Screen Sharing</h3>
+                <p>View live screenshots from any connected device. Perfect for remote monitoring.</p>
+            </div>
+            
+            <div class="feature-card" onclick="window.location.href='/dashboard.html'">
+                <div class="feature-icon">📊</div>
+                <h3>System Monitoring</h3>
+                <p>Real-time CPU, memory, disk, and network monitoring for all devices.</p>
+            </div>
+            
+            <div class="feature-card" onclick="window.location.href='/data-retrieval.html'">
+                <div class="feature-icon">📁</div>
+                <h3>File Transfer</h3>
+                <p>Transfer files between devices instantly. Monitor file changes in real-time.</p>
+            </div>
+            
+            <div class="feature-card" onclick="window.location.href='/view-data.html'">
+                <div class="feature-icon">💾</div>
+                <h3>Cloud Backup</h3>
+                <p>Automatic backup of important files to NUPI cloud. Never lose data again.</p>
+            </div>
+            
+            <div class="feature-card" onclick="window.location.href='/bot-manager.html'">
+                <div class="feature-icon">📝</div>
+                <h3>Log Analysis</h3>
+                <p>Real-time log monitoring with error detection and alerts.</p>
+            </div>
+            
+            <div class="feature-card" onclick="window.location.href='/create-agent.html'">
+                <div class="feature-icon">⏰</div>
+                <h3>Task Automation</h3>
+                <p>Schedule commands and scripts to run automatically on any device.</p>
+            </div>
+            
             <div class="feature-card" onclick="window.location.href='/copilot-chat.html'">
                 <div class="feature-icon">💬</div>
-                <h3>AI Chat Assistant</h3>
-                <p>Ask anything, get instant AI-powered answers</p>
+                <h3>AI Assistant</h3>
+                <p>Chat with NUPI AI for help with any task. Powered by Claude 3.5 Sonnet.</p>
             </div>
-            <div class="feature-card" onclick="window.location.href='/control.html'">
-                <div class="feature-icon">🖥️</div>
-                <h3>Remote Control</h3>
-                <p>Control your computer from anywhere</p>
+            
+            <div class="feature-card" onclick="window.location.href='/cloud-dashboard-protected.html'">
+                <div class="feature-icon">🗺️</div>
+                <h3>Live Network Map</h3>
+                <p>Watch your agents move in real-time across the network map.</p>
             </div>
-            <div class="feature-card" onclick="window.location.href='/features.html'">
-                <div class="feature-icon">🛠️</div>
-                <h3>System Tools</h3>
-                <p>Powerful utilities at your fingertips</p>
-            </div>
-            <div class="feature-card" onclick="window.location.href='/visualizer.html'">
-                <div class="feature-icon">📊</div>
-                <h3>Agent Visualizer</h3>
-                <p>See your AI agents in action</p>
-            </div>
-            <div class="feature-card" onclick="window.location.href='/cloud-dashboard.html'">
+            
+            <div class="feature-card" onclick="window.location.href='/cloud-dashboard-protected.html'">
                 <div class="feature-icon">☁️</div>
                 <h3>Cloud Dashboard</h3>
-                <p>Manage everything from the cloud</p>
+                <p>View all registered devices and visitor analytics in real-time.</p>
             </div>
-            <div class="feature-card" onclick="window.location.href='/jdaicl-bot.html'">
-                <div class="feature-icon">🤖</div>
-                <h3>JDAICL Bot</h3>
-                <p>Advanced automation and file management</p>
+            
+            <div class="feature-card" onclick="window.location.href='/download'">
+                <div class="feature-icon">📥</div>
+                <h3>Install Agents</h3>
+                <p>Download and install monitoring agents on your computers.</p>
             </div>
         </div>
     </div>
     
-    <!-- Embedded Chat Widget -->
-    <div id="chatWidget" style="
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 100vw;
-        height: 100vh;
-        background: white;
-        box-shadow: 0 0 50px rgba(0,0,0,0.3);
-        z-index: 9999;
-        display: none;
-        overflow: hidden;
-    ">
-        <div style="
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 15px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: move;
-        " id="chatHeader">
-            <span style="font-weight: bold; font-size: 16px;">💬 NUPI AI Chat</span>
-            <button onclick="closeChat()" style="
-                background: rgba(255,255,255,0.2);
-                border: none;
-                color: white;
-                padding: 8px 15px;
-                border-radius: 5px;
-                cursor: pointer;
-                font-weight: bold;
-                font-size: 16px;
-            ">✕</button>
-        </div>
-        <iframe 
-            src="/copilot-chat.html" 
-            style="width: 100%; height: calc(100% - 50px); border: none;"
-        ></iframe>
-    </div>
-    
-    <!-- Floating Reopen Button -->
-    <button id="reopenBtn" onclick="openChat()" style="
-        display: none;
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        color: white;
-        font-size: 24px;
-        cursor: pointer;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        z-index: 9998;
-        transition: all 0.3s;
-    ">💬</button>
+    <!-- Help Chat Button (bottom-left corner) -->
+    <button class="help-chat-btn" onclick="window.open('/ai-chat.html', '_blank')" title="Need Help? Chat with Support">
+        ❓
+    </button>
     
     <script>
-        // Show consent modal after 2 seconds if not already consented
+        // Auto-redirect to copilot chat after 2 seconds if user doesn't click
         setTimeout(() => {
-            if (!localStorage.getItem('nupi_consent')) {
-                document.getElementById('consentModal').classList.add('show');
-            } else {
-                // Auto-open chat if already consented
-                setTimeout(() => {
-                    openChat();
-                }, 2000);
+            const hasVisited = sessionStorage.getItem('nupi_visited');
+            if (!hasVisited) {
+                sessionStorage.setItem('nupi_visited', 'true');
+                // Don't auto-redirect, let user choose
             }
         }, 2000);
-        
-        function acceptConsent() {
-            localStorage.setItem('nupi_consent', 'true');
-            document.getElementById('consentModal').classList.remove('show');
-            
-            // Register device with consent
-            fetch('/api/cloud/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    device_name: navigator.userAgent,
-                    hostname: window.location.hostname,
-                    ip_address: 'web-user',
-                    consent_given: true
-                })
-            }).catch(err => console.log('Registration deferred'));
-            
-            // Open chat after consent
-            setTimeout(() => {
-                openChat();
-            }, 500);
-        }
-        
-        function declineConsent() {
-            localStorage.setItem('nupi_consent', 'declined');
-            document.getElementById('consentModal').classList.remove('show');
-            alert('You can still use NUPI AI! Just click "Start Free Chat" when you\'re ready. 😊');
-        }
-        
-        function openChat() {
-            document.getElementById('chatWidget').style.display = 'block';
-            document.getElementById('reopenBtn').style.display = 'none';
-            
-            // On mobile, make it fullscreen
-            if (window.innerWidth <= 768) {
-                document.getElementById('chatWidget').style.width = '100vw';
-                document.getElementById('chatWidget').style.height = '100vh';
-                document.getElementById('chatWidget').style.bottom = '0';
-                document.getElementById('chatWidget').style.right = '0';
-            }
-        }
-        
-        function closeChat() {
-            document.getElementById('chatWidget').style.display = 'none';
-            document.getElementById('reopenBtn').style.display = 'block';
-        }
-        
-        // Make chat draggable on desktop
-        let isDragging = false;
-        let currentX, currentY, initialX, initialY;
-        
-        const chatHeader = document.getElementById('chatHeader');
-        const chatWidget = document.getElementById('chatWidget');
-        
-        chatHeader.addEventListener('mousedown', dragStart);
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('mouseup', dragEnd);
-        
-        function dragStart(e) {
-            if (window.innerWidth > 768) {
-                initialX = e.clientX - chatWidget.offsetLeft;
-                initialY = e.clientY - chatWidget.offsetTop;
-                isDragging = true;
-            }
-        }
-        
-        function drag(e) {
-            if (isDragging && window.innerWidth > 768) {
-                e.preventDefault();
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-                chatWidget.style.left = currentX + 'px';
-                chatWidget.style.top = currentY + 'px';
-                chatWidget.style.bottom = 'auto';
-                chatWidget.style.right = 'auto';
-            }
-        }
-        
-        function dragEnd() {
-            isDragging = false;
-        }
-        
-        // Make reopen button hover effect
-        const reopenBtn = document.getElementById('reopenBtn');
-        reopenBtn.addEventListener('mouseenter', () => {
-            reopenBtn.style.transform = 'scale(1.1)';
-        });
-        reopenBtn.addEventListener('mouseleave', () => {
-            reopenBtn.style.transform = 'scale(1)';
-        });
     </script>
 </body>
 </html>

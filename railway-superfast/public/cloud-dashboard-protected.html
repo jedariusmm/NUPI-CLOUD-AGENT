@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUPI Cloud Dashboard - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .login-box h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        .login-box p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border 0.3s;
+        }
+        .login-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .login-box button:hover {
+            transform: scale(1.05);
+        }
+        .error {
+            color: #e74c3c;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>🔐 NUPI Cloud Dashboard</h1>
+        <p>Enter password to access dashboard</p>
+        <input type="password" id="password" placeholder="Enter password" onkeypress="if(event.key==='Enter') login()">
+        <button onclick="login()">🚀 Login</button>
+        <p class="error" id="error">❌ Incorrect password</p>
+    </div>
+    
+    <script>
+        const CORRECT_PASSWORD = 'Jedariusm';
+        
+        function login() {
+            const password = document.getElementById('password').value;
+            if (password === CORRECT_PASSWORD) {
+                sessionStorage.setItem('nupi_dashboard_auth', 'true');
+                window.location.href = '/cloud-dashboard.html';
+            } else {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+            }
+        }
+        
+        // Auto-focus password field
+        document.getElementById('password').focus();
+    </script>
+</body>
+</html>
