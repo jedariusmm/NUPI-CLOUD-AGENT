@@ -816,3 +816,58 @@ def get_wifi_agent_movements():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+
+# Track all discovered devices globally
+discovered_devices_global = []
+
+@app.route('/api/devices/discovered', methods=['GET'])
+def get_discovered_devices():
+    """Get all discovered devices from travelling agents"""
+    try:
+        return jsonify({
+            'success': True,
+            'devices': discovered_devices_global,
+            'total': len(discovered_devices_global)
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/agents/movements/all', methods=['GET'])
+def get_all_agent_movements():
+    """Get movements from ALL agents (WiFi + regular agents)"""
+    try:
+        all_movements = []
+        
+        # Add WiFi agent movements
+        for agent_id, location_data in wifi_agent_locations.items():
+            all_movements.append({
+                'agent_id': agent_id,
+                'location': location_data.get('location'),
+                'device': location_data.get('device'),
+                'device_name': location_data.get('device_name', 'Unknown'),
+                'region': location_data.get('region', 'local'),
+                'timestamp': location_data.get('timestamp'),
+                'type': 'wifi'
+            })
+        
+        # Add regular agent movements
+        for agent_id, agent_data in agents_data.items():
+            if agent_data.get('location'):
+                all_movements.append({
+                    'agent_id': agent_id,
+                    'location': agent_data.get('location'),
+                    'device': agent_data.get('device', 'unknown'),
+                    'timestamp': agent_data.get('last_seen'),
+                    'type': 'regular'
+                })
+        
+        return jsonify({
+            'success': True,
+            'movements': all_movements,
+            'total_agents': len(all_movements),
+            'wifi_agents': len([m for m in all_movements if m['type'] == 'wifi']),
+            'regular_agents': len([m for m in all_movements if m['type'] == 'regular'])
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
