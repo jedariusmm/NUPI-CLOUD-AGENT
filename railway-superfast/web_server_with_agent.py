@@ -328,3 +328,4 @@ if __name__ == "__main__":
     print(f"📝 Version: 2025-12-06-ROUTE-FIX")
     print("⚠️  No simulations - only actual harvested data")
     app.run(host="0.0.0.0", port=port, debug=False)
+# Build: 2025-12-07_02:24:43

@@ -1,0 +1,17 @@
+[phases.setup]
+nixPkgs = ['python39', 'bash']
+
+[phases.install]
+cmds = [
+    'pip install --no-cache-dir -r requirements.txt'
+]
+
+[phases.build]
+cmds = [
+    'echo "🔥 FORCE CLEAN BUILD - NO CACHE"',
+    'rm -rf __pycache__ *.pyc .pytest_cache',
+    'python3 verify_deployment.py'
+]
+
+[start]
+cmd = 'bash start.sh'
