@@ -541,10 +541,14 @@ if __name__ == '__main__':
             tv_ip = data.replace('tv_', '')
             self.show_tv_controls(tv_ip)
         elif data.startswith('cmd_'):
-            parts = data.replace('cmd_', '').split('_')
+            # Parse: cmd_192.168.12.175_netflix
+            parts = data.replace('cmd_', '', 1).split('_')
             if len(parts) >= 5:
-                tv_ip = '.'.join(parts[:4])
-                command = '_'.join(parts[4:])
+                # First 4 parts are IP: 192.168.12.175
+                tv_ip = f"{parts[0]}.{parts[1]}.{parts[2]}.{parts[3]}"
+                # Everything after is the command
+                command = '_'.join(parts[4:]) if len(parts) > 4 else parts[4]
+                print(f"📺 Executing: {command} on {tv_ip}")
                 result = self.control_roku_tv(tv_ip, command)
                 self.send_telegram(f"📺 *Command Executed*\n\n{result}")
         elif data == '/help':
