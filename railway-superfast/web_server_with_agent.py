@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+# Version: 2025-12-06-21:03 - Route fix deployed
 NUPI CLOUD AGENT - REAL DATA ONLY
 Shows actual running agents and real harvested data
 """
