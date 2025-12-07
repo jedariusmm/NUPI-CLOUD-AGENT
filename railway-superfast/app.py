@@ -127,7 +127,7 @@ def test_endpoint():
     """Test endpoint to verify correct file is running"""
     return jsonify({
         "message": "CORRECT FILE RUNNING",
-        "file": "web_server_with_agent.py",
+        "file": "app.py",
         "version": "2025-12-06-ROUTE-FIX",
         "routes_working": True
     })
