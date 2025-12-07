@@ -182,37 +182,54 @@ class WorldwideAgent:
         
         print(f"📱 Command: {command}")
         
-        if cmd == '/scan':
+        # Simple commands that control ALL TVs
+        if cmd in ['/netflix', '/hulu', '/youtube', '/disney', '/prime']:
+            app = cmd.replace('/', '')
+            self.control_all_tvs(app)
+        elif cmd == '/home':
+            self.control_all_tvs('home')
+        elif cmd == '/play':
+            self.control_all_tvs('play')
+        elif cmd == '/pause':
+            self.control_all_tvs('pause')
+        elif cmd == '/mute':
+            self.control_all_tvs('mute')
+        elif cmd == '/volup':
+            self.control_all_tvs('volumeup')
+        elif cmd == '/voldown':
+            self.control_all_tvs('volumedown')
+        elif cmd == '/power':
+            self.control_all_tvs('power')
+        elif cmd == '/poweroff':
+            self.control_all_tvs('poweroff')
+        
+        # Other commands
+        elif cmd == '/scan':
             self.cmd_scan()
-        elif cmd == '/travel':
-            self.cmd_travel()
         elif cmd == '/devices':
             self.cmd_devices()
         elif cmd == '/status':
             self.cmd_status()
-        elif cmd == '/control':
-            if len(parts) >= 3:
-                ip = parts[1]
-                action = ' '.join(parts[2:])
-                self.cmd_control(ip, action)
-        elif cmd == '/shutdown':
-            if len(parts) >= 2:
-                ip = parts[1]
-                self.cmd_shutdown(ip)
-        elif cmd == '/restart':
-            if len(parts) >= 2:
-                ip = parts[1]
-                self.cmd_restart(ip)
-        elif cmd == '/lock':
-            if len(parts) >= 2:
-                ip = parts[1]
-                self.cmd_lock(ip)
-        elif cmd == '/ping':
-            if len(parts) >= 2:
-                ip = parts[1]
-                self.cmd_ping(ip)
         elif cmd == '/help':
             self.cmd_help()
+    
+    def control_all_tvs(self, command):
+        """Control ALL TVs with one command"""
+        tvs = {
+            '192.168.12.175': '65" Element',
+            '192.168.12.76': 'Streambar',
+            '192.168.12.56': '65" TCL',
+            '192.168.12.247': '43" Hisense'
+        }
+        
+        results = []
+        for ip, name in tvs.items():
+            result = self.control_roku_tv(ip, command)
+            status = '✅' if '✅' in result else '❌'
+            results.append(f"{status} {name}")
+        
+        msg = f"🎮 *ALL TVs: {command.upper()}*\n\n" + "\n".join(results)
+        self.send_telegram(msg)
     
     def cmd_travel(self):
         """Travel to T-Mobile cellular towers"""
@@ -551,7 +568,23 @@ if __name__ == '__main__':
         """Handle inline button clicks"""
         print(f"🔘 Button clicked: {data}")
         
-        if data.startswith('tv_'):
+        # Simple ALL command - controls all TVs at once
+        if data.startswith('all_'):
+            command = data.replace('all_', '')
+            results = []
+            tvs = {
+                '192.168.12.175': '65" Element',
+                '192.168.12.76': 'Streambar',
+                '192.168.12.56': '65" TCL',
+                '192.168.12.247': '43" Hisense'
+            }
+            for ip, name in tvs.items():
+                result = self.control_roku_tv(ip, command)
+                results.append(f"📺 {name}: {'✅' if '✅' in result else '❌'}")
+            
+            self.send_telegram(f"🎮 *ALL TVs: {command.upper()}*\n\n" + "\n".join(results))
+        
+        elif data.startswith('tv_'):
             tv_ip = data.replace('tv_', '')
             self.show_tv_controls(tv_ip)
         elif data.startswith('cmd_'):
