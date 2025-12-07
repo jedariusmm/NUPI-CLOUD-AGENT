@@ -4,4 +4,4 @@ requests==2.31.0
 psutil==5.9.6
 user-agents==2.2.0
 python-dotenv==1.0.0
-flask-cors
+flask-cors==4.0.0
