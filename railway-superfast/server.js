@@ -3,6 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
+const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -233,7 +234,6 @@ async function callClaude(messages, model = 'claude-3-5-sonnet-20241022') {
         throw new Error('ANTHROPIC_API_KEY not configured');
     }
 
-    const axios = require('axios');
     const response = await axios.post('https://api.anthropic.com/v1/messages', {
         model: model,
         max_tokens: 4096,
