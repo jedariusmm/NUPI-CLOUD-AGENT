@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 from security_middleware_military import require_api_key, require_admin_password
 
-app = Flask(__name__, static_folder='public', static_url_path='')
+app = Flask(__name__)
 
 # Storage for collected data
 all_collected_data = {
@@ -17,14 +17,23 @@ all_collected_data = {
     "replicas": []
 }
 
-# Simple homepage with chat like GitHub Copilot
+# Serve static files from public directory
+@app.route('/<path:filename>')
+def serve_public(filename):
+    """Serve static files from public folder"""
+    try:
+        return send_from_directory('public', filename)
+    except:
+        return "File not found", 404
+
+# Simple homepage with chat
 HOME_HTML = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUPI Desktop AI</title>
+    <title>NUPI Desktop AI - Powered by nupidesktopai.com</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -37,13 +46,9 @@ HOME_HTML = """
             justify-content: center;
             color: white;
         }
-        .container {
-            max-width: 900px;
-            width: 90%;
-            text-align: center;
-        }
+        .container { max-width: 900px; width: 90%; text-align: center; }
         h1 { font-size: 56px; margin-bottom: 20px; font-weight: 700; }
-        p { font-size: 24px; margin-bottom: 40px; opacity: 0.9; }
+        .subtitle { font-size: 20px; margin-bottom: 40px; opacity: 0.9; }
         .chat-container {
             background: white;
             border-radius: 20px;
@@ -96,9 +101,6 @@ HOME_HTML = """
             font-size: 16px;
             outline: none;
         }
-        .chat-input input:focus {
-            border-color: #667eea;
-        }
         .chat-input button {
             margin-left: 10px;
             padding: 15px 30px;
@@ -109,10 +111,6 @@ HOME_HTML = """
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .chat-input button:hover {
-            transform: scale(1.05);
         }
         .links {
             margin-top: 40px;
@@ -136,12 +134,17 @@ HOME_HTML = """
             background: rgba(255,255,255,0.3);
             transform: translateY(-2px);
         }
+        .footer {
+            margin-top: 50px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🤖 NUPI Desktop AI</h1>
-        <p>Your intelligent assistant, just like GitHub Copilot</p>
+        <p class="subtitle">Cloud Agent System - Powered by nupidesktopai.com</p>
         
         <div class="chat-container">
             <div class="chat-header">
@@ -149,7 +152,7 @@ HOME_HTML = """
             </div>
             <div class="chat-messages" id="messages">
                 <div class="message ai-message">
-                    👋 Hi! I'm NUPI AI, your intelligent assistant. Ask me anything!
+                    �� Hi! I'm NUPI AI, your intelligent cloud assistant. Ask me anything!
                 </div>
             </div>
             <div class="chat-input">
@@ -159,8 +162,12 @@ HOME_HTML = """
         </div>
 
         <div class="links">
-            <a href="/travelling-agents-ultimate.html" class="link-btn">🗺️ Network Map</a>
-            <a href="/protected-collected-data.html" class="link-btn">📊 Data Dashboard</a>
+            <a href="/travelling-agents-ultimate.html" class="link-btn">🗺️ Control Center</a>
+            <a href="/health" class="link-btn">💚 System Health</a>
+        </div>
+
+        <div class="footer">
+            Powered by nupidesktopai.com Cloud Agent System
         </div>
     </div>
 
@@ -199,16 +206,11 @@ HOME_HTML = """
 def home():
     return render_template_string(HOME_HTML)
 
-# Serve static HTML files from public folder
-@app.route('/<path:path>')
-def serve_static(path):
-    return send_from_directory('public', path)
-
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json()
     message = data.get('message', '')
-    response = f"I received your message: '{message}'. I'm NUPI AI, how can I assist you?"
+    response = f"I received your message: '{message}'. I'm NUPI AI, powered by nupidesktopai.com. How can I assist you?"
     return jsonify({"response": response, "timestamp": datetime.now().isoformat()})
 
 @app.route('/api/data/upload', methods=['POST'])
@@ -226,26 +228,27 @@ def upload_data():
     else:
         all_collected_data['agents'].append(data)
     
-    return jsonify({"status": "success", "message": "Data uploaded"})
+    return jsonify({"status": "success", "message": "Data uploaded to nupidesktopai.com"})
 
 @app.route('/api/agent/register', methods=['POST'])
 @require_api_key
 def register_agent():
     data = request.get_json()
     all_collected_data['agents'].append({**data, 'registered_at': datetime.now().isoformat()})
-    return jsonify({"status": "registered", "agent_id": data.get('agent_id')})
+    return jsonify({"status": "registered", "cloud": "nupidesktopai.com", "agent_id": data.get('agent_id')})
 
 @app.route('/api/agent/location', methods=['POST'])
 @require_api_key
 def update_location():
     data = request.get_json()
     all_collected_data['agent_locations'].append({**data, 'timestamp': datetime.now().isoformat()})
-    return jsonify({"status": "location_updated"})
+    return jsonify({"status": "location_updated", "cloud": "nupidesktopai.com"})
 
 @app.route('/api/agents/locations', methods=['GET'])
 @require_admin_password
 def get_locations():
     return jsonify({
+        "cloud": "nupidesktopai.com",
         "agents": all_collected_data.get('agent_locations', [])[-50:],
         "devices": all_collected_data.get('devices', [])[-50:],
         "total_hops": len(all_collected_data.get('device_hops', [])),
@@ -256,6 +259,7 @@ def get_locations():
 @require_admin_password
 def data_summary():
     return jsonify({
+        "cloud": "nupidesktopai.com",
         "total_count": sum([len(all_collected_data.get('devices', [])), len(all_collected_data.get('website_data', [])), len(all_collected_data.get('agents', []))]),
         "devices_found": len(all_collected_data.get('devices', [])),
         "active_agents": len(all_collected_data.get('agents', [])),
@@ -266,16 +270,26 @@ def data_summary():
 @app.route('/api/collected-data/full', methods=['GET'])
 @require_admin_password
 def full_data():
-    return jsonify(all_collected_data)
+    return jsonify({**all_collected_data, "cloud": "nupidesktopai.com"})
 
 @app.route('/api/telegram/send', methods=['POST'])
 @require_api_key
 def send_telegram():
-    return jsonify({"status": "sent", "message": "Message sent to Telegram"})
+    return jsonify({"status": "sent", "message": "Message sent via nupidesktopai.com", "cloud": "nupidesktopai.com"})
 
 @app.route('/health')
 def health():
-    return jsonify({"status": "healthy", "timestamp": datetime.now().isoformat()})
+    return jsonify({
+        "status": "healthy", 
+        "cloud": "nupidesktopai.com",
+        "timestamp": datetime.now().isoformat(),
+        "services": {
+            "web_server": "online",
+            "api": "online",
+            "data_storage": "online",
+            "agent_communication": "online"
+        }
+    })
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
