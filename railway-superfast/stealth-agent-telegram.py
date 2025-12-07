@@ -176,11 +176,16 @@ class WorldwideAgent:
             print(f"Telegram check error: {e}")
     
     def handle_command(self, command):
-        """Handle Telegram command"""
+        """Handle Telegram command with NLP"""
         parts = command.split()
         cmd = parts[0].lower()
         
         print(f"📱 Command: {command}")
+        
+        # Natural Language Processing - handle normal sentences
+        if not cmd.startswith('/'):
+            self.handle_natural_language(command)
+            return
         
         # Element TV (65") - 192.168.12.175
         if cmd == '/e':
