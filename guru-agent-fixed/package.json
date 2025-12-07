@@ -1,0 +1,13 @@
+{
+  "name": "nupi-guru-agent",
+  "version": "1.0.0",
+  "description": "GURU Agent - Network monitoring with insights (No Anthropic API)",
+  "main": "guru-agent.js",
+  "scripts": {
+    "start": "node guru-agent.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.61.0",
+    "node-fetch": "^2.6.7"
+  }
+}

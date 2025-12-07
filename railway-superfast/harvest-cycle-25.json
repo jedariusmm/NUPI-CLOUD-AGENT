@@ -1,0 +1,231 @@
+{
+  "agent_id": "harvester-1765129056",
+  "scan_time": "2025-12-07T14:40:05.898928",
+  "network": "192.168.12.x",
+  "total_devices": 17,
+  "cycle": 25,
+  "devices": [
+    {
+      "ip": "192.168.12.10",
+      "hostname": "Device-10",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:00.762540",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\u2753 Unknown Device"
+    },
+    {
+      "ip": "192.168.12.1",
+      "hostname": "f5688w.lan",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 2,
+      "services": [
+        "HTTP",
+        "HTTP-Proxy"
+      ],
+      "last_seen": "2025-12-07T14:40:00.970582",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\u2753 Unknown Device"
+    },
+    {
+      "ip": "192.168.12.56",
+      "hostname": "65tclrokutvjedarius.lan",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 1,
+      "services": [
+        "Roku-API"
+      ],
+      "last_seen": "2025-12-07T14:40:01.708061",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\ud83d\udcfa Roku Device",
+      "roku": {
+        "model": "65S451",
+        "serial": "X01200KG0XA3",
+        "version": "15.0.4",
+        "friendly_name": "65\" TCL Roku TV (Jedarius)"
+      }
+    },
+    {
+      "ip": "192.168.12.76",
+      "hostname": "rokustreambar.lan",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 1,
+      "services": [
+        "Roku-API"
+      ],
+      "last_seen": "2025-12-07T14:40:01.781181",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\ud83d\udcfa Roku Device",
+      "roku": {
+        "model": "Roku Streambar",
+        "serial": "YL008X119165",
+        "version": "15.0.4",
+        "friendly_name": "Roku Streambar"
+      }
+    },
+    {
+      "ip": "192.168.12.91",
+      "hostname": "Device-91",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:01.935244",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\u2753 Unknown Device"
+    },
+    {
+      "ip": "192.168.12.105",
+      "hostname": "galaxy-tab-a9-5g.lan",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:02.083153",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\ud83d\udcf1 Android Device"
+    },
+    {
+      "ip": "192.168.12.109",
+      "hostname": "Device-109",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:02.921327",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\u2753 Unknown Device"
+    },
+    {
+      "ip": "192.168.12.141",
+      "hostname": "Device-141",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:02.927170",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\u2753 Unknown Device"
+    },
+    {
+      "ip": "192.168.12.127",
+      "hostname": "Device-127",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:02.929553",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\u2753 Unknown Device"
+    },
+    {
+      "ip": "192.168.12.134",
+      "hostname": "iphone.lan",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:03.029631",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\ud83d\udcf1 iOS Device"
+    },
+    {
+      "ip": "192.168.12.158",
+      "hostname": "Device-158",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:03.095776",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\u2753 Unknown Device"
+    },
+    {
+      "ip": "192.168.12.161",
+      "hostname": "lenovo-idea-tab-pro.lan",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:03.226787",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\u2753 Unknown Device"
+    },
+    {
+      "ip": "192.168.12.178",
+      "hostname": "imac.lan",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:03.730258",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\ud83d\udcbb Mac Computer"
+    },
+    {
+      "ip": "192.168.12.175",
+      "hostname": "65elementrokutv.lan",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 1,
+      "services": [
+        "Roku-API"
+      ],
+      "last_seen": "2025-12-07T14:40:03.774351",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\ud83d\udcfa Roku Device",
+      "roku": {
+        "model": "E4AA65R-T",
+        "serial": "X01200N4NND9",
+        "version": "15.0.4",
+        "friendly_name": "65\" ELEMENT Roku TV"
+      }
+    },
+    {
+      "ip": "192.168.12.236",
+      "hostname": "Device-236",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:04.856809",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\u2753 Unknown Device"
+    },
+    {
+      "ip": "192.168.12.255",
+      "hostname": "Device-255",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 0,
+      "services": [],
+      "last_seen": "2025-12-07T14:40:04.902333",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\u2753 Unknown Device"
+    },
+    {
+      "ip": "192.168.12.247",
+      "hostname": "43hisenserokutv.lan",
+      "mac": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": 1,
+      "services": [
+        "Roku-API"
+      ],
+      "last_seen": "2025-12-07T14:40:04.914767",
+      "agent_id": "harvester-1765129056",
+      "device_type": "\ud83d\udcfa Roku Device",
+      "roku": {
+        "model": "4Series-43",
+        "serial": "X00700WC0GW6",
+        "version": "15.0.4",
+        "friendly_name": "43\" Hisense Roku TV"
+      }
+    }
+  ]
+}

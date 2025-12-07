@@ -14,8 +14,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
 NETWORK = '192.168.12'
-CLOUD_API = 'http://localhost:3000/api/devices'
-AGENT_API = 'http://localhost:3000/api/agent/position'
+CLOUD_API = 'https://nupidesktopai.com/api/devices'
+AGENT_API = 'https://nupidesktopai.com/api/agent/position'
 TELEGRAM_BOT_TOKEN = '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y'
 TELEGRAM_CHAT_ID = '6523159355'
 HARVEST_INTERVAL = 300  # 5 minutes

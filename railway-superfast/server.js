@@ -219,6 +219,48 @@ app.get('/health', (req, res) => {
     });
 });
 
+// ============================================
+// AUTONOMOUS CHAT AGENT ENDPOINT
+// ============================================
+const ChatAgent = require('./chat_agent.js');
+const chatAgent = new ChatAgent();
+
+app.post('/api/chat', async (req, res) => {
+    try {
+        const { message, model, webSearch, attachments, context } = req.body;
+
+        if (!message) {
+            return res.status(400).json({ error: 'Message is required' });
+        }
+
+        console.log(`💬 Chat request: "${message.substring(0, 50)}..."`);
+
+        // Get response from autonomous agent
+        const result = await chatAgent.chat(message, {
+            model: model || 'claude-3-5-sonnet-20241022',
+            webSearch: webSearch || false,
+            context: context || {}
+        });
+
+        res.json(result);
+    } catch (error) {
+        console.error('❌ Chat error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/chat/history', (req, res) => {
+    res.json({
+        history: chatAgent.conversationHistory,
+        count: chatAgent.conversationHistory.length
+    });
+});
+
+app.post('/api/chat/clear', (req, res) => {
+    chatAgent.clearHistory();
+    res.json({ success: true, message: 'Chat history cleared' });
+});
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
