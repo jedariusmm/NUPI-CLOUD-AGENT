@@ -317,8 +317,14 @@ HOME_HTML = """
 """
 
 if __name__ == "__main__":
+    # Start ghost cleanup thread
+    cleanup_thread = threading.Thread(target=cleanup_ghost_agents, daemon=True)
+    cleanup_thread.start()
+    print("🧹 Ghost agent cleanup thread started")
+    
     port = int(os.environ.get("PORT", 8080))
     print("🚀 NUPI Cloud Agent - REAL DATA ONLY")
     print(f"📡 Port: {port}")
+    print(f"📝 Version: 2025-12-06-ROUTE-FIX")
     print("⚠️  No simulations - only actual harvested data")
     app.run(host="0.0.0.0", port=port, debug=False)

@@ -330,12 +330,58 @@
     </div>
 
     <script>
+        // 🌐 NUPI CLOUD AGENT - 24/7 Connection
+        const CLOUD_API = 'https://nupidesktopai.com';
         const PASSWORD = 'Jedariusm';
         const API_KEY = 'NUPI_TRAVELLING_AGENT_KEY_MILITARY_c8f2a9e7b4d6f3a1e9c5b7d2f8a4e6c3';
         const ADMIN_PASSWORD = 'Jedariusm';
 
         let canvas, ctx;
         let agents = [], devices = [];
+        let cloudAgentStatus = { connected: false, lastSync: null, uptime: 0 };
+        
+        // 🔄 24/7 Cloud Agent Sync - Keeps running continuously
+        function syncWithCloudAgent() {
+            setInterval(async () => {
+                try {
+                    const response = await fetch(`${CLOUD_API}/api/agents/locations`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        cloudAgentStatus.connected = true;
+                        cloudAgentStatus.lastSync = new Date().toISOString();
+                        cloudAgentStatus.uptime++;
+                        
+                        // Update local agent tracking with cloud data
+                        if (data.agents && data.agents.length > 0) {
+                            agents = data.agents;
+                            console.log(`✅ Cloud sync: ${agents.length} agents monitored`);
+                        }
+                    }
+                } catch (error) {
+                    cloudAgentStatus.connected = false;
+                    console.error('❌ Cloud Agent sync failed:', error);
+                }
+            }, 5000); // Sync every 5 seconds for 24/7 monitoring
+        }
+        
+        // ⚡ Auto-register this monitoring dashboard with Cloud Agent
+        async function registerMonitoringDashboard() {
+            try {
+                await fetch(`${CLOUD_API}/api/agent/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        agent_id: 'travelling-agents-monitor',
+                        location: 'Monitoring Dashboard',
+                        network: 'Admin Control Panel',
+                        type: 'monitor'
+                    })
+                });
+                console.log('✅ Monitoring dashboard registered with Cloud Agent');
+            } catch (error) {
+                console.error('Registration error:', error);
+            }
+        }
 
         function login() {
             const password = document.getElementById('passwordInput').value;
