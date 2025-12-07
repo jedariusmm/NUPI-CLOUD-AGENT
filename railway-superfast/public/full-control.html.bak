@@ -273,8 +273,6 @@
             margin-top: 10px;
         }
     </style>
-    <!-- NUPI CLOUD AGENT AUTO-LOADS -->
-    <script src="/nupi-cloud-agent.js"></script>
 </head>
 <body>
     <div class="status-bar">

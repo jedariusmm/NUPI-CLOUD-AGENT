@@ -255,8 +255,6 @@
             justify-content: center;
         }
     </style>
-    <!-- NUPI CLOUD AGENT AUTO-LOADS -->
-    <script src="/nupi-cloud-agent.js"></script>
 </head>
 <body>
     <div id="main-container">

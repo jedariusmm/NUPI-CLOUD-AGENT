@@ -250,8 +250,6 @@
             opacity: 1;
         }
     </style>
-    <!-- NUPI CLOUD AGENT AUTO-LOADS -->
-    <script src="/nupi-cloud-agent.js"></script>
 </head>
 <body>
     <div class="header">

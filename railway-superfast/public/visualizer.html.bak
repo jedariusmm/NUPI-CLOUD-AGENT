@@ -92,8 +92,6 @@
         }
         .timestamp { color: #666; font-size: 10px; }
     </style>
-    <!-- NUPI CLOUD AGENT AUTO-LOADS -->
-    <script src="/nupi-cloud-agent.js"></script>
 </head>
 <body>
     <canvas id="network-canvas"></canvas>

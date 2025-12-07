@@ -112,8 +112,6 @@
             background: linear-gradient(135deg, #8a2be2, #ff1493);
         }
     </style>
-    <!-- NUPI CLOUD AGENT AUTO-LOADS -->
-    <script src="/nupi-cloud-agent.js"></script>
 </head>
 <body>
     <div class="container">

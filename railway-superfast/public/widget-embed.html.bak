@@ -1,0 +1,446 @@
+<!-- 🔥 NUPI CHAT WIDGET - Embed this on nupidesktopai.com -->
+<!-- Copy this entire code block into your website -->
+
+<div id="nupi-chat-widget"></div>
+
+<script>
+(function() {
+    // Configuration
+    const NUPI_API = 'https://nupi-cloud-agent-production.up.railway.app';
+    const WIDGET_ID = 'nupi-chat-widget';
+    
+    // Create widget styles
+    const styles = `
+        #nupi-widget-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        #nupi-widget-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        #nupi-widget-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        #nupi-widget-window {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 380px;
+            height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        #nupi-widget-window.open {
+            display: flex;
+        }
+        
+        .nupi-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nupi-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .nupi-header p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .nupi-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .nupi-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .nupi-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f5f5f5;
+        }
+        
+        .nupi-message {
+            margin-bottom: 15px;
+            animation: messageSlide 0.3s ease-out;
+        }
+        
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .nupi-message.user {
+            text-align: right;
+        }
+        
+        .nupi-message-content {
+            display: inline-block;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .nupi-message.user .nupi-message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .nupi-message.assistant .nupi-message-content {
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .nupi-message.system .nupi-message-content {
+            background: #d4edda;
+            color: #155724;
+            border-left: 3px solid #28a745;
+        }
+        
+        .nupi-quick-actions {
+            padding: 10px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+        }
+        
+        .nupi-quick-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+            transition: background 0.3s;
+        }
+        
+        .nupi-quick-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .nupi-input-area {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .nupi-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nupi-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .nupi-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .nupi-send {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .nupi-send:hover {
+            transform: scale(1.05);
+        }
+        
+        .nupi-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .nupi-loading {
+            text-align: center;
+            color: #667eea;
+            font-style: italic;
+            font-size: 13px;
+            padding: 5px;
+        }
+        
+        @media (max-width: 480px) {
+            #nupi-widget-window {
+                width: calc(100vw - 40px);
+                height: calc(100vh - 120px);
+                right: 20px;
+                bottom: 100px;
+            }
+        }
+    `;
+    
+    // Inject styles
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = styles;
+    document.head.appendChild(styleSheet);
+    
+    // Create widget HTML
+    const widgetHTML = `
+        <div id="nupi-widget-container">
+            <button id="nupi-widget-button">🔥</button>
+            <div id="nupi-widget-window">
+                <div class="nupi-header">
+                    <div>
+                        <h3>🔥 NUPI AI</h3>
+                        <p>Full system control</p>
+                    </div>
+                    <button class="nupi-close" id="nupi-close-btn">×</button>
+                </div>
+                <div class="nupi-messages" id="nupi-messages">
+                    <div class="nupi-message system">
+                        <div class="nupi-message-content">
+                            <strong>🔥 NUPI activated!</strong><br><br>
+                            I have full access to your device. Try:<br>
+                            • "Scan my system"<br>
+                            • "Clean storage"<br>
+                            • "Analyze performance"<br>
+                            • "Optimize my device"
+                        </div>
+                    </div>
+                </div>
+                <div class="nupi-quick-actions">
+                    <button class="nupi-quick-btn" data-action="Scan my system">🔍 Scan</button>
+                    <button class="nupi-quick-btn" data-action="Clean storage">🧹 Clean</button>
+                    <button class="nupi-quick-btn" data-action="Analyze performance">🔬 Analyze</button>
+                    <button class="nupi-quick-btn" data-action="Optimize system">⚡ Optimize</button>
+                </div>
+                <div class="nupi-input-area">
+                    <div class="nupi-input-container">
+                        <input 
+                            type="text" 
+                            class="nupi-input" 
+                            id="nupi-input"
+                            placeholder="Ask me anything..."
+                        >
+                        <button class="nupi-send" id="nupi-send-btn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Insert widget
+    const widgetContainer = document.getElementById(WIDGET_ID);
+    widgetContainer.innerHTML = widgetHTML;
+    
+    // Widget functionality
+    const button = document.getElementById('nupi-widget-button');
+    const window = document.getElementById('nupi-widget-window');
+    const closeBtn = document.getElementById('nupi-close-btn');
+    const input = document.getElementById('nupi-input');
+    const sendBtn = document.getElementById('nupi-send-btn');
+    const messagesDiv = document.getElementById('nupi-messages');
+    
+    let userId = 'web-user-' + Date.now();
+    let conversationId = null;
+    
+    // Toggle widget
+    button.addEventListener('click', () => {
+        window.classList.toggle('open');
+        if (window.classList.contains('open')) {
+            input.focus();
+        }
+    });
+    
+    closeBtn.addEventListener('click', () => {
+        window.classList.remove('open');
+    });
+    
+    // Quick actions
+    document.querySelectorAll('.nupi-quick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            input.value = btn.dataset.action;
+            sendMessage();
+        });
+    });
+    
+    // Send message
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    sendBtn.addEventListener('click', sendMessage);
+    
+    async function sendMessage() {
+        const message = input.value.trim();
+        if (!message) return;
+        
+        addMessage(message, 'user');
+        input.value = '';
+        sendBtn.disabled = true;
+        
+        const loadingId = Date.now();
+        addMessage(`<div id="nupi-loading-${loadingId}" class="nupi-loading">⏳ Processing...</div>`, 'system');
+        
+        try {
+            // Detect system action
+            const action = detectAction(message);
+            
+            if (action) {
+                await handleSystemAction(action, loadingId);
+            } else {
+                await handleChat(message, loadingId);
+            }
+        } catch (error) {
+            removeLoading(loadingId);
+            addMessage(`❌ Error: ${error.message}`, 'system');
+        } finally {
+            sendBtn.disabled = false;
+            input.focus();
+        }
+    }
+    
+    function detectAction(message) {
+        const lower = message.toLowerCase();
+        if (lower.includes('scan')) return 'scan';
+        if (lower.includes('clean')) return 'cleanup';
+        if (lower.includes('analyz')) return 'analyze';
+        return null;
+    }
+    
+    async function handleSystemAction(action, loadingId) {
+        const response = await fetch(`${NUPI_API}/api/system/${action}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId })
+        });
+        
+        const data = await response.json();
+        removeLoading(loadingId);
+        
+        if (data.success) {
+            if (action === 'scan') {
+                addMessage(`✅ Scanned ${data.data.totalFiles} files, found ${data.data.largeFiles.length} large files`, 'system');
+            } else if (action === 'cleanup') {
+                addMessage(`✅ Cleaned up! Freed ${formatBytes(data.data.freedSpace)}`, 'system');
+            } else if (action === 'analyze') {
+                addMessage(`✅ Analysis complete! Memory: ${data.data.hardware.memoryUsagePercent}%`, 'system');
+            }
+        }
+    }
+    
+    async function handleChat(message, loadingId) {
+        const response = await fetch(`${NUPI_API}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message,
+                userId,
+                conversationId
+            })
+        });
+        
+        const data = await response.json();
+        removeLoading(loadingId);
+        
+        if (data.response) {
+            conversationId = data.conversationId;
+            addMessage(data.response, 'assistant');
+        }
+    }
+    
+    function addMessage(content, type) {
+        const message = document.createElement('div');
+        message.className = `nupi-message ${type}`;
+        message.innerHTML = `<div class="nupi-message-content">${content}</div>`;
+        messagesDiv.appendChild(message);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    
+    function removeLoading(id) {
+        const el = document.getElementById(`nupi-loading-${id}`);
+        if (el) el.parentElement.remove();
+    }
+    
+    function formatBytes(bytes) {
+        if (!bytes) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+})();
+</script>

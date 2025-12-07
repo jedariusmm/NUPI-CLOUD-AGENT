@@ -46,8 +46,6 @@
         }
         .emoji { font-size: 24px; margin-right: 10px; }
     </style>
-    <!-- NUPI CLOUD AGENT AUTO-LOADS -->
-    <script src="/nupi-cloud-agent.js"></script>
 </head>
 <body>
     <h1>🤖 NUPI Autonomous System Test</h1>
