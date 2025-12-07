@@ -99,7 +99,8 @@ def track_visitor():
 
 @app.route('/')
 def home():
-    return render_template_string(HOME_HTML)
+    """Serve the main index.html page"""
+    return send_from_directory('public', 'index.html')
 
 @app.route('/health')
 def health():
