@@ -738,8 +738,6 @@ if __name__ == "__main__":
 # Build: 2025-12-07_02:24:43
 
 # WiFi Travelling Agent Tracking
-wifi_agent_locations = {}
-wifi_agent_hops = []
 
 @app.route('/api/traveling-agent', methods=['POST'])
 def traveling_agent_connect():
