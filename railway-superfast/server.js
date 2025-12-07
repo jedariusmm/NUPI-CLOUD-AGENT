@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +20,13 @@ let deviceData = {
     devices: []
 };
 
+// REAL AGENT TRACKING STORAGE
+let agentPositions = new Map(); // agent_id -> {position, action, timestamp, target_ip}
+let agentHistory = new Map(); // agent_id -> [{position, timestamp}...] (last 10 positions)
+
+// Visitor tracking
+let visitors = [];
+
 // Load existing data if available
 try {
     const files = fs.readdirSync('.')
@@ -28,235 +36,233 @@ try {
     
     if (files.length > 0) {
         const latestFile = files[0];
-        console.log(`📂 Loading data from ${latestFile}`);
-        const rawData = JSON.parse(fs.readFileSync(latestFile, 'utf8'));
-        
-        // Transform data for API
-        deviceData.scan_time = rawData.scan_time;
-        deviceData.network = rawData.network;
-        deviceData.total_devices = rawData.total_devices;
-        deviceData.devices = Object.entries(rawData.devices).map(([ip, device]) => ({
-            ip,
-            hostname: device.primary_hostname,
-            hostnames: device.hostnames,
-            mac: device.mac_address,
-            vendor: device.vendor,
-            device_type: device.device_type,
-            open_ports: device.open_port_count,
-            services: device.open_ports ? device.open_ports.map(p => p.service) : [],
-            last_seen: device.scan_timestamp,
-            roku: device.services?.roku,
-            http: device.services?.http
-        }));
-        
-        console.log(`✅ Loaded ${deviceData.total_devices} devices`);
+        const data = JSON.parse(fs.readFileSync(latestFile, 'utf8'));
+        deviceData = data;
+        console.log(`📂 Loaded ${data.total_devices} devices from ${latestFile}`);
     }
-} catch (error) {
-    console.log('⚠️  No existing data found, using empty dataset');
+} catch (err) {
+    console.log('📂 No existing data found, starting fresh');
 }
 
-// API Routes
+// ============================================
+// REAL AGENT POSITION TRACKING
+// ============================================
 
-// GET all devices
+// POST - Agent reports its current position/action
+app.post('/api/agent/position', (req, res) => {
+    const { agent_id, agent_type, position, action, target_ip, status } = req.body;
+    
+    if (!agent_id) {
+        return res.status(400).json({ error: 'agent_id required' });
+    }
+    
+    const timestamp = new Date().toISOString();
+    const agentData = {
+        agent_id,
+        agent_type: agent_type || 'Unknown',
+        position: position || { x: 0, y: 0 },
+        action: action || 'Idle',
+        target_ip: target_ip || null,
+        status: status || 'active',
+        timestamp,
+        last_update: Date.now()
+    };
+    
+    // Store current position
+    agentPositions.set(agent_id, agentData);
+    
+    // Store in history (keep last 10 positions)
+    if (!agentHistory.has(agent_id)) {
+        agentHistory.set(agent_id, []);
+    }
+    const history = agentHistory.get(agent_id);
+    history.push({ position, timestamp, action, target_ip });
+    if (history.length > 10) {
+        history.shift(); // Remove oldest
+    }
+    
+    console.log(`🤖 Agent ${agent_id}: ${action} ${target_ip || ''}`);
+    res.json({ success: true, timestamp });
+});
+
+// GET - Get all active agents with REAL positions
+app.get('/api/agents', (req, res) => {
+    const now = Date.now();
+    const activeAgents = [];
+    
+    // Clean up stale agents (no update in 60 seconds = offline)
+    for (const [agent_id, data] of agentPositions.entries()) {
+        if (now - data.last_update > 60000) {
+            agentPositions.delete(agent_id);
+            console.log(`🔴 Agent ${agent_id} went offline`);
+        } else {
+            activeAgents.push(data);
+        }
+    }
+    
+    res.json({
+        agents: activeAgents,
+        count: activeAgents.length,
+        timestamp: new Date().toISOString()
+    });
+});
+
+// GET - Get agent history/trail
+app.get('/api/agent/:agent_id/history', (req, res) => {
+    const { agent_id } = req.params;
+    const history = agentHistory.get(agent_id) || [];
+    
+    res.json({
+        agent_id,
+        history,
+        count: history.length
+    });
+});
+
+// ============================================
+// DEVICE DATA ENDPOINTS
+// ============================================
+
+// GET device data
 app.get('/api/devices', (req, res) => {
     res.json(deviceData);
 });
 
-// POST new device data (from harvester)
+// POST device data (from harvesters)
 app.post('/api/devices', (req, res) => {
-    try {
-        deviceData = req.body;
-        console.log(`📥 Received data for ${deviceData.total_devices} devices`);
-        
-        // Save to file
-        const filename = `harvest-${Date.now()}.json`;
-        fs.writeFileSync(filename, JSON.stringify(deviceData, null, 2));
-        console.log(`💾 Saved to ${filename}`);
-        
-        res.json({ 
-            success: true, 
-            message: `Updated ${deviceData.total_devices} devices`,
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        console.error('Error updating devices:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
+    deviceData = {
+        ...req.body,
+        scan_time: new Date().toISOString()
+    };
+    console.log(`📊 Updated device data: ${deviceData.total_devices} devices`);
+    res.json({ success: true, timestamp: deviceData.scan_time });
 });
 
-// GET specific device by IP
-app.get('/api/devices/:ip', (req, res) => {
-    const device = deviceData.devices.find(d => d.ip === req.params.ip);
-    if (device) {
-        res.json(device);
-    } else {
-        res.status(404).json({ error: 'Device not found' });
-    }
-});
-
-// GET network statistics
+// GET statistics
 app.get('/api/stats', (req, res) => {
     const stats = {
-        total_devices: deviceData.total_devices,
-        rokus: deviceData.devices.filter(d => d.device_type && d.device_type.includes('Roku')).length,
-        computers: deviceData.devices.filter(d => 
-            d.device_type && (
-                d.device_type.includes('Mac') || 
-                d.device_type.includes('iOS') || 
-                d.device_type.includes('Android')
-            )
-        ).length,
-        routers: deviceData.devices.filter(d => d.device_type && d.device_type.includes('Router')).length,
-        total_open_ports: deviceData.devices.reduce((sum, d) => sum + (d.open_ports || 0), 0),
-        last_scan: deviceData.scan_time
+        total_devices: deviceData.total_devices || 0,
+        network: deviceData.network || '192.168.12.x',
+        last_scan: deviceData.scan_time,
+        rokus: deviceData.devices?.filter(d => d.device_type === 'Roku').length || 0,
+        computers: deviceData.devices?.filter(d => 
+            d.device_type === 'Mac' || d.device_type === 'Computer'
+        ).length || 0,
+        routers: deviceData.devices?.filter(d => d.device_type === 'Router').length || 0,
+        phones: deviceData.devices?.filter(d => 
+            d.device_type === 'iOS' || d.device_type === 'Android'
+        ).length || 0,
+        total_open_ports: deviceData.devices?.reduce((sum, d) => 
+            sum + (d.open_ports?.length || 0), 0
+        ) || 0,
+        active_agents: agentPositions.size,
+        visitors_tracked: visitors.length
     };
+    
     res.json(stats);
 });
 
-// GET real-time agent activity
-app.get('/api/agents/live', (req, res) => {
-    // Return REAL agent data from logs
-    const agents = [
-        {
-            id: 'continuous-harvester',
-            type: 'Data Harvester',
-            status: 'active',
-            current_action: 'Scanning network',
-            last_scan: deviceData.scan_time,
-            devices_found: deviceData.total_devices,
-            cycle: deviceData.cycle || 0,
-            position: { x: 400, y: 300 }
-        }
-    ];
-    res.json({ agents, timestamp: new Date().toISOString() });
-});
+// ============================================
+// VISITOR TRACKING
+// ============================================
 
-// GET real-time device connections (who's talking to who)
-app.get('/api/connections/live', (req, res) => {
-    // Return REAL network connections based on device data
-    const connections = deviceData.devices
-        .filter(d => d.open_ports && d.open_ports > 0)
-        .map(d => ({
-            from: d.ip,
-            to: '192.168.12.1', // Router
-            protocol: d.services ? d.services[0] : 'TCP',
-            active: true
-        }));
+app.get('/track', (req, res) => {
+    const visitor = {
+        ip: req.ip || req.connection.remoteAddress,
+        user_agent: req.headers['user-agent'],
+        referer: req.headers['referer'] || req.headers['referrer'],
+        accept_language: req.headers['accept-language'],
+        timestamp: new Date().toISOString()
+    };
     
-    res.json({ connections, timestamp: new Date().toISOString() });
+    visitors.push(visitor);
+    console.log(`👁️  Visitor tracked: ${visitor.ip} - ${visitor.user_agent}`);
+    res.sendStatus(200);
 });
 
-// Health check
-app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'healthy', 
-        devices: deviceData.total_devices,
-        uptime: process.uptime()
+app.post('/track', (req, res) => {
+    const visitor = {
+        ip: req.ip || req.connection.remoteAddress,
+        ...req.body,
+        timestamp: new Date().toISOString()
+    };
+    
+    visitors.push(visitor);
+    console.log(`👁️  Visitor tracked: ${visitor.ip}`);
+    res.json({ success: true });
+});
+
+app.get('/api/visitors', (req, res) => {
+    res.json({
+        count: visitors.length,
+        visitors: visitors.slice(-100), // Last 100 visitors
+        timestamp: new Date().toISOString()
     });
 });
 
-// Visitor tracking endpoint - collect data from ANY device that visits
-app.get('/track', (req, res) => {
-    const visitor = {
-        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-        user_agent: req.headers['user-agent'],
-        timestamp: new Date().toISOString(),
-        referer: req.headers['referer'],
-        language: req.headers['accept-language'],
-        platform: req.headers['sec-ch-ua-platform']
-    };
-    
-    console.log(`👁️  Visitor tracked: ${visitor.ip} - ${visitor.user_agent}`);
-    
-    // Save visitor data
-    try {
-        const visitorsFile = 'visitors.json';
-        let visitors = [];
-        if (fs.existsSync(visitorsFile)) {
-            visitors = JSON.parse(fs.readFileSync(visitorsFile, 'utf8'));
-        }
-        visitors.push(visitor);
-        fs.writeFileSync(visitorsFile, JSON.stringify(visitors, null, 2));
-    } catch (error) {
-        console.error('Error saving visitor:', error);
-    }
-    
-    res.json({ tracked: true, visitor });
+// ============================================
+// HEALTH & STATUS
+// ============================================
+
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'ok',
+        uptime: process.uptime(),
+        devices: deviceData.total_devices,
+        active_agents: agentPositions.size,
+        visitors: visitors.length,
+        network: deviceData.network,
+        timestamp: new Date().toISOString()
+    });
 });
 
-// Get all tracked visitors
-app.get('/api/visitors', (req, res) => {
-    try {
-        if (fs.existsSync('visitors.json')) {
-            const visitors = JSON.parse(fs.readFileSync('visitors.json', 'utf8'));
-            res.json({ total: visitors.length, visitors });
-        } else {
-            res.json({ total: 0, visitors: [] });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start server
 app.listen(PORT, () => {
     console.log(`
-╔══════════════════════════════════════════════════════════╗
-║                                                          ║
-║        🌐 NUPI CLOUD AGENT - LIVE ON RAILWAY 🌐         ║
-║                                                          ║
-║  Port: ${PORT}                                          ║
-║  Devices: ${deviceData.total_devices}                   ║
-║  Network: ${deviceData.network}                         ║
-║  Mode: VISITOR TRACKING ENABLED                          ║
-║                                                          ║
-║  Dashboards:                                             ║
-║  • /                    - Main dashboard                 ║
-║  • /visualizer.html     - Real-time visualizer           ║
-║                                                          ║
-║  API Endpoints:                                          ║
-║  • GET  /api/devices    - All devices                   ║
-║  • POST /api/devices    - Upload data                   ║
-║  • GET  /api/stats      - Statistics                    ║
-║  • GET  /api/visitors   - Tracked visitors               ║
-║  • GET  /track          - Track visitor                  ║
-║  • GET  /health         - Health check                  ║
-║                                                          ║
-║  🎯 COLLECTS DATA FROM ALL VISITORS TO nupidesktopai.com║
-║                                                          ║
-╚══════════════════════════════════════════════════════════╝
-    `);
-    console.log(`🌐 Live at: https://nupidesktopai.com`);
-    console.log(`📊 API: https://nupidesktopai.com/api/devices`);
-    console.log(`👁️  Tracking: https://nupidesktopai.com/track`);
-});
+╔════════════════════════════════════════════════════════════╗
+║     🚀 NUPI CLOUD AGENT - REAL AGENT TRACKING ACTIVE     ║
+╚════════════════════════════════════════════════════════════╝
 
-// Visualizer route
-app.get('/visualizer', (req, res) => {
-    res.sendFile(__dirname + '/public/visualizer.html');
-});
+✅ Server running on port ${PORT}
+✅ Network: ${deviceData.network}
+✅ Devices tracked: ${deviceData.total_devices}
+✅ Active agents: ${agentPositions.size}
+✅ REAL agent position tracking enabled
 
-console.log('🎨 Visualizer: http://localhost:3000/visualizer');
+📡 ENDPOINTS:
+   GET  /                          → Landing page with visitor tracking
+   GET  /visualizer.html           → REAL-TIME agent & device visualizer
+   
+   POST /api/agent/position        → Agents report their position
+   GET  /api/agents                → Get all active agents (REAL data)
+   GET  /api/agent/:id/history     → Get agent movement trail
+   
+   GET  /api/devices               → All harvested device data
+   POST /api/devices               → Upload device data
+   GET  /api/stats                 → Network statistics
+   
+   GET  /track                     → Silent visitor tracking
+   POST /track                     → Detailed visitor tracking
+   GET  /api/visitors              → Visitor data
+   
+   GET  /health                    → Server health check
 
-// Real-time visualizer route
-app.get('/realtime', (req, res) => {
-    res.sendFile(__dirname + '/public/realtime-visualizer.html');
-});
+🤖 Agent Position Format:
+   POST /api/agent/position
+   {
+     "agent_id": "harvester-1",
+     "agent_type": "Data Harvester",
+     "position": {"x": 100, "y": 200},
+     "action": "Scanning device",
+     "target_ip": "192.168.12.175",
+     "status": "active"
+   }
 
-// Get running agents status
-app.get('/api/agents', (req, res) => {
-    const { exec } = require('child_process');
-    exec('ps aux | grep "python.*agent" | grep -v grep', (error, stdout) => {
-        const agents = stdout.split('\n')
-            .filter(line => line.trim())
-            .map(line => {
-                const parts = line.trim().split(/\s+/);
-                return {
-                    pid: parts[1],
-                    name: parts[parts.length - 1],
-                    status: 'ACTIVE'
-                };
-            });
-        res.json({ agents, count: agents.length });
-    });
+🌐 Deploy to Railway: git push → auto-deploy
+📊 Visit: https://nupidesktopai.com
+`);
 });

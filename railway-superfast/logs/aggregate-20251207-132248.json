@@ -1,0 +1,521 @@
+{
+  "scan_time": "2025-12-07T12:27:29.762157",
+  "network": "192.168.12.x",
+  "total_devices": 16,
+  "devices": {
+    "192.168.12.10": {
+      "ip": "192.168.12.10",
+      "scan_timestamp": "2025-12-07T12:27:12.642424",
+      "scan_epoch": 1765128432.6424708,
+      "hostnames": [
+        "Device-10"
+      ],
+      "primary_hostname": "Device-10",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [],
+      "open_port_count": 0,
+      "services": {},
+      "device_type": "\u2753 Unknown Device"
+    },
+    "192.168.12.1": {
+      "ip": "192.168.12.1",
+      "scan_timestamp": "2025-12-07T12:27:12.600029",
+      "scan_epoch": 1765128432.600076,
+      "hostnames": [
+        "f5688w.lan"
+      ],
+      "primary_hostname": "f5688w.lan",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [
+        {
+          "port": 80,
+          "service": "HTTP"
+        },
+        {
+          "port": 8080,
+          "service": "HTTP-Proxy"
+        }
+      ],
+      "open_port_count": 2,
+      "services": {
+        "http": {
+          "status_code": 200,
+          "server": "lighttpd/1.4.69",
+          "content_type": "text/html",
+          "content_length": "900",
+          "page_title": "T-Mobile Gateway",
+          "accessible_paths": [
+            "/api",
+            "/admin",
+            "/login",
+            "/status",
+            "/info",
+            "/config"
+          ]
+        }
+      },
+      "device_type": "\ud83c\udf10 Router/Gateway"
+    },
+    "192.168.12.56": {
+      "ip": "192.168.12.56",
+      "scan_timestamp": "2025-12-07T12:27:14.676577",
+      "scan_epoch": 1765128434.6766279,
+      "hostnames": [
+        "65tclrokutvjedarius.lan"
+      ],
+      "primary_hostname": "65tclrokutvjedarius.lan",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku-API"
+        }
+      ],
+      "open_port_count": 1,
+      "services": {
+        "roku": {
+          "model": "65S451",
+          "model_number": "G138X",
+          "serial": "X01200KG0XA3",
+          "software_version": "15.0.4",
+          "friendly_name": "65\" TCL Roku TV (Jedarius)",
+          "wifi_mac": "94:b3:f7:eb:ba:24",
+          "ethernet_mac": "38:26:56:97:af:79",
+          "active_app": "Home"
+        }
+      },
+      "device_type": "\ud83d\udcfa TV/Roku Device"
+    },
+    "192.168.12.76": {
+      "ip": "192.168.12.76",
+      "scan_timestamp": "2025-12-07T12:27:16.646335",
+      "scan_epoch": 1765128436.646388,
+      "hostnames": [
+        "rokustreambar.lan"
+      ],
+      "primary_hostname": "rokustreambar.lan",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku-API"
+        }
+      ],
+      "open_port_count": 1,
+      "services": {
+        "roku": {
+          "model": "Roku Streambar",
+          "model_number": "9102R",
+          "serial": "YL008X119165",
+          "software_version": "15.0.4",
+          "friendly_name": "Roku Streambar",
+          "wifi_mac": "20:ef:bd:91:67:3e",
+          "ethernet_mac": "Unknown",
+          "active_app": "Home"
+        }
+      },
+      "device_type": "\ud83d\udcfa TV/Roku Device"
+    },
+    "192.168.12.91": {
+      "ip": "192.168.12.91",
+      "scan_timestamp": "2025-12-07T12:27:16.818340",
+      "scan_epoch": 1765128436.818411,
+      "hostnames": [
+        "Device-91"
+      ],
+      "primary_hostname": "Device-91",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [],
+      "open_port_count": 0,
+      "services": {},
+      "device_type": "\u2753 Unknown Device"
+    },
+    "192.168.12.105": {
+      "ip": "192.168.12.105",
+      "scan_timestamp": "2025-12-07T12:27:17.713404",
+      "scan_epoch": 1765128437.713461,
+      "hostnames": [
+        "galaxy-tab-a9-5g.lan"
+      ],
+      "primary_hostname": "galaxy-tab-a9-5g.lan",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [],
+      "open_port_count": 0,
+      "services": {},
+      "device_type": "\ud83c\udf10 Router/Gateway"
+    },
+    "192.168.12.109": {
+      "ip": "192.168.12.109",
+      "scan_timestamp": "2025-12-07T12:27:17.824576",
+      "scan_epoch": 1765128437.82463,
+      "hostnames": [
+        "Device-109"
+      ],
+      "primary_hostname": "Device-109",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [],
+      "open_port_count": 0,
+      "services": {},
+      "device_type": "\u2753 Unknown Device"
+    },
+    "192.168.12.127": {
+      "ip": "192.168.12.127",
+      "scan_timestamp": "2025-12-07T12:27:19.108110",
+      "scan_epoch": 1765128439.108198,
+      "hostnames": [
+        "Device-127"
+      ],
+      "primary_hostname": "Device-127",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [
+        {
+          "port": 8443,
+          "service": "HTTPS-Alt"
+        },
+        {
+          "port": 8008,
+          "service": "Chromecast"
+        },
+        {
+          "port": 9080,
+          "service": "Roku-Dev"
+        }
+      ],
+      "open_port_count": 3,
+      "services": {},
+      "device_type": "\u2753 Unknown Device"
+    },
+    "192.168.12.141": {
+      "ip": "192.168.12.141",
+      "scan_timestamp": "2025-12-07T12:27:19.726511",
+      "scan_epoch": 1765128439.7265542,
+      "hostnames": [
+        "Device-141"
+      ],
+      "primary_hostname": "Device-141",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [],
+      "open_port_count": 0,
+      "services": {},
+      "device_type": "\u2753 Unknown Device"
+    },
+    "192.168.12.147": {
+      "ip": "192.168.12.147",
+      "scan_timestamp": "2025-12-07T12:27:20.690353",
+      "scan_epoch": 1765128440.690399,
+      "hostnames": [
+        "iphone.lan"
+      ],
+      "primary_hostname": "iphone.lan",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [],
+      "open_port_count": 0,
+      "services": {},
+      "device_type": "\ud83d\udcf1 iOS Device"
+    },
+    "192.168.12.158": {
+      "ip": "192.168.12.158",
+      "scan_timestamp": "2025-12-07T12:27:21.094874",
+      "scan_epoch": 1765128441.09493,
+      "hostnames": [
+        "Device-158"
+      ],
+      "primary_hostname": "Device-158",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [],
+      "open_port_count": 0,
+      "services": {},
+      "device_type": "\u2753 Unknown Device"
+    },
+    "192.168.12.178": {
+      "ip": "192.168.12.178",
+      "scan_timestamp": "2025-12-07T12:27:22.124118",
+      "scan_epoch": 1765128442.124167,
+      "hostnames": [
+        "imac.lan"
+      ],
+      "primary_hostname": "imac.lan",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [],
+      "open_port_count": 0,
+      "services": {},
+      "device_type": "\ud83d\udcbb Mac Computer"
+    },
+    "192.168.12.175": {
+      "ip": "192.168.12.175",
+      "scan_timestamp": "2025-12-07T12:27:21.961043",
+      "scan_epoch": 1765128441.961088,
+      "hostnames": [
+        "65elementrokutv.lan"
+      ],
+      "primary_hostname": "65elementrokutv.lan",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku-API"
+        },
+        {
+          "port": 9080,
+          "service": "Roku-Dev"
+        }
+      ],
+      "open_port_count": 2,
+      "services": {
+        "roku": {
+          "model": "E4AA65R-T",
+          "model_number": "GE05X",
+          "serial": "X01200N4NND9",
+          "software_version": "15.0.4",
+          "friendly_name": "65\" ELEMENT Roku TV",
+          "wifi_mac": "38:e7:c0:19:97:e7",
+          "ethernet_mac": "04:05:dd:5a:2a:75",
+          "installed_apps": [
+            {
+              "id": "tvinput.hdmi4",
+              "name": "HDMI\u00a04",
+              "version": "1.0.0"
+            },
+            {
+              "id": "tvinput.hdmi2",
+              "name": "Xbox",
+              "version": "1.0.0"
+            },
+            {
+              "id": "tvinput.hdmi1",
+              "name": "Roku Streambar",
+              "version": "1.0.0"
+            },
+            {
+              "id": "tvinput.hdmi3",
+              "name": "Xbox",
+              "version": "1.0.0"
+            },
+            {
+              "id": "tvinput.dtv",
+              "name": "Live\u00a0TV",
+              "version": "1.0.0"
+            },
+            {
+              "id": "12",
+              "name": "Netflix",
+              "version": "61.2222.1301012"
+            },
+            {
+              "id": "13",
+              "name": "Prime Video",
+              "version": "15.4.2025110415"
+            },
+            {
+              "id": "2285",
+              "name": "Hulu",
+              "version": "6.101.0"
+            },
+            {
+              "id": "593099",
+              "name": "Peacock TV",
+              "version": "6.11.22"
+            },
+            {
+              "id": "291097",
+              "name": "Disney Plus",
+              "version": "1.56.2025112400"
+            },
+            {
+              "id": "837",
+              "name": "YouTube",
+              "version": "2.25.305"
+            },
+            {
+              "id": "151908",
+              "name": "The Roku Channel",
+              "version": "13.10.5"
+            },
+            {
+              "id": "606242",
+              "name": "Kids & Family on The Roku Channel",
+              "version": "12.5.18"
+            },
+            {
+              "id": "8838",
+              "name": "SHOWTIME",
+              "version": "1.0.2"
+            },
+            {
+              "id": "31440",
+              "name": "Paramount Plus",
+              "version": "9.15.20251021"
+            },
+            {
+              "id": "41468",
+              "name": "Tubi - Free Movies & TV",
+              "version": "3.7.1"
+            },
+            {
+              "id": "551012",
+              "name": "Apple TV",
+              "version": "16.0.51"
+            },
+            {
+              "id": "98061",
+              "name": "Match Four Free",
+              "version": "8.4.3"
+            },
+            {
+              "id": "43465",
+              "name": "Fubo: Watch Live TV & Sports",
+              "version": "5.15.0"
+            },
+            {
+              "id": "251090",
+              "name": "Roku | Cinematic Sound",
+              "version": "1.0.21"
+            },
+            {
+              "id": "637097",
+              "name": "Roku Photo Streams",
+              "version": "1.58.1106192181"
+            },
+            {
+              "id": "276881",
+              "name": "Zeus Network",
+              "version": "9.1.1"
+            },
+            {
+              "id": "45706",
+              "name": "Roku TV Intro",
+              "version": "1.0.60"
+            },
+            {
+              "id": "22297",
+              "name": "Spotify Music",
+              "version": "2.11.71"
+            },
+            {
+              "id": "14362",
+              "name": "Amazon Music",
+              "version": "3.0.167"
+            },
+            {
+              "id": "2595",
+              "name": "Crunchyroll",
+              "version": "6.2.38"
+            },
+            {
+              "id": "12716",
+              "name": "AMC",
+              "version": "3.4.17"
+            },
+            {
+              "id": "773622",
+              "name": "Backdrops",
+              "version": "1.17.1815091133"
+            },
+            {
+              "id": "46041",
+              "name": "Sling TV - Live Sports, News, Shows + Freestream",
+              "version": "8.174.23376"
+            },
+            {
+              "id": "652379",
+              "name": "Now Thats TV",
+              "version": "3.164.340"
+            },
+            {
+              "id": "617456",
+              "name": "Free Arcade Games by PlayWorks",
+              "version": "3.0.14"
+            },
+            {
+              "id": "724900",
+              "name": "Drag Racing",
+              "version": "3.0.11"
+            },
+            {
+              "id": "44856",
+              "name": "NFL",
+              "version": "5.2.0"
+            }
+          ],
+          "app_count": 33,
+          "active_app": "YouTube"
+        }
+      },
+      "device_type": "\ud83d\udcfa TV/Roku Device"
+    },
+    "192.168.12.169": {
+      "ip": "192.168.12.169",
+      "scan_timestamp": "2025-12-07T12:27:22.050771",
+      "scan_epoch": 1765128442.050823,
+      "hostnames": [
+        "Device-169"
+      ],
+      "primary_hostname": "Device-169",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [],
+      "open_port_count": 0,
+      "services": {},
+      "device_type": "\u2753 Unknown Device"
+    },
+    "192.168.12.247": {
+      "ip": "192.168.12.247",
+      "scan_timestamp": "2025-12-07T12:27:26.156809",
+      "scan_epoch": 1765128446.156867,
+      "hostnames": [
+        "43hisenserokutv.lan"
+      ],
+      "primary_hostname": "43hisenserokutv.lan",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku-API"
+        }
+      ],
+      "open_port_count": 1,
+      "services": {
+        "roku": {
+          "model": "4Series-43",
+          "model_number": "D207X",
+          "serial": "X00700WC0GW6",
+          "software_version": "15.0.4",
+          "friendly_name": "43\" Hisense Roku TV",
+          "wifi_mac": "38:64:07:98:92:78",
+          "ethernet_mac": "Unknown",
+          "active_app": "Home"
+        }
+      },
+      "device_type": "\ud83d\udcfa TV/Roku Device"
+    },
+    "192.168.12.255": {
+      "ip": "192.168.12.255",
+      "scan_timestamp": "2025-12-07T12:27:26.744278",
+      "scan_epoch": 1765128446.744322,
+      "hostnames": [
+        "Device-255"
+      ],
+      "primary_hostname": "Device-255",
+      "mac_address": "Unknown",
+      "vendor": "Unknown",
+      "open_ports": [],
+      "open_port_count": 0,
+      "services": {},
+      "device_type": "\u2753 Unknown Device"
+    }
+  }
+}

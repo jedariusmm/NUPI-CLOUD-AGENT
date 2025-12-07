@@ -1,0 +1,26 @@
+{
+  "agent_id": "deep-scanner-4",
+  "devices": [
+    {
+      "ip": "192.168.12.91",
+      "hostname": "Device-91",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-4",
+      "scan_time": "2025-12-07T13:20:33.685623"
+    },
+    {
+      "ip": "192.168.12.105",
+      "hostname": "galaxy-tab-a9-5g.lan",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-4",
+      "scan_time": "2025-12-07T13:20:46.963392"
+    },
+    {
+      "ip": "192.168.12.109",
+      "hostname": "Device-109",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-4",
+      "scan_time": "2025-12-07T13:20:50.004282"
+    }
+  ]
+}

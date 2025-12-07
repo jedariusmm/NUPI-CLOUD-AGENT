@@ -1,0 +1,194 @@
+{
+  "scan_time": "2025-12-07T13:27:11.357482",
+  "network": "192.168.12.x",
+  "total_devices": 14,
+  "devices": [
+    {
+      "ip": "192.168.12.1",
+      "hostname": "f5688w.lan",
+      "mac": "38:e7:c0:19:97:e7",
+      "vendor": "Roku Inc",
+      "device_type": "Router",
+      "open_ports": [
+        {
+          "port": 80,
+          "service": "HTTP"
+        },
+        {
+          "port": 8080,
+          "service": "HTTP-Proxy"
+        }
+      ],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:06.583186"
+    },
+    {
+      "ip": "192.168.12.91",
+      "hostname": "Device-91",
+      "mac": null,
+      "vendor": "Unknown",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:07.424315"
+    },
+    {
+      "ip": "192.168.12.56",
+      "hostname": "65tclrokutvjedarius.lan",
+      "mac": "94:b3:f7:eb:ba:24",
+      "vendor": "TCL",
+      "device_type": "Roku",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku-API"
+        }
+      ],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:07.391256",
+      "model-name": "65S451",
+      "serial-number": "X01200KG0XA3",
+      "software-version": "15.0.4",
+      "app_count": 0
+    },
+    {
+      "ip": "192.168.12.76",
+      "hostname": "rokustreambar.lan",
+      "mac": "20:ef:bd:91:67:3e",
+      "vendor": "Roku Inc",
+      "device_type": "Roku",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku-API"
+        }
+      ],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:07.406422",
+      "model-name": "Roku Streambar",
+      "serial-number": "YL008X119165",
+      "software-version": "15.0.4",
+      "app_count": 0
+    },
+    {
+      "ip": "192.168.12.109",
+      "hostname": "Device-109",
+      "mac": "e8:6e:3a:48:65:7f",
+      "vendor": "Wireless",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:08.329807"
+    },
+    {
+      "ip": "192.168.12.127",
+      "hostname": "Device-127",
+      "mac": null,
+      "vendor": "Unknown",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:08.417763"
+    },
+    {
+      "ip": "192.168.12.141",
+      "hostname": "Device-141",
+      "mac": "e8:61:7e:b1:24:41",
+      "vendor": "Unknown",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:08.448260"
+    },
+    {
+      "ip": "192.168.12.105",
+      "hostname": "galaxy-tab-a9-5g.lan",
+      "mac": "3a:78:8e:3a:a2:aa",
+      "vendor": "Unknown",
+      "device_type": "Android",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:08.459992"
+    },
+    {
+      "ip": "192.168.12.158",
+      "hostname": "Device-158",
+      "mac": "e8:6e:3a:1c:37:43",
+      "vendor": "Wireless",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:09.288008"
+    },
+    {
+      "ip": "192.168.12.178",
+      "hostname": "imac.lan",
+      "mac": null,
+      "vendor": "Unknown",
+      "device_type": "Mac",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:09.343772"
+    },
+    {
+      "ip": "192.168.12.175",
+      "hostname": "65elementrokutv.lan",
+      "mac": "38:e7:c0:19:97:e7",
+      "vendor": "Roku Inc",
+      "device_type": "Roku",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku-API"
+        }
+      ],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:09.355232",
+      "model-name": "E4AA65R-T",
+      "serial-number": "X01200N4NND9",
+      "software-version": "15.0.4",
+      "app_count": 34
+    },
+    {
+      "ip": "192.168.12.161",
+      "hostname": "lenovo-idea-tab-pro.lan",
+      "mac": null,
+      "vendor": "Unknown",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:09.589781"
+    },
+    {
+      "ip": "192.168.12.255",
+      "hostname": "Device-255",
+      "mac": "ff:ff:ff:ff:ff:ff",
+      "vendor": "Unknown",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:11.313595"
+    },
+    {
+      "ip": "192.168.12.247",
+      "hostname": "43hisenserokutv.lan",
+      "mac": null,
+      "vendor": "Unknown",
+      "device_type": "Roku",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku-API"
+        }
+      ],
+      "online": true,
+      "last_seen": "2025-12-07T13:27:11.315267",
+      "model-name": "4Series-43",
+      "serial-number": "X00700WC0GW6",
+      "software-version": "15.0.4",
+      "app_count": 0
+    }
+  ],
+  "cycle": 1,
+  "agent_id": "harvester-1765132015"
+}

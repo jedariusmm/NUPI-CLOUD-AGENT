@@ -1,0 +1,19 @@
+{
+  "agent_id": "deep-scanner-3",
+  "devices": [
+    {
+      "ip": "192.168.12.56",
+      "hostname": "65tclrokutvjedarius.lan",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-3",
+      "scan_time": "2025-12-07T13:17:57.653860"
+    },
+    {
+      "ip": "192.168.12.76",
+      "hostname": "rokustreambar.lan",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-3",
+      "scan_time": "2025-12-07T13:18:16.827517"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "agent_id": "deep-scanner-5",
+  "devices": [
+    {
+      "ip": "192.168.12.127",
+      "hostname": "Device-127",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-5",
+      "scan_time": "2025-12-07T13:20:24.294624"
+    },
+    {
+      "ip": "192.168.12.141",
+      "hostname": "Device-141",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-5",
+      "scan_time": "2025-12-07T13:20:37.441387"
+    },
+    {
+      "ip": "192.168.12.158",
+      "hostname": "Device-158",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-5",
+      "scan_time": "2025-12-07T13:20:53.606143"
+    },
+    {
+      "ip": "192.168.12.161",
+      "hostname": "lenovo-idea-tab-pro.lan",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-5",
+      "scan_time": "2025-12-07T13:20:55.862305"
+    }
+  ]
+}

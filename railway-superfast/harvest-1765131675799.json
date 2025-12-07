@@ -1,0 +1,12 @@
+{
+  "agent_id": "deep-scanner-7",
+  "devices": [
+    {
+      "ip": "192.168.12.247",
+      "hostname": "43hisenserokutv.lan",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-7",
+      "scan_time": "2025-12-07T13:21:10.743390"
+    }
+  ]
+}

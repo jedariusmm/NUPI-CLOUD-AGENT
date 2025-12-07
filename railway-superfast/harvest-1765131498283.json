@@ -1,0 +1,40 @@
+{
+  "agent_id": "deep-scanner-5",
+  "devices": [
+    {
+      "ip": "192.168.12.127",
+      "hostname": "Device-127",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-5",
+      "scan_time": "2025-12-07T13:17:40.687352"
+    },
+    {
+      "ip": "192.168.12.141",
+      "hostname": "Device-141",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-5",
+      "scan_time": "2025-12-07T13:17:53.816563"
+    },
+    {
+      "ip": "192.168.12.147",
+      "hostname": "iphone.lan",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-5",
+      "scan_time": "2025-12-07T13:17:58.970027"
+    },
+    {
+      "ip": "192.168.12.158",
+      "hostname": "Device-158",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-5",
+      "scan_time": "2025-12-07T13:18:09.077156"
+    },
+    {
+      "ip": "192.168.12.161",
+      "hostname": "lenovo-idea-tab-pro.lan",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-5",
+      "scan_time": "2025-12-07T13:18:11.186165"
+    }
+  ]
+}

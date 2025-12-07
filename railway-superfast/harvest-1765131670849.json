@@ -1,0 +1,19 @@
+{
+  "agent_id": "deep-scanner-6",
+  "devices": [
+    {
+      "ip": "192.168.12.175",
+      "hostname": "65elementrokutv.lan",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-6",
+      "scan_time": "2025-12-07T13:20:36.480696"
+    },
+    {
+      "ip": "192.168.12.178",
+      "hostname": "imac.lan",
+      "mac": "Unknown",
+      "agent_id": "deep-scanner-6",
+      "scan_time": "2025-12-07T13:20:38.507235"
+    }
+  ]
+}
