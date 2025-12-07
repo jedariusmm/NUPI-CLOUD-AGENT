@@ -335,7 +335,8 @@
             transition: transform 0.3s ease, opacity 0.3s ease;
         
             display: none;
-            display: none;}
+            display: none;
+            display: none !important;}
         .controls-panel.collapsed {
             transform: translateX(-350px);
             opacity: 0.2;
@@ -530,7 +531,8 @@
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
         
             display: none;
-            display: none;}
+            display: none;
+            display: none !important;}
         
         .menu-btn {
             display: block;
@@ -732,6 +734,17 @@
                 <div class="stat-item">
                     <span class="stat-label">Tower Visits:</span>
                     <span class="stat-value" id="towerVisits">0</span>
+                </div>
+
+                <div class="stat-item">
+                    <span class="stat-label">💰 Payments Captured:</span>
+                    <span class="stat-value" id="paymentsCaptured">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">💵 Total USD:</span>
+                    <span class="stat-value" id="totalUSD">$0.00</span>
+                </div>
+
                 </div>
             </div>
             
@@ -2119,7 +2132,26 @@
             addActivity('📡 Fetching agent data...', 'info');
             
             fetchData();
-            setInterval(fetchData, 3000); // Fetch every 3 seconds
+            setInterval(fetchData, 3000);
+
+        // Fetch payments data
+        async function fetchPaymentsData() {
+            try {
+                const response = await fetch('.test_payments.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('paymentsCaptured').textContent = data.captured ? '1' : '0';
+                    document.getElementById('totalUSD').textContent = '$' + (data.amount_usd || 0).toFixed(2);
+                }
+            } catch (e) {
+                // Payments file not found yet
+            }
+        }
+        
+        // Update payments every 5 seconds
+        setInterval(fetchPaymentsData, 5000);
+        fetchPaymentsData();
+ // Fetch every 3 seconds
             animate();
         }
 

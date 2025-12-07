@@ -1,0 +1,20 @@
+{
+  "test_payment": {
+    "timestamp": "2025-12-07T14:15:07.267032",
+    "source_ip": "185.46.212.88",
+    "amount": "1250.50",
+    "currency": "EUR",
+    "iban": "DE89370400440532013000",
+    "swift": "COBADEFFXXX",
+    "email": "customer@example.de",
+    "phone": "+49-30-12345678",
+    "country": "Germany",
+    "payment_method": "SEPA Transfer",
+    "raw_data": "amount:1250.50 currency:EUR iban:DE89370400440532013000"
+  },
+  "amount_usd": 1375.5500000000002,
+  "target": "@chevyclt01",
+  "telegram": "@jdtech",
+  "usa_blocked": true,
+  "captured": true
+}
