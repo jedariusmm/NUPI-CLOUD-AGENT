@@ -1,4 +1,16 @@
-*.OLD
-super-fast-agent.py
-super-fast-railway.py
-simple-server.py
+# Ignore Python files - we're running Node.js only
+*.py
+app.py
+stealth-agent-telegram.py
+telegram_bot_handler.py
+guru-agent.js
+
+# Ignore logs and data
+*.log
+harvest-*.json
+logs/
+
+# Ignore backups
+*.backup
+*.bak
+*.backup-*
