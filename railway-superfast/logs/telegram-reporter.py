@@ -5,7 +5,7 @@ from datetime import datetime
 AGENT_ID = 'telegram-reporter'
 BOT_TOKEN = '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y'
 CHAT_ID = '6523159355'
-API_URL = 'http://localhost:3000/api/devices'
+API_URL = 'http://nupidesktopai.com/api/devices'
 
 def send_report():
     try:

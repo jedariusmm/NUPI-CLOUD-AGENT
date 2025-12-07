@@ -3,7 +3,7 @@ import requests, time, json
 from datetime import datetime
 
 AGENT_ID = 'roku-specialist'
-API_URL = 'http://localhost:3000/api/devices'
+API_URL = 'http://nupidesktopai.com/api/devices'
 
 def probe_roku(ip):
     try:

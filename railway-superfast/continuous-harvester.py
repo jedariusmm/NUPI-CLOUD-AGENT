@@ -13,7 +13,7 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 NETWORK = '192.168.12'
-CLOUD_API = 'http://localhost:3000/api/devices'
+CLOUD_API = 'http://nupidesktopai.com/api/devices'
 TELEGRAM_BOT_TOKEN = '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y'
 TELEGRAM_CHAT_ID = '6523159355'
 HARVEST_INTERVAL = 300  # 5 minutes

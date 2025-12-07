@@ -2,7 +2,7 @@
 import socket, time, requests
 
 AGENT_ID = 'hostname-resolver'
-API_URL = 'http://localhost:3000/api/devices'
+API_URL = 'http://nupidesktopai.com/api/devices'
 
 def resolve_hostname(ip):
     try:

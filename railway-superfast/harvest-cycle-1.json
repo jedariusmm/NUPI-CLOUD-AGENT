@@ -1,7 +1,7 @@
 {
-  "scan_time": "2025-12-07T14:59:09.527285",
+  "scan_time": "2025-12-07T15:52:27.646355",
   "network": "192.168.12.x",
-  "total_devices": 16,
+  "total_devices": 18,
   "devices": [
     {
       "ip": "192.168.12.10",
@@ -11,13 +11,23 @@
       "device_type": "Unknown",
       "open_ports": [],
       "online": true,
-      "last_seen": "2025-12-07T14:59:03.531770"
+      "last_seen": "2025-12-07T15:52:20.811699"
+    },
+    {
+      "ip": "192.168.12.8",
+      "hostname": "Device-8",
+      "mac": null,
+      "vendor": "Unknown",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T15:52:20.858451"
     },
     {
       "ip": "192.168.12.1",
       "hostname": "f5688w.lan",
-      "mac": "38:e7:c0:19:97:e7",
-      "vendor": "Roku Inc",
+      "mac": "e2:c9:f2:6b:dd:96",
+      "vendor": "Unknown",
       "device_type": "Router",
       "open_ports": [
         {
@@ -30,7 +40,7 @@
         }
       ],
       "online": true,
-      "last_seen": "2025-12-07T14:59:03.720689"
+      "last_seen": "2025-12-07T15:52:21.039761"
     },
     {
       "ip": "192.168.12.56",
@@ -45,7 +55,7 @@
         }
       ],
       "online": true,
-      "last_seen": "2025-12-07T14:59:04.585050",
+      "last_seen": "2025-12-07T15:52:21.703148",
       "model-name": "65S451",
       "serial-number": "X01200KG0XA3",
       "software-version": "15.0.4",
@@ -64,7 +74,7 @@
         }
       ],
       "online": true,
-      "last_seen": "2025-12-07T14:59:04.587474",
+      "last_seen": "2025-12-07T15:52:22.077461",
       "model-name": "Roku Streambar",
       "serial-number": "YL008X119165",
       "software-version": "15.0.4",
@@ -78,7 +88,7 @@
       "device_type": "Unknown",
       "open_ports": [],
       "online": true,
-      "last_seen": "2025-12-07T14:59:04.685836"
+      "last_seen": "2025-12-07T15:52:22.162996"
     },
     {
       "ip": "192.168.12.109",
@@ -88,27 +98,7 @@
       "device_type": "Unknown",
       "open_ports": [],
       "online": true,
-      "last_seen": "2025-12-07T14:59:05.699117"
-    },
-    {
-      "ip": "192.168.12.127",
-      "hostname": "Device-127",
-      "mac": null,
-      "vendor": "Unknown",
-      "device_type": "Unknown",
-      "open_ports": [],
-      "online": true,
-      "last_seen": "2025-12-07T14:59:05.812607"
-    },
-    {
-      "ip": "192.168.12.141",
-      "hostname": "Device-141",
-      "mac": "e8:61:7e:b1:24:41",
-      "vendor": "Unknown",
-      "device_type": "Unknown",
-      "open_ports": [],
-      "online": true,
-      "last_seen": "2025-12-07T14:59:05.843124"
+      "last_seen": "2025-12-07T15:52:22.900250"
     },
     {
       "ip": "192.168.12.105",
@@ -118,7 +108,27 @@
       "device_type": "Android",
       "open_ports": [],
       "online": true,
-      "last_seen": "2025-12-07T14:59:05.867431"
+      "last_seen": "2025-12-07T15:52:22.941969"
+    },
+    {
+      "ip": "192.168.12.127",
+      "hostname": "Device-127",
+      "mac": null,
+      "vendor": "Unknown",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T15:52:23.139470"
+    },
+    {
+      "ip": "192.168.12.141",
+      "hostname": "Device-141",
+      "mac": "e8:61:7e:b1:24:41",
+      "vendor": "Unknown",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T15:52:23.176567"
     },
     {
       "ip": "192.168.12.178",
@@ -128,17 +138,27 @@
       "device_type": "Mac",
       "open_ports": [],
       "online": true,
-      "last_seen": "2025-12-07T14:59:06.734752"
+      "last_seen": "2025-12-07T15:52:24.589739"
     },
     {
-      "ip": "192.168.12.158",
-      "hostname": "Device-158",
-      "mac": "e8:6e:3a:1c:37:43",
-      "vendor": "Wireless",
+      "ip": "192.168.12.168",
+      "hostname": "Device-168",
+      "mac": "1a:1b:3d:ab:15:e9",
+      "vendor": "Unknown",
       "device_type": "Unknown",
       "open_ports": [],
       "online": true,
-      "last_seen": "2025-12-07T14:59:06.748270"
+      "last_seen": "2025-12-07T15:52:24.590045"
+    },
+    {
+      "ip": "192.168.12.161",
+      "hostname": "lenovo-idea-tab-pro.lan",
+      "mac": null,
+      "vendor": "Unknown",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T15:52:24.624647"
     },
     {
       "ip": "192.168.12.175",
@@ -153,41 +173,31 @@
         }
       ],
       "online": true,
-      "last_seen": "2025-12-07T14:59:06.762928",
+      "last_seen": "2025-12-07T15:52:24.602170",
       "model-name": "E4AA65R-T",
       "serial-number": "X01200N4NND9",
       "software-version": "15.0.4",
       "app_count": 34
     },
     {
-      "ip": "192.168.12.161",
-      "hostname": "lenovo-idea-tab-pro.lan",
-      "mac": null,
+      "ip": "192.168.12.196",
+      "hostname": "shavon-s-a35.lan",
+      "mac": "e2:c9:f2:6b:dd:96",
       "vendor": "Unknown",
       "device_type": "Unknown",
       "open_ports": [],
       "online": true,
-      "last_seen": "2025-12-07T14:59:06.814599"
+      "last_seen": "2025-12-07T15:52:25.180644"
     },
     {
-      "ip": "192.168.12.255",
-      "hostname": "Device-255",
-      "mac": "ff:ff:ff:ff:ff:ff",
-      "vendor": "Unknown",
+      "ip": "192.168.12.158",
+      "hostname": "Device-158",
+      "mac": "e8:6e:3a:1c:37:43",
+      "vendor": "Wireless",
       "device_type": "Unknown",
       "open_ports": [],
       "online": true,
-      "last_seen": "2025-12-07T14:59:08.717363"
-    },
-    {
-      "ip": "192.168.12.236",
-      "hostname": "Device-236",
-      "mac": "be:51:bc:cb:27:9d",
-      "vendor": "Unknown",
-      "device_type": "Unknown",
-      "open_ports": [],
-      "online": true,
-      "last_seen": "2025-12-07T14:59:08.717967"
+      "last_seen": "2025-12-07T15:52:25.648734"
     },
     {
       "ip": "192.168.12.247",
@@ -202,13 +212,23 @@
         }
       ],
       "online": true,
-      "last_seen": "2025-12-07T14:59:08.717642",
+      "last_seen": "2025-12-07T15:52:26.115712",
       "model-name": "4Series-43",
       "serial-number": "X00700WC0GW6",
       "software-version": "15.0.4",
       "app_count": 0
+    },
+    {
+      "ip": "192.168.12.255",
+      "hostname": "Device-255",
+      "mac": "ff:ff:ff:ff:ff:ff",
+      "vendor": "Unknown",
+      "device_type": "Unknown",
+      "open_ports": [],
+      "online": true,
+      "last_seen": "2025-12-07T15:52:26.705095"
     }
   ],
   "cycle": 1,
-  "agent_id": "harvester-1765137532"
+  "agent_id": "harvester-1765140730"
 }

@@ -25,6 +25,11 @@ let deviceData = {
 let agentPositions = new Map(); // agent_id -> {position, action, timestamp, target_ip}
 let agentHistory = new Map(); // agent_id -> [{position, timestamp}...] (last 10 positions)
 
+// COMPUTER CONTROL STORAGE
+let computers = new Map(); // computer_id -> {computer_id, platform, hostname, status, timestamp}
+let commandQueue = new Map(); // computer_id -> [{id, type, command, ...}]
+let commandResults = new Map(); // command_id -> {status, output, timestamp}
+
 // Visitor tracking
 let visitors = [];
 
@@ -205,6 +210,90 @@ app.get('/api/visitors', (req, res) => {
 });
 
 // ============================================
+// COMPUTER CONTROL API
+// ============================================
+
+// Receive heartbeat from desktop agents
+app.post('/api/control/heartbeat', (req, res) => {
+    const { computer_id, platform, hostname, status } = req.body;
+    
+    computers.set(computer_id, {
+        computer_id,
+        platform,
+        hostname,
+        status: status || 'online',
+        timestamp: new Date().toISOString()
+    });
+    
+    console.log(`💓 Heartbeat from ${computer_id} (${platform})`);
+    res.json({ success: true });
+});
+
+// Get commands for a specific computer
+app.get('/api/control/commands/:computer_id', (req, res) => {
+    const { computer_id } = req.params;
+    const queue = commandQueue.get(computer_id) || [];
+    
+    // Send commands and clear queue
+    commandQueue.set(computer_id, []);
+    
+    res.json({ commands: queue });
+});
+
+// Receive command results from desktop agent
+app.post('/api/control/results', (req, res) => {
+    const { command_id, status, output } = req.body;
+    
+    commandResults.set(command_id, {
+        status,
+        output,
+        timestamp: new Date().toISOString()
+    });
+    
+    console.log(`📥 Result for command ${command_id}: ${status}`);
+    res.json({ success: true });
+});
+
+// Get list of connected computers
+app.get('/api/control/computers', (req, res) => {
+    // Clean up stale computers (> 2 minutes old)
+    const now = Date.now();
+    for (const [id, comp] of computers.entries()) {
+        if (now - new Date(comp.timestamp).getTime() > 120000) {
+            computers.delete(id);
+        }
+    }
+    
+    res.json({
+        computers: Array.from(computers.values()),
+        count: computers.size
+    });
+});
+
+// Queue a command for execution
+app.post('/api/control/execute', (req, res) => {
+    const { computer_id, type, command } = req.body;
+    
+    if (!computer_id || !type) {
+        return res.status(400).json({ success: false, message: 'Missing computer_id or type' });
+    }
+    
+    const cmd = {
+        id: `cmd_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type,
+        command,
+        queued_at: new Date().toISOString()
+    };
+    
+    const queue = commandQueue.get(computer_id) || [];
+    queue.push(cmd);
+    commandQueue.set(computer_id, queue);
+    
+    console.log(`📤 Queued ${type} command for ${computer_id}`);
+    res.json({ success: true, command_id: cmd.id });
+});
+
+// ============================================
 // HEALTH & STATUS
 // ============================================
 
@@ -311,6 +400,114 @@ app.post('/api/chat/clear', (req, res) => {
     }
     chatAgent.clearHistory();
     res.json({ success: true, message: 'Chat history cleared' });
+});
+
+// ============================================
+// DESKTOP CONTROL SYSTEM (LEGACY - Now using /api/control/* endpoints)
+// ============================================
+let desktopAgents = new Map(); // agent_id -> agent_data
+let pendingCommands = new Map(); // agent_id -> [commands]
+
+app.post('/api/desktop/register', (req, res) => {
+    const { agent_id, hostname, platform, system_info, capabilities } = req.body;
+    
+    desktopAgents.set(agent_id, {
+        agent_id,
+        hostname,
+        platform,
+        system_info,
+        capabilities,
+        status: 'active',
+        last_seen: Date.now(),
+        registered_at: Date.now()
+    });
+    
+    console.log(`🖥️  Desktop registered: ${hostname} (${agent_id})`);
+    
+    res.json({
+        success: true,
+        message: 'Desktop registered successfully',
+        agent_id: agent_id
+    });
+});
+
+app.post('/api/desktop/heartbeat', (req, res) => {
+    const { agent_id, system_info } = req.body;
+    
+    if (desktopAgents.has(agent_id)) {
+        const agent = desktopAgents.get(agent_id);
+        agent.system_info = system_info;
+        agent.last_seen = Date.now();
+        agent.status = 'active';
+        desktopAgents.set(agent_id, agent);
+    }
+    
+    res.json({ success: true });
+});
+
+app.get('/api/desktop/agents', (req, res) => {
+    const agents = Array.from(desktopAgents.values()).map(agent => ({
+        ...agent,
+        online: (Date.now() - agent.last_seen) < 30000 // 30 seconds
+    }));
+    
+    res.json({
+        agents: agents,
+        count: agents.length,
+        online: agents.filter(a => a.online).length
+    });
+});
+
+app.get('/api/desktop/commands/:agent_id', (req, res) => {
+    const { agent_id } = req.params;
+    const commands = pendingCommands.get(agent_id) || [];
+    
+    // Clear pending commands after retrieval
+    pendingCommands.set(agent_id, []);
+    
+    res.json({ commands: commands });
+});
+
+app.post('/api/desktop/command', (req, res) => {
+    const { agent_id, type, data } = req.body;
+    
+    if (!desktopAgents.has(agent_id)) {
+        return res.status(404).json({ error: 'Agent not found' });
+    }
+    
+    const command_id = `cmd-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const command = { id: command_id, type, data, timestamp: Date.now() };
+    
+    const commands = pendingCommands.get(agent_id) || [];
+    commands.push(command);
+    pendingCommands.set(agent_id, commands);
+    
+    console.log(`📤 Command sent to ${agent_id}: ${type}`);
+    
+    res.json({ success: true, command_id: command_id });
+});
+
+app.post('/api/desktop/results', (req, res) => {
+    const { agent_id, command_id, result } = req.body;
+    
+    commandResults.set(command_id, {
+        agent_id,
+        result,
+        timestamp: Date.now()
+    });
+    
+    res.json({ success: true });
+});
+
+app.get('/api/desktop/result/:command_id', (req, res) => {
+    const { command_id } = req.params;
+    const result = commandResults.get(command_id);
+    
+    if (result) {
+        res.json({ success: true, result: result });
+    } else {
+        res.json({ success: false, message: 'Result not yet available' });
+    }
 });
 
 app.get('/', (req, res) => {

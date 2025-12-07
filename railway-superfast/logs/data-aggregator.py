@@ -3,7 +3,7 @@ import time, json, requests
 from datetime import datetime
 
 AGENT_ID = 'data-aggregator'
-API_URL = 'http://localhost:3000/api/devices'
+API_URL = 'http://nupidesktopai.com/api/devices'
 
 print(f"💾 {AGENT_ID} aggregating data")
 cycle = 0

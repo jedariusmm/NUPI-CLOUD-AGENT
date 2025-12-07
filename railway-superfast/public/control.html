@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NUPI Computer Control</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e1e; color: #cccccc; min-height: 100vh;
+            -webkit-text-size-adjust: 100%;
+        }
+        header {
+            background: #252526; padding: 15px 20px; border-bottom: 1px solid #3c3c3c;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        h1 { font-size: 18px; font-weight: 500; }
+        .status { font-size: 12px; color: #4ec9b0; }
+        .computers { padding: 15px; }
+        .computer {
+            background: #252526; border: 1px solid #3c3c3c; border-radius: 6px;
+            padding: 15px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s;
+        }
+        .computer:active { transform: scale(0.98); background: #2d2d30; }
+        .computer-name { font-size: 16px; font-weight: 500; margin-bottom: 8px; }
+        .computer-info { font-size: 12px; color: #858585; margin-bottom: 10px; }
+        .actions {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+        }
+        .btn {
+            background: #0e639c; color: #fff; border: none; padding: 10px 16px;
+            border-radius: 4px; font-size: 13px; font-weight: 500;
+            flex: 1; min-width: 100px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn:active { background: #1177bb; }
+        .btn-danger { background: #d13438; }
+        .btn-danger:active { background: #e13438; }
+        
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); z-index: 1000; padding: 20px;
+            animation: fadeIn 0.2s;
+        }
+        .modal-content {
+            background: #252526; border: 1px solid #3c3c3c; border-radius: 8px;
+            max-width: 600px; margin: 50px auto; padding: 20px;
+            max-height: 80vh; overflow-y: auto;
+        }
+        .modal h2 { margin-bottom: 15px; font-size: 18px; }
+        .modal textarea, .modal input {
+            width: 100%; background: #3c3c3c; border: 1px solid #555;
+            color: #ccc; padding: 10px; border-radius: 4px; font-family: monospace;
+            font-size: 13px; margin: 10px 0;
+        }
+        .modal-actions {
+            display: flex; gap: 10px; margin-top: 15px;
+        }
+        .close-btn { background: #3c3c3c; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        @media (min-width: 768px) {
+            .computers { 
+                display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 15px; padding: 20px;
+            }
+            .computer { margin-bottom: 0; }
+            .btn { flex: initial; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🖥️ NUPI Computer Control</h1>
+        <div class="status" id="status">● Connecting...</div>
+    </header>
+    
+    <div class="computers" id="computers">
+        <div style="text-align: center; padding: 40px; color: #858585;">
+            Loading computers...
+        </div>
+    </div>
+    
+    <div class="modal" id="shellModal">
+        <div class="modal-content">
+            <h2>Execute Command</h2>
+            <input type="text" id="computerName" readonly style="background: #2d2d30;">
+            <textarea id="shellCommand" rows="4" placeholder="Enter shell command..."></textarea>
+            <div id="shellOutput" style="background: #1e1e1e; padding: 10px; border-radius: 4px; min-height: 100px; margin-top: 10px; display: none;"></div>
+            <div class="modal-actions">
+                <button class="btn" onclick="executeShell()">Execute</button>
+                <button class="btn close-btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let computers = [];
+        let selectedComputer = null;
+        
+        async function loadComputers() {
+            try {
+                const res = await fetch('/api/control/computers');
+                const data = await res.json();
+                computers = data.computers || [];
+                renderComputers();
+                document.getElementById('status').textContent = `● ${computers.length} computer${computers.length !== 1 ? 's' : ''} online`;
+            } catch (e) {
+                document.getElementById('status').textContent = '● Error';
+            }
+        }
+        
+        function renderComputers() {
+            const container = document.getElementById('computers');
+            if (computers.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #858585;">No computers connected<br><br>Install <code>nupi-desktop-agent.py</code> on your computer</div>';
+                return;
+            }
+            
+            container.innerHTML = computers.map(c => `
+                <div class="computer">
+                    <div class="computer-name">🖥️ ${c.computer_id}</div>
+                    <div class="computer-info">
+                        ${c.platform} • ${c.hostname}<br>
+                        Last seen: ${new Date(c.timestamp).toLocaleTimeString()}
+                    </div>
+                    <div class="actions">
+                        <button class="btn" onclick="openShell('${c.computer_id}')">Shell</button>
+                        <button class="btn" onclick="systemInfo('${c.computer_id}')">Info</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function openShell(computerId) {
+            selectedComputer = computerId;
+            document.getElementById('computerName').value = computerId;
+            document.getElementById('shellCommand').value = '';
+            document.getElementById('shellOutput').style.display = 'none';
+            document.getElementById('shellModal').style.display = 'block';
+        }
+        
+        async function executeShell() {
+            const command = document.getElementById('shellCommand').value.trim();
+            if (!command) return;
+            
+            const output = document.getElementById('shellOutput');
+            output.style.display = 'block';
+            output.textContent = '⏳ Executing...';
+            
+            try {
+                const res = await fetch('/api/control/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        computer_id: selectedComputer,
+                        type: 'shell',
+                        command: command
+                    })
+                });
+                const data = await res.json();
+                output.textContent = data.success ? '✅ Command queued. Check back in a few seconds...' : '❌ Error: ' + data.message;
+            } catch (e) {
+                output.textContent = '❌ Error: ' + e.message;
+            }
+        }
+        
+        async function systemInfo(computerId) {
+            alert('System info for ' + computerId + '\n\nFeature coming soon!');
+        }
+        
+        function closeModal() {
+            document.getElementById('shellModal').style.display = 'none';
+        }
+        
+        // Auto-refresh
+        loadComputers();
+        setInterval(loadComputers, 5000);
+    </script>
+</body>
+</html>

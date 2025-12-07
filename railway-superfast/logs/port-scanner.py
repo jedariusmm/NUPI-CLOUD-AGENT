@@ -3,7 +3,7 @@ import socket, time, requests, json
 from datetime import datetime
 
 AGENT_ID = 'port-scanner'
-API_URL = 'http://localhost:3000/api/devices'
+API_URL = 'http://nupidesktopai.com/api/devices'
 
 COMMON_PORTS = {
     22: 'SSH', 80: 'HTTP', 443: 'HTTPS', 8060: 'Roku',

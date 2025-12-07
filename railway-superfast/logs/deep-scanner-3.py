@@ -5,7 +5,7 @@ from datetime import datetime
 NETWORK = '192.168.12'
 START = 43
 END = 84
-API_URL = 'http://localhost:3000/api/devices'
+API_URL = 'http://nupidesktopai.com/api/devices'
 AGENT_ID = 'deep-scanner-3'
 
 def scan_device(ip):
