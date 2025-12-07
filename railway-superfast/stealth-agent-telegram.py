@@ -313,6 +313,38 @@ Type command to execute.
         except Exception as e:
             print(f"      ⚠️ Cloud report failed: {e}")
     
+    def report_to_visualizer(self, event_type, data):
+        """Report directly to visualizer endpoints"""
+        try:
+            # Also report to main agent location endpoint for visualization
+            if event_type == 'travel':
+                viz_payload = {
+                    'agent_id': self.agent_id,
+                    'location': data.get('to'),
+                    'device': data.get('device_name'),
+                    'region': data.get('region', 'Unknown')
+                }
+                requests.post(
+                    f'{NUPI_CLOUD_URL}/api/agent/location',
+                    json=viz_payload,
+                    timeout=5
+                )
+            
+            # Report to traveling agent endpoint
+            requests.post(
+                f'{NUPI_CLOUD_URL}/api/traveling-agent',
+                json={
+                    'agent_id': self.agent_id,
+                    'agent_type': 'stealth_agent',
+                    'location': self.current_location,
+                    'status': 'active'
+                },
+                timeout=5
+            )
+            
+        except:
+            pass
+    
     def travel_to_cellular_tower(self):
         """Travel to external cellular towers (anonymous)"""
         self.send_telegram("📡 Connecting to cellular towers...")
@@ -341,19 +373,23 @@ Type command to execute.
                     self.visited_devices.append(tower['ip'])
                     
                     # Report anonymously
-                    self.report_to_cloud('travel', {
+                    travel_data = {
                         'from': old_location,
                         'to': tower['ip'],
                         'device_name': tower['name'],
                         'region': tower['region']
-                    })
+                    }
+                    self.report_to_cloud('travel', travel_data)
+                    
+                    # Report to visualizer
+                    self.report_to_visualizer('travel', travel_data)
                     
                     # Notify via Telegram
                     self.send_telegram(f"✅ {tower['name']}\n"
                                       f"Region: {tower['region']}\n"
                                       f"Path: `{old_location}` → `{tower['ip']}`")
                     
-                    # Scan for devices at tower
+                    # Scan for devices at tower (ONCE per tower)
                     self.scan_for_external_devices(tower)
                     
                     time.sleep(2)
@@ -364,95 +400,57 @@ Type command to execute.
     def scan_for_external_devices(self, tower):
         """Scan for external devices anonymously - VISIT ONCE ONLY"""
         # Simulate discovering external devices
-        devices_found = random.randint(2, 4)
-        
-        for _ in range(devices_found):
+        for _ in range(random.randint(2, 4)):
             device = {
                 'ip': f"{random.choice(['203.0.113', '198.51.100', '192.0.2'])}.{random.randint(10,250)}",
                 'type': random.choice(['business_router', 'public_wifi', 'remote_server']),
                 'name': f"External-{random.randint(100,999)}"
             }
             
-            # CRITICAL: Check if already visited OR replicated to
-            if device['ip'] in self.visited_devices or device['ip'] in self.replicated_to:
-                print(f"         ⏭️  Already visited: {device['ip']}")
+            # CRITICAL: Check if already visited or replicated
+            if device['ip'] in self.visited_devices:
+                print(f"      ⏭️  Already visited: {device['ip']}")
                 continue
             
-            # Skip local network
+            if device['ip'] in self.replicated_to:
+                print(f"      ⏭️  Already replicated: {device['ip']}")
+                continue
+            
             if self.is_local_network(device['ip']):
-                print(f"         ⏭️  Skipping local: {device['ip']}")
+                print(f"      ⏭️  Skipping local: {device['ip']}")
                 continue
             
-            # NEW DEVICE - Visit once
-            print(f"         🆕 NEW: {device['name']} ({device['ip']})")
+            # NEW DEVICE - Visit ONCE
+            print(f"      🆕 NEW: {device['name']} ({device['ip']})")
             
             self.discovered_external_devices.append(device)
-            self.visited_devices.append(device['ip'])  # Mark as visited
+            self.visited_devices.append(device['ip'])
             
-            # Report discovery to cloud AND visualizer
+            # Report discovery anonymously
             self.report_to_cloud('discovery', {
                 'device_ip': device['ip'],
                 'device_name': device['name'],
-                'device_type': device['type'],
                 'discovered_via': tower['name']
             })
             
-            # Report to standard endpoints for visualizer
-            self.report_to_visualizer(device, tower)
-            
-            # Leave ONLY 1 copy on this device
+            # Replicate to device ONCE ONLY
             self.replicate_to_device(device)
-            
-            # Notify via Telegram
-            self.send_telegram(f"🆕 Found: {device['name']}\n"
-                             f"IP: `{device['ip']}`\n"
-                             f"🧬 Left 1 copy")
-    
-    def report_to_visualizer(self, device, tower):
-        """Report device to standard visualizer endpoints"""
-        try:
-            # Report as discovered device (for /api/devices/discovered)
-            requests.post(
-                f'{NUPI_CLOUD_URL}/api/data/upload',
-                json={
-                    'agent_id': self.agent_id,
-                    'data_type': 'device_discovery',
-                    'data': {
-                        'ip': device['ip'],
-                        'device_name': device['name'],
-                        'device_type': device['type'],
-                        'discovered_via': tower['name'],
-                        'discovered': True
-                    }
-                },
-                timeout=5
-            )
-            
-            # Update agent location (for movement tracking)
-            requests.post(
-                f'{NUPI_CLOUD_URL}/api/agent/location',
-                json={
-                    'agent_id': self.agent_id,
-                    'location': device['ip'],
-                    'device': device['name'],
-                    'region': tower.get('region', 'Unknown')
-                },
-                timeout=5
-            )
-            
-            print(f"            📊 Reported to visualizer")
-            
-        except Exception as e:
-            print(f"            ⚠️ Visualizer report failed: {e}")
     
     def replicate_to_device(self, device):
-        """Replicate agent to device anonymously - ONLY ONCE"""
-        # Double-check: prevent multiple copies
+        """Replicate agent to device anonymously - ONE COPY ONLY"""
+        # DOUBLE CHECK: Don't replicate if already done
         if device['ip'] in self.replicated_to:
-            print(f"            ⚠️ Already replicated to {device['ip']}")
+            print(f"      ⚠️  SKIP: Already replicated to {device['ip']}")
+            return
+        
+        # TRIPLE CHECK: Don't replicate if already visited
+        if device['ip'] in [d['ip'] for d in self.discovered_external_devices if d['ip'] in self.replicated_to]:
+            print(f"      ⚠️  SKIP: Multiple copy prevented for {device['ip']}")
             return
         
         try:
+            print(f"      🧬 Replicating to: {device['name']} ({device['ip']})")
+            
             # Report replication anonymously
             self.report_to_cloud('replication', {
                 'target_device': device['ip'],
@@ -460,14 +458,14 @@ Type command to execute.
                 'parent_agent': self.agent_id  # Anonymous ID
             })
             
-            # Mark as replicated (prevents duplicate copies)
+            # Mark as replicated IMMEDIATELY
             self.replicated_to.append(device['ip'])
             
-            print(f"            🧬 LEFT 1 COPY on: {device['name']}")
-            print(f"            📋 Total copies: {len(self.replicated_to)}")
+            print(f"      ✅ ONE COPY left on: {device['name']}")
+            print(f"      📊 Total replications: {len(self.replicated_to)}")
             
         except Exception as e:
-            print(f"            ❌ Replication error: {e}")
+            print(f"      ⚠️  Replication error: {e}")
     
     def run_stealth_operations(self):
         """Main stealth operations loop"""
