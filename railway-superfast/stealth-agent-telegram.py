@@ -182,26 +182,37 @@ class WorldwideAgent:
         
         print(f"📱 Command: {command}")
         
-        # Simple commands that control ALL TVs
-        if cmd in ['/netflix', '/hulu', '/youtube', '/disney', '/prime']:
-            app = cmd.replace('/', '')
-            self.control_all_tvs(app)
-        elif cmd == '/home':
-            self.control_all_tvs('home')
-        elif cmd == '/play':
-            self.control_all_tvs('play')
-        elif cmd == '/pause':
-            self.control_all_tvs('pause')
-        elif cmd == '/mute':
-            self.control_all_tvs('mute')
-        elif cmd == '/volup':
-            self.control_all_tvs('volumeup')
-        elif cmd == '/voldown':
-            self.control_all_tvs('volumedown')
-        elif cmd == '/power':
-            self.control_all_tvs('power')
-        elif cmd == '/poweroff':
-            self.control_all_tvs('poweroff')
+        # Element TV (65") - 192.168.12.175
+        if cmd == '/element':
+            if len(parts) >= 2:
+                action = parts[1].lower()
+                self.control_one_tv('192.168.12.175', '65" Element', action)
+            else:
+                self.send_telegram("Usage: /element [netflix|hulu|youtube|disney|home|play|mute|volup|voldown|power|poweron|poweroff]")
+        
+        # Streambar - 192.168.12.76
+        elif cmd == '/streambar':
+            if len(parts) >= 2:
+                action = parts[1].lower()
+                self.control_one_tv('192.168.12.76', 'Streambar', action)
+            else:
+                self.send_telegram("Usage: /streambar [netflix|hulu|youtube|disney|home|play|mute|volup|voldown|power|poweron|poweroff]")
+        
+        # TCL TV (65") - 192.168.12.56
+        elif cmd == '/tcl':
+            if len(parts) >= 2:
+                action = parts[1].lower()
+                self.control_one_tv('192.168.12.56', '65" TCL', action)
+            else:
+                self.send_telegram("Usage: /tcl [netflix|hulu|youtube|disney|home|play|mute|volup|voldown|power|poweron|poweroff]")
+        
+        # Hisense TV (43") - 192.168.12.247
+        elif cmd == '/hisense':
+            if len(parts) >= 2:
+                action = parts[1].lower()
+                self.control_one_tv('192.168.12.247', '43" Hisense', action)
+            else:
+                self.send_telegram("Usage: /hisense [netflix|hulu|youtube|disney|home|play|mute|volup|voldown|power|poweron|poweroff]")
         
         # Other commands
         elif cmd == '/scan':
@@ -213,23 +224,11 @@ class WorldwideAgent:
         elif cmd == '/help':
             self.cmd_help()
     
-    def control_all_tvs(self, command):
-        """Control ALL TVs with one command"""
-        tvs = {
-            '192.168.12.175': '65" Element',
-            '192.168.12.76': 'Streambar',
-            '192.168.12.56': '65" TCL',
-            '192.168.12.247': '43" Hisense'
-        }
-        
-        results = []
-        for ip, name in tvs.items():
-            result = self.control_roku_tv(ip, command)
-            status = '✅' if '✅' in result else '❌'
-            results.append(f"{status} {name}")
-        
-        msg = f"🎮 *ALL TVs: {command.upper()}*\n\n" + "\n".join(results)
-        self.send_telegram(msg)
+    def control_one_tv(self, ip, name, command):
+        """Control ONE specific TV"""
+        print(f"📺 Controlling {name} ({ip}): {command}")
+        result = self.control_roku_tv(ip, command)
+        self.send_telegram(f"📺 *{name}*\n\n{result}")
     
     def cmd_travel(self):
         """Travel to T-Mobile cellular towers"""
