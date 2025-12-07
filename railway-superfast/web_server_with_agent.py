@@ -108,6 +108,7 @@ def health():
     return jsonify({
         "status": "healthy",
         "cloud": "nupidesktopai.com",
+        "version": "2025-12-06-ROUTE-FIX",
         "timestamp": datetime.utcnow().isoformat(),
         "active_agents": active_agents,
         "total_devices": len(device_discoveries),
@@ -119,6 +120,16 @@ def health():
             "data_storage": "online",
             "agent_communication": "online"
         }
+    })
+
+@app.route('/api/test')
+def test_endpoint():
+    """Test endpoint to verify correct file is running"""
+    return jsonify({
+        "message": "CORRECT FILE RUNNING",
+        "file": "web_server_with_agent.py",
+        "version": "2025-12-06-ROUTE-FIX",
+        "routes_working": True
     })
 
 # REAL AGENT REGISTRATION
