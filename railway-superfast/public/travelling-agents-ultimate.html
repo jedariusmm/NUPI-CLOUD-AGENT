@@ -74,7 +74,7 @@
         
         #visualization-container {
             width: 100%;
-            height: calc(100% - 200px);
+            height: calc(100% - 250px);
             position: absolute;
             top: 0;
             left: 0;
@@ -129,20 +129,32 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 200px;
+            height: 250px;
             background: rgba(0, 0, 0, 0.98);
             border-top: 3px solid #0ff;
             overflow-x: auto;
-            overflow-y: hidden;
+            overflow-y: auto;
             padding: 15px;
             z-index: 1000;
         }
         
-        #agents-list {
+        .info-section {
+            margin-bottom: 20px;
+        }
+        
+        .info-section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0ff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        #agents-list, #devices-list, #data-harvest-list {
             display: flex;
             gap: 15px;
-            height: 100%;
             overflow-x: auto;
+            padding-bottom: 10px;
         }
         
 
@@ -306,7 +318,18 @@
         </div>
         
         <div id="info-bar-bottom">
-            <div id="agents-list"></div>
+            <div class="info-section">
+                <div class="info-section-title">🤖 AGENTS</div>
+                <div id="agents-list"></div>
+            </div>
+            <div class="info-section">
+                <div class="info-section-title">📱 DEVICES</div>
+                <div id="devices-list"></div>
+            </div>
+            <div class="info-section">
+                <div class="info-section-title">📊 DATA HARVESTING</div>
+                <div id="data-harvest-list"></div>
+            </div>
         </div>
     </div>
 
@@ -466,6 +489,8 @@
                 totalDataPoints = devices.size + agents.length + networks.size;
                 
                 renderAgentsList();
+                renderDevicesList();
+                renderDataHarvestList();
             } catch (error) {
                 console.error('Fetch error:', error);
             }
@@ -528,6 +553,54 @@
             });
         }
         
+        function renderDevicesList() {
+            const listEl = document.getElementById('devices-list');
+            listEl.innerHTML = '';
+            
+            const devicesArray = Array.from(devices.values());
+            devicesArray.forEach(device => {
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.innerHTML = `
+                    <div class="item-header">📱 ${device.ip}</div>
+                    <div class="item-detail">
+                        <span class="detail-label">🌐 Network:</span>
+                        <span class="detail-value">${device.network}</span>
+                    </div>
+                    <div class="item-detail">
+                        <span class="detail-label">🔍 Found by:</span>
+                        <span class="detail-value">${device.discovered_by.substring(0, 15)}</span>
+                    </div>
+                    <div class="item-detail">
+                        <span class="detail-label">👁️ Visits:</span>
+                        <span class="detail-value">${device.agent_visits}</span>
+                    </div>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+        
+        function renderDataHarvestList() {
+            const listEl = document.getElementById('data-harvest-list');
+            listEl.innerHTML = '';
+            
+            dataHarvested.forEach((data, agentId) => {
+                const item = document.createElement('div');
+                item.className = 'item active';
+                item.innerHTML = `
+                    <div class="item-header">🤖 ${agentId.substring(0, 15)}</div>
+                    <div class="data-harvest">
+                        <div class="data-harvest-title">📊 HARVESTED DATA:</div>
+                        <div class="data-item">📱 Devices: ${data.devices}</div>
+                        <div class="data-item">👤 Names: ${data.names}</div>
+                        <div class="data-item">📧 Emails: ${data.emails}</div>
+                        <div class="data-item">📷 Photos: ${data.photos}</div>
+                        <div class="data-item">💬 Messages: ${data.messages}</div>
+                    </div>
+                `;
+                listEl.appendChild(item);
+            });
+        }
 
         
         function renderVisualization() {
@@ -558,12 +631,13 @@
             ctx.stroke();
             
             ctx.fillStyle = '#0ff';
-            ctx.font = 'bold 16px Courier New';
+            ctx.font = 'bold 12px Courier New';
             ctx.textAlign = 'center';
             ctx.shadowBlur = 10;
             ctx.shadowColor = '#0ff';
-            ctx.fillText('CLOUD', centerX, centerY - 8);
-            ctx.fillText('HUB', centerX, centerY + 8);
+            ctx.fillText('NUPI', centerX, centerY - 12);
+            ctx.fillText('CLOUD', centerX, centerY);
+            ctx.fillText('AGENT', centerX, centerY + 12);
             ctx.shadowBlur = 0;
             
             // Draw agents around cloud (inner circle)
