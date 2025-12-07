@@ -224,9 +224,6 @@ class AutonomousHarvestingAgent:
         total_data_collected = 0
         
         for tower in TMOBILE_TOWERS:
-            if tower['ip'] in self.visited_towers:
-                print(f"   ⏭️  Already visited: {tower['name']}")
-                continue
             
             print(f"\n📡 Traveling to: {tower['name']}")
             print(f"   Region: {tower['region']}")
@@ -653,7 +650,7 @@ Send /status for stats
                 
                 if self.autonomy_enabled:
                     # Every 3rd cycle: travel to towers
-                    if cycle_count % 3 == 0 and len(self.visited_towers) < len(TMOBILE_TOWERS):
+                    if cycle_count % 3 == 0:  # Travel to towers every 3rd cycle
                         print("\n🌍 Time for worldwide travel...")
                         self.travel_cellular_towers()
                     
