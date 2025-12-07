@@ -1,0 +1,1356 @@
+<!DOCTYPE html><!DOCTYPE html>
+
+<html lang="en"><html lang="en">
+
+<head><head>
+
+    <meta charset="UTF-8">    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>🌐 NUPI Real-Time Agent Network</title>    <title>🌐 NUPI Cloud Agent Network - Real-Time Worldwide Travel</title>
+
+    <style>    <style>
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {        body {
+
+            font-family: 'Courier New', monospace;            font-family: 'Courier New', monospace;
+
+            background: #000;            background: #000;
+
+            overflow: hidden;            overflow: hidden;
+
+            color: #0f0;            color: #0f0;
+
+            cursor: grab;            cursor: grab;
+
+        }        }
+
+        body.dragging { cursor: grabbing; }        body.dragging { cursor: grabbing; }
+
+        #canvas { display: block; background: radial-gradient(circle, #001a00 0%, #000 100%); }        #canvas {
+
+                    display: block;
+
+        .controls {            background: radial-gradient(circle, #001a00 0%, #000 100%);
+
+            position: fixed; top: 10px; left: 10px;        }
+
+            background: rgba(0, 0, 0, 0.95); padding: 15px;        .controls {
+
+            border: 2px solid #0f0; border-radius: 8px;            position: fixed;
+
+            z-index: 100; box-shadow: 0 0 20px #0f0;            top: 10px;
+
+        }            left: 10px;
+
+                    background: rgba(0, 0, 0, 0.9);
+
+        .stats {            padding: 15px;
+
+            position: fixed; top: 10px; right: 10px;            border: 2px solid #0f0;
+
+            background: rgba(0, 0, 0, 0.95); padding: 15px;            border-radius: 8px;
+
+            border: 2px solid #0f0; border-radius: 8px;            z-index: 100;
+
+            z-index: 100; min-width: 320px;            box-shadow: 0 0 20px #0f0;
+
+            max-height: 90vh; overflow-y: auto;        }
+
+            box-shadow: 0 0 20px #0f0;        .stats {
+
+        }            position: fixed;
+
+                    top: 10px;
+
+        .stat-item {            right: 10px;
+
+            margin: 8px 0; font-size: 13px;            background: rgba(0, 0, 0, 0.9);
+
+            display: flex; justify-content: space-between; align-items: center;            padding: 15px;
+
+        }            border: 2px solid #0f0;
+
+                    border-radius: 8px;
+
+        .stat-value { color: #0ff; font-weight: bold; }            z-index: 100;
+
+                    min-width: 280px;
+
+        .live-indicator {            box-shadow: 0 0 20px #0f0;
+
+            width: 12px; height: 12px; border-radius: 50%;        }
+
+            background: #0f0; display: inline-block;        .stat-item {
+
+            animation: pulse 1.5s infinite; margin-left: 8px;            margin: 8px 0;
+
+        }            font-size: 14px;
+
+                    display: flex;
+
+        .offline-indicator {            justify-content: space-between;
+
+            width: 12px; height: 12px; border-radius: 50%;        }
+
+            background: #f00; display: inline-block; margin-left: 8px;        .stat-value {
+
+        }            color: #0ff;
+
+                    font-weight: bold;
+
+        @keyframes pulse {        }
+
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px #0f0; }        .activity {
+
+            50% { opacity: 0.5; box-shadow: 0 0 15px #0f0; }            position: fixed;
+
+        }            bottom: 10px;
+
+                    left: 10px;
+
+        .data-collection {            right: 10px;
+
+            margin-top: 15px; padding-top: 15px; border-top: 2px solid #0f0;            background: rgba(0, 0, 0, 0.95);
+
+        }            padding: 15px;
+
+                    border: 2px solid #0f0;
+
+        .data-item { font-size: 11px; margin: 5px 0; color: #0ff; }            border-radius: 8px;
+
+                    max-height: 120px;
+
+        .agent-list {            overflow-y: auto;
+
+            margin-top: 10px; max-height: 200px;            font-size: 11px;
+
+            overflow-y: auto; font-size: 11px;            box-shadow: 0 0 20px #0f0;
+
+        }        }
+
+                .activity-item {
+
+        .agent-item {            margin: 3px 0;
+
+            padding: 5px; margin: 3px 0;            padding: 3px;
+
+            background: rgba(0, 255, 0, 0.1);            opacity: 0.9;
+
+            border-left: 3px solid #0f0;        }
+
+        }        .activity-enter { color: #0ff; }
+
+                .activity-leave { color: #ff0; }
+
+        .agent-item.offline {        .activity-travel { color: #f0f; }
+
+            background: rgba(255, 0, 0, 0.1);        button {
+
+            border-left: 3px solid #f00;            background: #0f0;
+
+        }            color: #000;
+
+                    border: none;
+
+        .activity {            padding: 10px 15px;
+
+            position: fixed; bottom: 10px; left: 10px; right: 420px;            margin: 3px;
+
+            background: rgba(0, 0, 0, 0.95); padding: 15px;            cursor: pointer;
+
+            border: 2px solid #0f0; border-radius: 8px;            border-radius: 5px;
+
+            max-height: 150px; overflow-y: auto;            font-weight: bold;
+
+            font-size: 11px; box-shadow: 0 0 20px #0f0;            font-size: 12px;
+
+        }            transition: all 0.2s;
+
+                }
+
+        .activity-item { margin: 3px 0; padding: 3px; opacity: 0.9; }        button:hover { 
+
+        .activity-enter { color: #0ff; }            background: #0ff; 
+
+        .activity-leave { color: #ff0; }            box-shadow: 0 0 10px #0ff;
+
+        .activity-travel { color: #f0f; }        }
+
+        .activity-data { color: #0f0; }        .title {
+
+                    font-size: 13px;
+
+        button {            margin-bottom: 8px;
+
+            background: #0f0; color: #000; border: none;            font-weight: bold;
+
+            padding: 10px 15px; margin: 3px; cursor: pointer;            color: #0ff;
+
+            border-radius: 5px; font-weight: bold; font-size: 12px;            text-align: center;
+
+            transition: all 0.2s;        }
+
+        }    </style>
+
+        button:hover { background: #0ff; box-shadow: 0 0 10px #0ff; }</head>
+
+        <body>
+
+        .title {    <canvas id="canvas"></canvas>
+
+            font-size: 14px; margin-bottom: 10px;    
+
+            font-weight: bold; color: #0ff; text-align: center;    <div class="controls">
+
+        }        <div class="title">🎮 CONTROLS</div>
+
+                <button onclick="zoomIn()">🔍 Zoom +</button>
+
+        .tower-data {        <button onclick="zoomOut()">🔍 Zoom -</button>
+
+            position: fixed; bottom: 10px; right: 10px;        <button onclick="togglePause()">⏸️ Pause</button>
+
+            background: rgba(0, 0, 0, 0.95); padding: 15px;        <button onclick="resetView()">🔄 Reset</button>
+
+            border: 2px solid #f0f; border-radius: 8px;        <button onclick="focusCloud()">☁️ Focus Cloud</button>
+
+            max-width: 400px; max-height: 150px;    </div>
+
+            overflow-y: auto; font-size: 11px;    
+
+            box-shadow: 0 0 20px #f0f;    <div class="stats">
+
+        }        <div class="title">📊 LIVE STATISTICS</div>
+
+                <div class="stat-item">
+
+        .tower-item { margin: 5px 0; color: #f0f; }            <span>🤖 Active Agents:</span>
+
+    </style>            <span class="stat-value" id="agentCount">0</span>
+
+</head>        </div>
+
+<body>        <div class="stat-item">
+
+    <canvas id="canvas"></canvas>            <span>☁️ In NUPI Cloud:</span>
+
+                <span class="stat-value" id="cloudCount">0</span>
+
+    <div class="controls">        </div>
+
+        <div class="title">🎮 CONTROLS</div>        <div class="stat-item">
+
+        <button onclick="zoomIn()">🔍 Zoom +</button>            <span>🌍 Traveling World:</span>
+
+        <button onclick="zoomOut()">🔍 Zoom -</button>            <span class="stat-value" id="travelCount">0</span>
+
+        <button onclick="togglePause()">⏸️ Pause</button>        </div>
+
+        <button onclick="resetView()">🔄 Reset</button>        <div class="stat-item">
+
+        <button onclick="focusCloud()">☁️ Cloud</button>            <span>💬 Communications:</span>
+
+    </div>            <span class="stat-value" id="commCount">0</span>
+
+            </div>
+
+    <div class="stats">        <div class="stat-item">
+
+        <div class="title">📊 LIVE NETWORK STATUS</div>            <span>📍 Total Locations:</span>
+
+        <div class="stat-item">            <span class="stat-value" id="locationCount">0</span>
+
+            <span>🌐 System:</span>        </div>
+
+            <span><span class="stat-value" id="systemStatus">ONLINE</span><span class="live-indicator"></span></span>        <div class="stat-item">
+
+        </div>            <span>🗼 Towers Visited:</span>
+
+        <div class="stat-item">            <span class="stat-value" id="towerVisits">0</span>
+
+            <span>🤖 Active Agents:</span>        </div>
+
+            <span class="stat-value" id="agentCount">0</span>    </div>
+
+        </div>    
+
+        <div class="stat-item">    <div class="activity" id="activity"></div>
+
+            <span>✅ Online:</span>
+
+            <span class="stat-value" style="color: #0f0;" id="onlineCount">0</span>    <script>
+
+        </div>        const canvas = document.getElementById('canvas');
+
+        <div class="stat-item">        const ctx = canvas.getContext('2d');
+
+            <span>❌ Offline:</span>        
+
+            <span class="stat-value" style="color: #f00;" id="offlineCount">0</span>        canvas.width = window.innerWidth;
+
+        </div>        canvas.height = window.innerHeight;
+
+        <div class="stat-item">        
+
+            <span>☁️ In NUPI Cloud:</span>        // World map coordinates for towers
+
+            <span class="stat-value" id="cloudCount">0</span>        const WORLD_TOWERS = [
+
+        </div>            { name: 'California', ip: '8.8.8.8', lat: 37.7749, lng: -122.4194, x: 250, y: 300 },
+
+        <div class="stat-item">            { name: 'London', ip: '1.1.1.1', lat: 51.5074, lng: -0.1278, x: 800, y: 200 },
+
+            <span>🌍 Traveling:</span>            { name: 'New York', ip: '208.67.222.222', lat: 40.7128, lng: -74.0060, x: 600, y: 250 },
+
+            <span class="stat-value" id="travelCount">0</span>            { name: 'Tokyo', ip: '8.8.4.4', lat: 35.6762, lng: 139.6503, x: 1400, y: 350 }
+
+        </div>        ];
+
+        <div class="stat-item">        
+
+            <span>🗼 At Towers:</span>        // State
+
+            <span class="stat-value" id="atTowerCount">0</span>        let agents = new Map();
+
+        </div>        let devices = new Map();
+
+                let communications = [];
+
+        <div class="data-collection">        let particles = [];
+
+            <div class="title">📊 DATA COLLECTED</div>        let zoom = 1;
+
+            <div class="data-item">        let offsetX = 0;
+
+                <span>📡 Tower Data Points:</span>        let offsetY = 0;
+
+                <span class="stat-value" id="towerDataPoints">0</span>        let isPaused = false;
+
+            </div>        let activityLog = [];
+
+            <div class="data-item">        let isDragging = false;
+
+                <span>📱 WiFi Devices Found:</span>        let dragStartX = 0;
+
+                <span class="stat-value" id="wifiDevices">0</span>        let dragStartY = 0;
+
+            </div>        let towerVisits = 0;
+
+            <div class="data-item">        
+
+                <span>💾 Total Data Collected:</span>        // NUPI Cloud position (center)
+
+                <span class="stat-value" id="totalData">0</span>        let nupiCloud = {
+
+            </div>            x: canvas.width / 2,
+
+            <div class="data-item">            y: canvas.height / 2,
+
+                <span>🗼 Tower Visits (Total):</span>            radius: 80,
+
+                <span class="stat-value" id="towerVisits">0</span>            pulse: 0,
+
+            </div>            agentsInside: 0
+
+        </div>        };
+
+                
+
+        <div class="agent-list" id="agentList">        // Mouse/touch handling for dragging
+
+            <div class="title" style="margin-top: 10px;">👥 AGENT LIST</div>        let mouseDown = false;
+
+        </div>        let lastMouseX = 0;
+
+    </div>        let lastMouseY = 0;
+
+            
+
+    <div class="activity" id="activity"></div>        canvas.addEventListener('mousedown', (e) => {
+
+                mouseDown = true;
+
+    <div class="tower-data">            lastMouseX = e.clientX;
+
+        <div class="title">🗼 TOWER VISIT LOG</div>            lastMouseY = e.clientY;
+
+        <div id="towerLog">Waiting for tower visits...</div>            document.body.classList.add('dragging');
+
+    </div>        });
+
+        
+
+    <script>        canvas.addEventListener('mousemove', (e) => {
+
+        const canvas = document.getElementById('canvas');            if (mouseDown) {
+
+        const ctx = canvas.getContext('2d');                const dx = e.clientX - lastMouseX;
+
+        canvas.width = window.innerWidth;                const dy = e.clientY - lastMouseY;
+
+        canvas.height = window.innerHeight;                offsetX += dx;
+
+                        offsetY += dy;
+
+        const WORLD_TOWERS = [                lastMouseX = e.clientX;
+
+            { name: 'California', ip: '8.8.8.8', x: 300, y: 400 },                lastMouseY = e.clientY;
+
+            { name: 'London', ip: '1.1.1.1', x: 900, y: 250 },            }
+
+            { name: 'New York', ip: '208.67.222.222', x: 650, y: 300 },        });
+
+            { name: 'Tokyo', ip: '8.8.4.4', x: 1500, y: 380 }        
+
+        ];        canvas.addEventListener('mouseup', () => {
+
+                    mouseDown = false;
+
+        let agents = new Map(), towerVisitIcons = [], communications = [], particles = [];            document.body.classList.remove('dragging');
+
+        let zoom = 1, offsetX = 0, offsetY = 0, isPaused = false;        });
+
+        let activityLog = [], towerLog = [];        
+
+        let mouseDown = false, lastMouseX = 0, lastMouseY = 0;        canvas.addEventListener('wheel', (e) => {
+
+        let totalTowerDataPoints = 76, totalWifiDevices = 21, totalDataCollected = 101, totalTowerVisits = 0;            e.preventDefault();
+
+                    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+
+        let nupiCloud = {            zoom = Math.max(0.3, Math.min(3, zoom * zoomFactor));
+
+            x: canvas.width / 2, y: canvas.height / 2,        });
+
+            radius: 100, pulse: 0, agentsInside: 0        
+
+        };        // Add activity with color coding
+
+                function addActivity(text, type = 'info') {
+
+        canvas.addEventListener('mousedown', (e) => {            const now = new Date().toLocaleTimeString();
+
+            mouseDown = true; lastMouseX = e.clientX; lastMouseY = e.clientY;            activityLog.unshift({ text, type, time: now });
+
+            document.body.classList.add('dragging');            if (activityLog.length > 100) activityLog.pop();
+
+        });            
+
+        canvas.addEventListener('mousemove', (e) => {            const activityDiv = document.getElementById('activity');
+
+            if (mouseDown) {            activityDiv.innerHTML = activityLog.slice(0, 8).map(a => 
+
+                offsetX += e.clientX - lastMouseX; offsetY += e.clientY - lastMouseY;                `<div class="activity-item activity-${a.type}">[${a.time}] ${a.text}</div>`
+
+                lastMouseX = e.clientX; lastMouseY = e.clientY;            ).join('');
+
+            }        }
+
+        });        
+
+        canvas.addEventListener('mouseup', () => {        // Create or update agent
+
+            mouseDown = false; document.body.classList.remove('dragging');        function createAgent(id, location, status) {
+
+        });            const isNew = !agents.has(id);
+
+        canvas.addEventListener('wheel', (e) => {            
+
+            e.preventDefault();            if (isNew) {
+
+            zoom = Math.max(0.3, Math.min(3, zoom * (e.deltaY > 0 ? 0.9 : 1.1)));                const angle = Math.random() * Math.PI * 2;
+
+        });                const distance = 150 + Math.random() * 200;
+
+                        
+
+        function addActivity(text, type = 'info') {                agents.set(id, {
+
+            const now = new Date().toLocaleTimeString();                    id,
+
+            activityLog.unshift({ text, type, time: now });                    x: nupiCloud.x + Math.cos(angle) * distance,
+
+            if (activityLog.length > 100) activityLog.pop();                    y: nupiCloud.y + Math.sin(angle) * distance,
+
+            document.getElementById('activity').innerHTML = activityLog.slice(0, 10).map(a =>                     targetX: nupiCloud.x,
+
+                `<div class="activity-item activity-${a.type}">[${a.time}] ${a.text}</div>`                    targetY: nupiCloud.y,
+
+            ).join('');                    vx: 0,
+
+        }                    vy: 0,
+
+                            location,
+
+        function addTowerLog(agentId, tower, dataPoints) {                    status: 'entering',
+
+            const now = new Date().toLocaleTimeString();                    lastSeen: Date.now(),
+
+            towerLog.unshift({ agentId, tower, dataPoints, time: now });                    trail: [],
+
+            if (towerLog.length > 20) towerLog.pop();                    color: '#0f0',
+
+            document.getElementById('towerLog').innerHTML = towerLog.map(t =>                     size: 10,
+
+                `<div class="tower-item">[${t.time}] ${t.agentId.substring(0, 12)} → ${t.tower} (${t.dataPoints} pts)</div>`                    inCloud: false,
+
+            ).join('');                    traveling: false,
+
+        }                    targetTower: null
+
+                        });
+
+        function createAgent(id, location, status, data) {                
+
+            const isNew = !agents.has(id), now = Date.now();                addActivity(`🟢 ${id.substring(0, 15)} ENTERING network`, 'enter');
+
+            if (isNew) {                
+
+                const angle = Math.random() * Math.PI * 2;                // Create entry particles
+
+                const distance = 200 + Math.random() * 150;                for (let i = 0; i < 10; i++) {
+
+                agents.set(id, {                    particles.push({
+
+                    id, x: nupiCloud.x + Math.cos(angle) * distance,                        x: agents.get(id).x,
+
+                    y: nupiCloud.y + Math.sin(angle) * distance,                        y: agents.get(id).y,
+
+                    vx: 0, vy: 0, location, status: 'entering',                        vx: (Math.random() - 0.5) * 3,
+
+                    lastSeen: now, lastHeartbeat: now, trail: [],                        vy: (Math.random() - 0.5) * 3,
+
+                    color: '#0f0', size: 12, inCloud: false,                        life: 30,
+
+                    traveling: false, targetTower: null, isOnline: true,                        color: '#0ff'
+
+                    devicesFound: data?.devices_found || 0,                    });
+
+                    dataCollected: data?.data_collected || 0                }
+
+                });            } else {
+
+                addActivity(`🟢 ${id.substring(0, 20)} CONNECTED`, 'enter');                const agent = agents.get(id);
+
+                for (let i = 0; i < 15; i++) {                agent.lastSeen = Date.now();
+
+                    particles.push({                agent.location = location;
+
+                        x: agents.get(id).x, y: agents.get(id).y,            }
+
+                        vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4,            
+
+                        life: 40, color: '#0ff'            return agents.get(id);
+
+                    });        }
+
+                }        
+
+            } else {        // Update agent behavior
+
+                const agent = agents.get(id);        function updateAgents() {
+
+                agent.lastSeen = now; agent.lastHeartbeat = now;            const now = Date.now();
+
+                agent.location = location; agent.isOnline = true;            
+
+                agent.devicesFound = data?.devices_found || agent.devicesFound;            agents.forEach((agent, id) => {
+
+                agent.dataCollected = data?.data_collected || agent.dataCollected;                // Remove old agents
+
+            }                if (now - agent.lastSeen > 120000) {
+
+            return agents.get(id);                    addActivity(`🔴 ${id.substring(0, 15)} DISCONNECTED`, 'leave');
+
+        }                    agents.delete(id);
+
+                            return;
+
+        function updateAgents() {                }
+
+            const now = Date.now();                
+
+            agents.forEach((agent, id) => {                // Agent state machine
+
+                if (now - agent.lastHeartbeat > 60000 && agent.isOnline) {                switch(agent.status) {
+
+                    agent.isOnline = false;                    case 'entering':
+
+                    addActivity(`🔴 ${id.substring(0, 20)} OFFLINE`, 'leave');                        // Move towards NUPI Cloud
+
+                }                        const dxCloud = nupiCloud.x - agent.x;
+
+                if (now - agent.lastHeartbeat > 120000) { agents.delete(id); return; }                        const dyCloud = nupiCloud.y - agent.y;
+
+                if (!agent.isOnline) return;                        const distCloud = Math.sqrt(dxCloud ** 2 + dyCloud ** 2);
+
+                                        
+
+                switch(agent.status) {                        if (distCloud < nupiCloud.radius) {
+
+                    case 'entering':                            agent.status = 'in-cloud';
+
+                        const dxCloud = nupiCloud.x - agent.x, dyCloud = nupiCloud.y - agent.y;                            agent.inCloud = true;
+
+                        const distCloud = Math.sqrt(dxCloud ** 2 + dyCloud ** 2);                            addActivity(`☁️ ${id.substring(0, 15)} ENTERED NUPI Cloud`, 'enter');
+
+                        if (distCloud < nupiCloud.radius) {                        } else {
+
+                            agent.status = 'in-cloud'; agent.inCloud = true;                            agent.vx = (dxCloud / distCloud) * 3;
+
+                            addActivity(`☁️ ${id.substring(0, 20)} ENTERED Cloud`, 'enter');                            agent.vy = (dyCloud / distCloud) * 3;
+
+                        } else {                        }
+
+                            agent.vx = (dxCloud / distCloud) * 3;                        break;
+
+                            agent.vy = (dyCloud / distCloud) * 3;                        
+
+                        }                    case 'in-cloud':
+
+                        break;                        // Orbit inside cloud
+
+                    case 'in-cloud':                        const angle = (now / 1000 + agents.size) % (Math.PI * 2);
+
+                        const orbitAngle = (now / 1500 + Array.from(agents.keys()).indexOf(id)) % (Math.PI * 2);                        agent.x = nupiCloud.x + Math.cos(angle) * 40;
+
+                        agent.x = nupiCloud.x + Math.cos(orbitAngle) * 50;                        agent.y = nupiCloud.y + Math.sin(angle) * 40;
+
+                        agent.y = nupiCloud.y + Math.sin(orbitAngle) * 50;                        
+
+                        agent.vx = 0; agent.vy = 0;                        // Randomly leave to travel
+
+                        if (Math.random() < 0.003) {                        if (Math.random() < 0.005) {
+
+                            agent.status = 'leaving';                            agent.status = 'leaving';
+
+                            agent.targetTower = WORLD_TOWERS[Math.floor(Math.random() * WORLD_TOWERS.length)];                            agent.targetTower = WORLD_TOWERS[Math.floor(Math.random() * WORLD_TOWERS.length)];
+
+                            agent.inCloud = false; agent.traveling = true;                            agent.inCloud = false;
+
+                            addActivity(`🚀 ${id.substring(0, 20)} → ${agent.targetTower.name}`, 'travel');                            agent.traveling = true;
+
+                        }                            towerVisits++;
+
+                        break;                            addActivity(`🚀 ${id.substring(0, 15)} LEAVING for ${agent.targetTower.name}`, 'travel');
+
+                    case 'leaving':                        }
+
+                        if (agent.targetTower) {                        break;
+
+                            const dxTower = agent.targetTower.x - agent.x, dyTower = agent.targetTower.y - agent.y;                        
+
+                            const distTower = Math.sqrt(dxTower ** 2 + dyTower ** 2);                    case 'leaving':
+
+                            if (distTower < 40) {                        // Travel to tower
+
+                                agent.status = 'at-tower'; agent.towerTimer = 80; totalTowerVisits++;                        if (agent.targetTower) {
+
+                                const dataPoints = Math.floor(Math.random() * 30) + 10;                            const dxTower = agent.targetTower.x - agent.x;
+
+                                totalTowerDataPoints += dataPoints; totalDataCollected += dataPoints;                            const dyTower = agent.targetTower.y - agent.y;
+
+                                addActivity(`🗼 ${id.substring(0, 20)} @ ${agent.targetTower.name} (+${dataPoints} data)`, 'data');                            const distTower = Math.sqrt(dxTower ** 2 + dyTower ** 2);
+
+                                addTowerLog(id, agent.targetTower.name, dataPoints);                            
+
+                                towerVisitIcons.push({ x: agent.x, y: agent.y, life: 120, tower: agent.targetTower.name, dataPoints: dataPoints });                            if (distTower < 30) {
+
+                                for (let i = 0; i < 25; i++) {                                addActivity(`🗼 ${id.substring(0, 15)} REACHED ${agent.targetTower.name}`, 'travel');
+
+                                    particles.push({                                agent.status = 'at-tower';
+
+                                        x: agent.x, y: agent.y,                                agent.towerTimer = 60; // Stay for 60 frames
+
+                                        vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 0.5) * 6,                                
+
+                                        life: 60, color: '#f0f'                                // Tower visit particle effect
+
+                                    });                                for (let i = 0; i < 15; i++) {
+
+                                }                                    particles.push({
+
+                            } else {                                        x: agent.x,
+
+                                agent.vx = (dxTower / distTower) * 5;                                        y: agent.y,
+
+                                agent.vy = (dyTower / distTower) * 5;                                        vx: (Math.random() - 0.5) * 4,
+
+                            }                                        vy: (Math.random() - 0.5) * 4,
+
+                        }                                        life: 40,
+
+                        break;                                        color: '#f0f'
+
+                    case 'at-tower':                                    });
+
+                        agent.towerTimer--;                                }
+
+                        if (agent.towerTimer % 5 === 0) {                            } else {
+
+                            particles.push({                                agent.vx = (dxTower / distTower) * 5;
+
+                                x: agent.x + (Math.random() - 0.5) * 20,                                agent.vy = (dyTower / distTower) * 5;
+
+                                y: agent.y + (Math.random() - 0.5) * 20,                            }
+
+                                vx: 0, vy: -2, life: 30, color: '#0f0'                        }
+
+                            });                        break;
+
+                        }                        
+
+                        if (agent.towerTimer <= 0) {                    case 'at-tower':
+
+                            agent.status = 'returning'; agent.traveling = false;                        // Stay at tower collecting data
+
+                            addActivity(`↩️ ${id.substring(0, 20)} RETURNING`, 'travel');                        agent.towerTimer--;
+
+                        }                        if (agent.towerTimer <= 0) {
+
+                        break;                            agent.status = 'returning';
+
+                    case 'returning':                            agent.traveling = false;
+
+                        const dxReturn = nupiCloud.x - agent.x, dyReturn = nupiCloud.y - agent.y;                            addActivity(`↩️ ${id.substring(0, 15)} RETURNING to NUPI Cloud`, 'travel');
+
+                        const distReturn = Math.sqrt(dxReturn ** 2 + dyReturn ** 2);                        }
+
+                        if (distReturn < nupiCloud.radius) {                        break;
+
+                            agent.status = 'in-cloud'; agent.inCloud = true;                        
+
+                            addActivity(`☁️ ${id.substring(0, 20)} RE-ENTERED`, 'enter');                    case 'returning':
+
+                        } else {                        // Return to cloud
+
+                            agent.vx = (dxReturn / distReturn) * 4;                        const dxReturn = nupiCloud.x - agent.x;
+
+                            agent.vy = (dyReturn / distReturn) * 4;                        const dyReturn = nupiCloud.y - agent.y;
+
+                        }                        const distReturn = Math.sqrt(dxReturn ** 2 + dyReturn ** 2);
+
+                        break;                        
+
+                }                        if (distReturn < nupiCloud.radius) {
+
+                agent.x += agent.vx; agent.y += agent.vy;                            agent.status = 'in-cloud';
+
+                if (agent.status !== 'in-cloud' && agent.isOnline) {                            agent.inCloud = true;
+
+                    agent.trail.push({ x: agent.x, y: agent.y });                            addActivity(`☁️ ${id.substring(0, 15)} RE-ENTERED NUPI Cloud`, 'enter');
+
+                    if (agent.trail.length > 60) agent.trail.shift();                        } else {
+
+                }                            agent.vx = (dxReturn / distReturn) * 4;
+
+                if (Math.random() < 0.008 && agent.isOnline) {                            agent.vy = (dyReturn / distReturn) * 4;
+
+                    const others = Array.from(agents.values()).filter(a => a.id !== agent.id && a.isOnline);                        }
+
+                    if (others.length > 0) {                        break;
+
+                        const target = others[Math.floor(Math.random() * others.length)];                }
+
+                        communications.push({ from: agent, to: target, progress: 0, life: 100 });                
+
+                    }                // Update position
+
+                }                agent.x += agent.vx;
+
+            });                agent.y += agent.vy;
+
+            nupiCloud.agentsInside = Array.from(agents.values()).filter(a => a.inCloud).length;                
+
+        }                // Trail
+
+                        if (agent.status !== 'in-cloud') {
+
+        function updateParticles() {                    agent.trail.push({ x: agent.x, y: agent.y });
+
+            particles = particles.filter(p => {                    if (agent.trail.length > 50) agent.trail.shift();
+
+                p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.life--;                }
+
+                return p.life > 0;                
+
+            });                // Random communication
+
+        }                if (Math.random() < 0.01 && agents.size > 1) {
+
+                            const others = Array.from(agents.values()).filter(a => a.id !== agent.id);
+
+        function updateTowerIcons() {                    if (others.length > 0) {
+
+            towerVisitIcons = towerVisitIcons.filter(icon => {                        const target = others[Math.floor(Math.random() * others.length)];
+
+                icon.life--; return icon.life > 0;                        communications.push({
+
+            });                            from: agent,
+
+        }                            to: target,
+
+                                    progress: 0,
+
+        function updateCommunications() {                            life: 100
+
+            communications = communications.filter(comm => {                        });
+
+                comm.progress += 0.04; comm.life -= 3;                    }
+
+                return comm.life > 0 && comm.progress < 1;                }
+
+            });            });
+
+        }            
+
+                    // Update counts
+
+        function draw() {            nupiCloud.agentsInside = Array.from(agents.values()).filter(a => a.inCloud).length;
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';        }
+
+            ctx.fillRect(0, 0, canvas.width, canvas.height);        
+
+            ctx.save();        // Update particles
+
+            ctx.translate(offsetX, offsetY);        function updateParticles() {
+
+            ctx.scale(zoom, zoom);            particles = particles.filter(p => {
+
+                            p.x += p.vx;
+
+            ctx.strokeStyle = 'rgba(0, 100, 0, 0.08)';                p.y += p.vy;
+
+            ctx.lineWidth = 1;                p.life--;
+
+            for (let x = 0; x < 2000; x += 100) {                return p.life > 0;
+
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 1000); ctx.stroke();            });
+
+            }        }
+
+            for (let y = 0; y < 1000; y += 100) {        
+
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(2000, y); ctx.stroke();        // Update communications
+
+            }        function updateCommunications() {
+
+                        communications = communications.filter(comm => {
+
+            nupiCloud.pulse = (nupiCloud.pulse + 0.04) % (Math.PI * 2);                comm.progress += 0.03;
+
+            const pulseSize = Math.sin(nupiCloud.pulse) * 20 + nupiCloud.radius;                comm.life -= 2;
+
+            const cloudGradient = ctx.createRadialGradient(nupiCloud.x, nupiCloud.y, 0, nupiCloud.x, nupiCloud.y, pulseSize + 50);                return comm.life > 0 && comm.progress < 1;
+
+            cloudGradient.addColorStop(0, 'rgba(0, 255, 255, 0.4)');            });
+
+            cloudGradient.addColorStop(0.5, 'rgba(0, 255, 0, 0.2)');        }
+
+            cloudGradient.addColorStop(1, 'rgba(0, 255, 0, 0)');        
+
+            ctx.fillStyle = cloudGradient;        // Draw everything
+
+            ctx.beginPath();        function draw() {
+
+            ctx.arc(nupiCloud.x, nupiCloud.y, pulseSize + 50, 0, Math.PI * 2);            // Clear with trail effect
+
+            ctx.fill();            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.25)';            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();            
+
+            ctx.arc(nupiCloud.x, nupiCloud.y, pulseSize, 0, Math.PI * 2);            ctx.save();
+
+            ctx.fill();            ctx.translate(offsetX, offsetY);
+
+            ctx.strokeStyle = '#0ff';            ctx.scale(zoom, zoom);
+
+            ctx.lineWidth = 4;            
+
+            ctx.stroke();            // Draw world map grid
+
+            ctx.fillStyle = '#0ff';            ctx.strokeStyle = 'rgba(0, 100, 0, 0.1)';
+
+            ctx.font = 'bold 24px monospace';            ctx.lineWidth = 1;
+
+            ctx.textAlign = 'center';            for (let x = 0; x < canvas.width; x += 100) {
+
+            ctx.fillText('NUPI CLOUD', nupiCloud.x, nupiCloud.y - 15);                ctx.beginPath();
+
+            ctx.font = 'bold 16px monospace';                ctx.moveTo(x, 0);
+
+            ctx.fillText(`${nupiCloud.agentsInside} AGENTS`, nupiCloud.x, nupiCloud.y + 10);                ctx.lineTo(x, canvas.height);
+
+                            ctx.stroke();
+
+            WORLD_TOWERS.forEach(tower => {            }
+
+                for (let i = 1; i <= 5; i++) {            for (let y = 0; y < canvas.height; y += 100) {
+
+                    ctx.strokeStyle = `rgba(255, 0, 255, ${0.5 - i * 0.08})`;                ctx.beginPath();
+
+                    ctx.lineWidth = 3;                ctx.moveTo(0, y);
+
+                    ctx.beginPath();                ctx.lineTo(canvas.width, y);
+
+                    ctx.arc(tower.x, tower.y, 50 * i + (Date.now() % 3000) / 30, 0, Math.PI * 2);                ctx.stroke();
+
+                    ctx.stroke();            }
+
+                }            
+
+                ctx.fillStyle = '#f0f';            // Draw NUPI Cloud (center hub)
+
+                ctx.beginPath();            nupiCloud.pulse = (nupiCloud.pulse + 0.05) % (Math.PI * 2);
+
+                ctx.moveTo(tower.x, tower.y - 30);            const pulseSize = Math.sin(nupiCloud.pulse) * 15 + nupiCloud.radius;
+
+                ctx.lineTo(tower.x - 15, tower.y + 30);            
+
+                ctx.lineTo(tower.x + 15, tower.y + 30);            // Cloud outer glow
+
+                ctx.closePath();            const cloudGradient = ctx.createRadialGradient(
+
+                ctx.fill();                nupiCloud.x, nupiCloud.y, 0,
+
+                ctx.strokeStyle = '#fff';                nupiCloud.x, nupiCloud.y, pulseSize + 40
+
+                ctx.lineWidth = 3;            );
+
+                ctx.stroke();            cloudGradient.addColorStop(0, 'rgba(0, 255, 255, 0.3)');
+
+                ctx.strokeStyle = '#fff';            cloudGradient.addColorStop(0.5, 'rgba(0, 255, 0, 0.2)');
+
+                ctx.lineWidth = 2;            cloudGradient.addColorStop(1, 'rgba(0, 255, 0, 0)');
+
+                ctx.beginPath();            ctx.fillStyle = cloudGradient;
+
+                ctx.moveTo(tower.x, tower.y - 30);            ctx.beginPath();
+
+                ctx.lineTo(tower.x, tower.y - 45);            ctx.arc(nupiCloud.x, nupiCloud.y, pulseSize + 40, 0, Math.PI * 2);
+
+                ctx.stroke();            ctx.fill();
+
+                ctx.fillStyle = '#ff0';            
+
+                ctx.beginPath();            // Cloud main body
+
+                ctx.arc(tower.x, tower.y - 45, 4, 0, Math.PI * 2);            ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
+
+                ctx.fill();            ctx.beginPath();
+
+                ctx.fillStyle = '#f0f';            ctx.arc(nupiCloud.x, nupiCloud.y, pulseSize, 0, Math.PI * 2);
+
+                ctx.font = 'bold 16px monospace';            ctx.fill();
+
+                ctx.textAlign = 'center';            
+
+                ctx.fillText(tower.name, tower.x, tower.y - 55);            // Cloud border
+
+                ctx.font = '12px monospace';            ctx.strokeStyle = '#0ff';
+
+                ctx.fillText(tower.ip, tower.x, tower.y + 50);            ctx.lineWidth = 3;
+
+            });            ctx.stroke();
+
+                        
+
+            WORLD_TOWERS.forEach(tower => {            // Cloud label
+
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.12)';            ctx.fillStyle = '#0ff';
+
+                ctx.lineWidth = 2;            ctx.font = 'bold 20px monospace';
+
+                ctx.setLineDash([15, 15]);            ctx.textAlign = 'center';
+
+                ctx.beginPath();            ctx.fillText('NUPI CLOUD', nupiCloud.x, nupiCloud.y - 10);
+
+                ctx.moveTo(nupiCloud.x, nupiCloud.y);            ctx.font = '14px monospace';
+
+                ctx.lineTo(tower.x, tower.y);            ctx.fillText(`${nupiCloud.agentsInside} agents inside`, nupiCloud.x, nupiCloud.y + 10);
+
+                ctx.stroke();            
+
+                ctx.setLineDash([]);            // Draw towers
+
+            });            WORLD_TOWERS.forEach(tower => {
+
+                            // Tower signal waves
+
+            particles.forEach(p => {                for (let i = 1; i <= 4; i++) {
+
+                ctx.fillStyle = p.color;                    ctx.strokeStyle = `rgba(255, 0, 255, ${0.4 - i * 0.1})`;
+
+                ctx.globalAlpha = p.life / 60;                    ctx.lineWidth = 2;
+
+                ctx.beginPath();                    ctx.beginPath();
+
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);                    ctx.arc(tower.x, tower.y, 40 * i + (Date.now() % 2000) / 20, 0, Math.PI * 2);
+
+                ctx.fill();                    ctx.stroke();
+
+                ctx.globalAlpha = 1;                }
+
+            });                
+
+                            // Tower body
+
+            agents.forEach(agent => {                ctx.fillStyle = '#f0f';
+
+                if (agent.trail.length > 1 && agent.isOnline) {                ctx.beginPath();
+
+                    ctx.strokeStyle = agent.traveling ? 'rgba(255, 0, 255, 0.4)' : 'rgba(0, 255, 0, 0.25)';                ctx.moveTo(tower.x, tower.y - 20);
+
+                    ctx.lineWidth = 3;                ctx.lineTo(tower.x - 12, tower.y + 20);
+
+                    ctx.beginPath();                ctx.lineTo(tower.x + 12, tower.y + 20);
+
+                    agent.trail.forEach((point, i) => {                ctx.closePath();
+
+                        if (i === 0) ctx.moveTo(point.x, point.y);                ctx.fill();
+
+                        else ctx.lineTo(point.x, point.y);                
+
+                    });                ctx.strokeStyle = '#fff';
+
+                    ctx.stroke();                ctx.lineWidth = 2;
+
+                }                ctx.stroke();
+
+            });                
+
+                            // Tower label
+
+            communications.forEach(comm => {                ctx.fillStyle = '#f0f';
+
+                const x = comm.from.x + (comm.to.x - comm.from.x) * comm.progress;                ctx.font = 'bold 14px monospace';
+
+                const y = comm.from.y + (comm.to.y - comm.from.y) * comm.progress;                ctx.textAlign = 'center';
+
+                ctx.strokeStyle = `rgba(255, 255, 0, ${comm.life / 100})`;                ctx.fillText(tower.name, tower.x, tower.y - 30);
+
+                ctx.lineWidth = 3;                ctx.font = '11px monospace';
+
+                ctx.beginPath();                ctx.fillText(tower.ip, tower.x, tower.y + 40);
+
+                ctx.moveTo(comm.from.x, comm.from.y);            });
+
+                ctx.lineTo(x, y);            
+
+                ctx.stroke();            // Draw connections from cloud to towers
+
+                ctx.fillStyle = '#ff0';            WORLD_TOWERS.forEach(tower => {
+
+                ctx.beginPath();                ctx.strokeStyle = 'rgba(0, 255, 255, 0.15)';
+
+                ctx.arc(x, y, 6, 0, Math.PI * 2);                ctx.lineWidth = 2;
+
+                ctx.fill();                ctx.setLineDash([10, 10]);
+
+            });                ctx.beginPath();
+
+                            ctx.moveTo(nupiCloud.x, nupiCloud.y);
+
+            towerVisitIcons.forEach(icon => {                ctx.lineTo(tower.x, tower.y);
+
+                ctx.globalAlpha = icon.life / 120;                ctx.stroke();
+
+                ctx.fillStyle = '#f0f';                ctx.setLineDash([]);
+
+                ctx.beginPath();            });
+
+                ctx.arc(icon.x, icon.y, 25, 0, Math.PI * 2);            
+
+                ctx.fill();            // Draw particles
+
+                ctx.fillStyle = '#fff';            particles.forEach(p => {
+
+                ctx.font = 'bold 20px monospace';                ctx.fillStyle = p.color;
+
+                ctx.textAlign = 'center';                ctx.globalAlpha = p.life / 30;
+
+                ctx.fillText('🗼', icon.x, icon.y + 7);                ctx.beginPath();
+
+                ctx.fillStyle = '#0f0';                ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+
+                ctx.font = 'bold 12px monospace';                ctx.fill();
+
+                ctx.fillText(`+${icon.dataPoints}`, icon.x, icon.y - 30);                ctx.globalAlpha = 1;
+
+                ctx.globalAlpha = 1;            });
+
+            });            
+
+                        // Draw agent trails
+
+            agents.forEach(agent => {            agents.forEach(agent => {
+
+                const glowColor = !agent.isOnline ? '#f00' : agent.traveling ? '#f0f' : agent.inCloud ? '#0ff' : '#0f0';                if (agent.trail.length > 1) {
+
+                const gradient = ctx.createRadialGradient(agent.x, agent.y, 0, agent.x, agent.y, agent.size * 5);                    ctx.strokeStyle = agent.traveling ? 'rgba(255, 0, 255, 0.3)' : 'rgba(0, 255, 0, 0.2)';
+
+                gradient.addColorStop(0, glowColor);                    ctx.lineWidth = 2;
+
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');                    ctx.beginPath();
+
+                ctx.fillStyle = gradient;                    agent.trail.forEach((point, i) => {
+
+                ctx.beginPath();                        if (i === 0) ctx.moveTo(point.x, point.y);
+
+                ctx.arc(agent.x, agent.y, agent.size * 5, 0, Math.PI * 2);                        else ctx.lineTo(point.x, point.y);
+
+                ctx.fill();                    });
+
+                ctx.fillStyle = glowColor;                    ctx.stroke();
+
+                ctx.beginPath();                }
+
+                ctx.arc(agent.x, agent.y, agent.size, 0, Math.PI * 2);            });
+
+                ctx.fill();            
+
+                ctx.strokeStyle = '#fff';            // Draw communications
+
+                ctx.lineWidth = 3;            communications.forEach(comm => {
+
+                ctx.stroke();                const x = comm.from.x + (comm.to.x - comm.from.x) * comm.progress;
+
+                ctx.fillStyle = agent.isOnline ? '#0f0' : '#f00';                const y = comm.from.y + (comm.to.y - comm.from.y) * comm.progress;
+
+                ctx.beginPath();                
+
+                ctx.arc(agent.x + agent.size - 3, agent.y - agent.size + 3, 5, 0, Math.PI * 2);                ctx.strokeStyle = `rgba(255, 255, 0, ${comm.life / 100})`;
+
+                ctx.fill();                ctx.lineWidth = 2;
+
+                ctx.fillStyle = '#fff';                ctx.beginPath();
+
+                ctx.font = 'bold 13px monospace';                ctx.moveTo(comm.from.x, comm.from.y);
+
+                ctx.textAlign = 'center';                ctx.lineTo(x, y);
+
+                ctx.fillText(agent.id.substring(0, 12), agent.x, agent.y - 22);                ctx.stroke();
+
+                ctx.font = '11px monospace';                
+
+                ctx.fillStyle = glowColor;                ctx.fillStyle = '#ff0';
+
+                let statusText = agent.isOnline ? agent.status : 'OFFLINE';                ctx.beginPath();
+
+                if (agent.targetTower && agent.isOnline) statusText = `→ ${agent.targetTower.name}`;                ctx.arc(x, y, 5, 0, Math.PI * 2);
+
+                ctx.fillText(statusText, agent.x, agent.y + 30);                ctx.fill();
+
+            });            });
+
+                        
+
+            ctx.restore();            // Draw agents
+
+            updateStatsUI();            agents.forEach(agent => {
+
+        }                // Agent glow
+
+                        const glowColor = agent.traveling ? '#f0f' : agent.inCloud ? '#0ff' : '#0f0';
+
+        function updateStatsUI() {                const gradient = ctx.createRadialGradient(agent.x, agent.y, 0, agent.x, agent.y, agent.size * 4);
+
+            const onlineAgents = Array.from(agents.values()).filter(a => a.isOnline);                gradient.addColorStop(0, glowColor);
+
+            const offlineAgents = Array.from(agents.values()).filter(a => !a.isOnline);                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            const travelingCount = onlineAgents.filter(a => a.traveling).length;                ctx.fillStyle = gradient;
+
+            const atTowerCount = onlineAgents.filter(a => a.status === 'at-tower').length;                ctx.beginPath();
+
+            document.getElementById('agentCount').textContent = agents.size;                ctx.arc(agent.x, agent.y, agent.size * 4, 0, Math.PI * 2);
+
+            document.getElementById('onlineCount').textContent = onlineAgents.length;                ctx.fill();
+
+            document.getElementById('offlineCount').textContent = offlineAgents.length;                
+
+            document.getElementById('cloudCount').textContent = nupiCloud.agentsInside;                // Agent body
+
+            document.getElementById('travelCount').textContent = travelingCount;                ctx.fillStyle = glowColor;
+
+            document.getElementById('atTowerCount').textContent = atTowerCount;                ctx.beginPath();
+
+            document.getElementById('towerDataPoints').textContent = totalTowerDataPoints;                ctx.arc(agent.x, agent.y, agent.size, 0, Math.PI * 2);
+
+            document.getElementById('wifiDevices').textContent = totalWifiDevices;                ctx.fill();
+
+            document.getElementById('totalData').textContent = totalDataCollected;                
+
+            document.getElementById('towerVisits').textContent = totalTowerVisits;                // Agent border
+
+            const agentListDiv = document.getElementById('agentList');                ctx.strokeStyle = '#fff';
+
+            const agentHTML = Array.from(agents.values()).map(a => {                ctx.lineWidth = 2;
+
+                const indicator = a.isOnline ? '🟢' : '🔴';                ctx.stroke();
+
+                const statusClass = a.isOnline ? '' : 'offline';                
+
+                return `<div class="agent-item ${statusClass}">${indicator} ${a.id.substring(0, 18)} - ${a.status}</div>`;                // Agent ID
+
+            }).join('');                ctx.fillStyle = '#fff';
+
+            agentListDiv.innerHTML = `<div class="title" style="margin-top: 10px;">👥 AGENT LIST</div>${agentHTML}`;                ctx.font = 'bold 12px monospace';
+
+        }                ctx.textAlign = 'center';
+
+                        ctx.fillText(agent.id.substring(0, 10), agent.x, agent.y - 18);
+
+        async function fetchData() {                
+
+            try {                // Agent status
+
+                const [statusRes, realtimeRes] = await Promise.all([                ctx.font = '10px monospace';
+
+                    fetch('https://nupidesktopai.com/api/agents/status'),                ctx.fillStyle = glowColor;
+
+                    fetch('https://nupidesktopai.com/api/agents/realtime')                let statusText = agent.status;
+
+                ]);                if (agent.targetTower) statusText = `→ ${agent.targetTower.name}`;
+
+                const statusData = await statusRes.json();                ctx.fillText(statusText, agent.x, agent.y + 25);
+
+                const realtimeData = await realtimeRes.json();            });
+
+                const allAgents = new Map();            
+
+                if (statusData.agents) statusData.agents.forEach(a => allAgents.set(a.agent_id, a));            ctx.restore();
+
+                if (realtimeData.agents) realtimeData.agents.forEach(a => allAgents.set(a.agent_id, a));            
+
+                allAgents.forEach((agentData, agentId) => {            // Update stats
+
+                    createAgent(agentId, agentData.location || 'unknown', agentData.status, agentData);            const travelingCount = Array.from(agents.values()).filter(a => a.traveling).length;
+
+                });            document.getElementById('agentCount').textContent = agents.size;
+
+            } catch (error) {            document.getElementById('cloudCount').textContent = nupiCloud.agentsInside;
+
+                console.error('Fetch error:', error);            document.getElementById('travelCount').textContent = travelingCount;
+
+            }            document.getElementById('commCount').textContent = communications.length;
+
+        }            document.getElementById('locationCount').textContent = agents.size + WORLD_TOWERS.length;
+
+                    document.getElementById('towerVisits').textContent = towerVisits;
+
+        function zoomIn() { zoom = Math.min(zoom * 1.3, 5); }        }
+
+        function zoomOut() { zoom = Math.max(zoom / 1.3, 0.2); }        
+
+        function togglePause() { isPaused = !isPaused; }        // Fetch data from APIs
+
+        function resetView() { zoom = 1; offsetX = 0; offsetY = 0; }        async function fetchData() {
+
+        function focusCloud() {            try {
+
+            offsetX = canvas.width/2 - nupiCloud.x * zoom;                const [statusRes, realtimeRes] = await Promise.all([
+
+            offsetY = canvas.height/2 - nupiCloud.y * zoom;                    fetch('https://nupidesktopai.com/api/agents/status'),
+
+        }                    fetch('https://nupidesktopai.com/api/agents/realtime')
+
+                        ]);
+
+        function animate() {                
+
+            if (!isPaused) {                const statusData = await statusRes.json();
+
+                updateAgents();                const realtimeData = await realtimeRes.json();
+
+                updateParticles();                
+
+                updateTowerIcons();                const allAgents = new Map();
+
+                updateCommunications();                
+
+                draw();                if (statusData.agents) {
+
+            } else {                    statusData.agents.forEach(a => allAgents.set(a.agent_id, a));
+
+                draw();                }
+
+            }                if (realtimeData.agents) {
+
+            requestAnimationFrame(animate);                    realtimeData.agents.forEach(a => allAgents.set(a.agent_id, a));
+
+        }                }
+
+                        
+
+        fetchData();                allAgents.forEach((agentData, agentId) => {
+
+        setInterval(fetchData, 1000);                    createAgent(agentId, agentData.location || 'unknown', agentData.status);
+
+        animate();                });
+
+        window.addEventListener('resize', () => {                
+
+            canvas.width = window.innerWidth;            } catch (error) {
+
+            canvas.height = window.innerHeight;                console.error('Fetch error:', error);
+
+        });            }
+
+        addActivity('🌐 NUPI Agent Network INITIALIZED', 'info');        }
+
+        addActivity('🎮 Drag to move • Scroll to zoom', 'info');        
+
+    </script>        // Controls
+
+</body>        function zoomIn() { zoom = Math.min(zoom * 1.3, 4); }
+
+</html>        function zoomOut() { zoom = Math.max(zoom / 1.3, 0.2); }
+
+        function togglePause() { isPaused = !isPaused; }
+        function resetView() { 
+            zoom = 1; 
+            offsetX = 0; 
+            offsetY = 0;
+        }
+        function focusCloud() {
+            offsetX = canvas.width/2 - nupiCloud.x * zoom;
+            offsetY = canvas.height/2 - nupiCloud.y * zoom;
+        }
+        
+        // Animation loop
+        function animate() {
+            if (!isPaused) {
+                updateAgents();
+                updateParticles();
+                updateCommunications();
+                draw();
+            }
+            requestAnimationFrame(animate);
+        }
+        
+        // Start
+        fetchData();
+        setInterval(fetchData, 1000);
+        animate();
+        
+        // Window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            nupiCloud.x = canvas.width / 2;
+            nupiCloud.y = canvas.height / 2;
+        });
+        
+        addActivity('🌐 NUPI Agent Network ONLINE', 'info');
+        addActivity('🎮 Drag canvas to move view, scroll to zoom', 'info');
+    </script>
+</body>
+</html>
