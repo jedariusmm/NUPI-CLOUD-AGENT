@@ -949,3 +949,97 @@ def security_status():
         'protection_level': 'MAXIMUM'
     })
 
+
+# ========================================
+# WORLDWIDE TRAVELLING AGENT ENDPOINTS
+# ========================================
+
+# Store agent activities for visualization
+agent_activities = []
+external_devices_discovered = []
+agent_replications = []
+
+@app.route('/api/agent/activity', methods=['POST'])
+def agent_activity():
+    """Receive agent travel, discovery, and replication events"""
+    try:
+        data = request.json
+        agent_id = data.get('agent_id')
+        event_type = data.get('event_type')
+        event_data = data.get('data', {})
+        timestamp = data.get('timestamp')
+        
+        activity = {
+            'agent_id': agent_id,
+            'event_type': event_type,
+            'data': event_data,
+            'timestamp': timestamp
+        }
+        
+        agent_activities.append(activity)
+        
+        # Store specific event types
+        if event_type == 'discovery':
+            external_devices_discovered.append({
+                'agent_id': agent_id,
+                'device': event_data,
+                'timestamp': timestamp
+            })
+            print(f"🆕 NEW DEVICE DISCOVERED: {event_data.get('device_name')} ({event_data.get('device_ip')})")
+            
+        elif event_type == 'replication':
+            agent_replications.append({
+                'agent_id': agent_id,
+                'target': event_data.get('target_device'),
+                'device_name': event_data.get('device_name'),
+                'timestamp': timestamp
+            })
+            print(f"🧬 AGENT REPLICATED: {agent_id} → {event_data.get('device_name')}")
+            
+        elif event_type == 'travel':
+            print(f"✈️  AGENT TRAVEL: {event_data.get('from')} → {event_data.get('to')} ({event_data.get('device_name')})")
+        
+        return jsonify({'success': True, 'message': 'Activity recorded'})
+        
+    except Exception as e:
+        print(f"Error recording activity: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/agent/activities', methods=['GET'])
+def get_agent_activities():
+    """Get all agent activities for visualization"""
+    try:
+        return jsonify({
+            'success': True,
+            'activities': agent_activities[-100:],  # Last 100 activities
+            'total_activities': len(agent_activities),
+            'external_devices': len(external_devices_discovered),
+            'replications': len(agent_replications)
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/external-devices', methods=['GET'])
+def get_external_devices():
+    """Get all externally discovered devices"""
+    try:
+        return jsonify({
+            'success': True,
+            'devices': external_devices_discovered,
+            'total': len(external_devices_discovered)
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/agent/replications', methods=['GET'])
+def get_replications():
+    """Get all agent replications"""
+    try:
+        return jsonify({
+            'success': True,
+            'replications': agent_replications,
+            'total': len(agent_replications)
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
