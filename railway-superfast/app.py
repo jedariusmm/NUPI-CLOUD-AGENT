@@ -64,6 +64,8 @@ app = Flask(__name__)
 # REAL DATA STORAGE - No fake simulations
 agents_registry = {}  # agent_id -> agent_data
 collected_data = []   # All harvested data
+wifi_agent_locations = {}  # WiFi agent tracking
+wifi_agent_hops = []       # WiFi hop history
 visitor_data = []     # Worldwide visitor tracking
 
 # Configure CORS for nupiai.com and nupidesktopai.com
