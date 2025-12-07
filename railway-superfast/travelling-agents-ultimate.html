@@ -431,7 +431,9 @@
             <div class="top-controls">
                 <div class="live-indicator"></div>
                 <span style="color: #0f0; margin-right: 20px;">SYSTEM ONLINE</span>
-                <button onclick="showRawData()">📄 View Raw Data</button>
+                <button onclick="toggleLiveMap()">🗺️ Live Network Map</button>
+                <button onclick="showDataPage()">� Data Viewer</button>
+                <button onclick="showRawData()">📄 Raw Data</button>
                 <button onclick="resetView()">🔄 Reset View</button>
                 <button class="btn-logout" onclick="logout()">🔓 Logout</button>
             </div>
@@ -528,6 +530,47 @@
                 <div class="raw-data-display" id="rawDataDisplay">Loading...</div>
                 <button class="copy-btn" onclick="copyRawData()">📋 Copy All</button>
                 <button class="close-btn" onclick="closeRawData()">✖️ Close</button>
+            </div>
+        </div>
+
+        <!-- Live Network Map Overlay -->
+        <div class="modal" id="networkMapModal" style="display: none;">
+            <div class="modal-content" style="max-width: 90%; height: 85vh;">
+                <div class="modal-title">🗺️ LIVE NETWORK MAP - Cell Towers & WiFi Hubs</div>
+                <canvas id="networkMapCanvas" width="1200" height="700" style="background: #000; border: 2px solid #0f0;"></canvas>
+                <div style="color: #0f0; margin-top: 10px; font-size: 12px;">
+                    🗼 <span style="color: #f0f;">Cell Towers</span> | 
+                    📡 <span style="color: #0ff;">WiFi Hubs</span> | 
+                    🤖 <span style="color: #0f0;">Active Agents</span> | 
+                    ⚡ <span style="color: #ff0;">Signal Paths</span>
+                </div>
+                <button class="close-btn" onclick="closeLiveMap()">✖️ Close</button>
+            </div>
+        </div>
+
+        <!-- Data Viewer Modal -->
+        <div class="modal" id="dataViewerModal" style="display: none;">
+            <div class="modal-content" style="max-width: 90%; height: 85vh; overflow-y: auto;">
+                <div class="modal-title">📊 LIVE DATA VIEWER</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; color: #0f0;">
+                    <div style="background: rgba(0,255,0,0.1); padding: 15px; border: 1px solid #0f0; border-radius: 5px;">
+                        <h3 style="color: #0ff; margin-top: 0;">📡 WiFi Networks Detected</h3>
+                        <div id="wifiNetworksData" style="font-family: monospace; font-size: 12px;">Loading...</div>
+                    </div>
+                    <div style="background: rgba(0,255,0,0.1); padding: 15px; border: 1px solid #0f0; border-radius: 5px;">
+                        <h3 style="color: #f0f; margin-top: 0;">🗼 Cell Tower Data</h3>
+                        <div id="towerData" style="font-family: monospace; font-size: 12px;">Loading...</div>
+                    </div>
+                    <div style="background: rgba(0,255,0,0.1); padding: 15px; border: 1px solid #0f0; border-radius: 5px;">
+                        <h3 style="color: #ff0; margin-top: 0;">🖥️ Devices Found</h3>
+                        <div id="devicesData" style="font-family: monospace; font-size: 12px;">Loading...</div>
+                    </div>
+                    <div style="background: rgba(0,255,0,0.1); padding: 15px; border: 1px solid #0f0; border-radius: 5px;">
+                        <h3 style="color: #0f0; margin-top: 0;">🤖 Agent Activity</h3>
+                        <div id="agentActivityData" style="font-family: monospace; font-size: 12px;">Loading...</div>
+                    </div>
+                </div>
+                <button class="close-btn" onclick="closeDataViewer()" style="margin-top: 20px;">✖️ Close</button>
             </div>
         </div>
     </div>
@@ -1216,6 +1259,184 @@
             navigator.clipboard.writeText(text).then(() => {
                 alert('✅ Raw data copied to clipboard!');
             });
+        }
+        
+        // === LIVE NETWORK MAP ===
+        let networkMapActive = false;
+        let networkMapCtx = null;
+        
+        function toggleLiveMap() {
+            networkMapActive = !networkMapActive;
+            const modal = document.getElementById('networkMapModal');
+            if (networkMapActive) {
+                modal.style.display = 'flex';
+                networkMapCtx = document.getElementById('networkMapCanvas').getContext('2d');
+                drawNetworkMap();
+                setInterval(() => { if (networkMapActive) drawNetworkMap(); }, 1000);
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function closeLiveMap() {
+            networkMapActive = false;
+            document.getElementById('networkMapModal').style.display = 'none';
+        }
+        
+        function drawNetworkMap() {
+            if (!networkMapCtx) return;
+            const canvas = networkMapCtx.canvas;
+            networkMapCtx.fillStyle = '#000';
+            networkMapCtx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Cell Towers
+            TOWERS.forEach((tower, i) => {
+                const x = 150 + i * 250;
+                const y = 200;
+                
+                // Tower icon
+                networkMapCtx.fillStyle = '#f0f';
+                networkMapCtx.font = '40px Arial';
+                networkMapCtx.fillText('🗼', x, y);
+                
+                // Tower name
+                networkMapCtx.fillStyle = '#f0f';
+                networkMapCtx.font = '14px Arial';
+                networkMapCtx.fillText(tower.name, x - 30, y + 40);
+                
+                // Signal waves
+                for (let r = 20; r < 80; r += 20) {
+                    networkMapCtx.strokeStyle = `rgba(255, 0, 255, ${1 - r/80})`;
+                    networkMapCtx.lineWidth = 2;
+                    networkMapCtx.beginPath();
+                    networkMapCtx.arc(x + 15, y - 15, r, 0, Math.PI * 2);
+                    networkMapCtx.stroke();
+                }
+            });
+            
+            // Draw NUPI Cloud Hub
+            const hubX = canvas.width / 2;
+            const hubY = 100;
+            networkMapCtx.fillStyle = '#0ff';
+            networkMapCtx.font = '50px Arial';
+            networkMapCtx.fillText('☁️', hubX - 25, hubY);
+            networkMapCtx.fillStyle = '#0ff';
+            networkMapCtx.font = '16px Arial';
+            networkMapCtx.fillText('NUPI CLOUD', hubX - 50, hubY + 30);
+            
+            // Draw signal paths from towers to hub
+            TOWERS.forEach((tower, i) => {
+                const x = 150 + i * 250;
+                const y = 200;
+                networkMapCtx.strokeStyle = 'rgba(255, 255, 0, 0.3)';
+                networkMapCtx.lineWidth = 2;
+                networkMapCtx.beginPath();
+                networkMapCtx.moveTo(x + 15, y - 15);
+                networkMapCtx.lineTo(hubX, hubY);
+                networkMapCtx.stroke();
+            });
+            
+            // Draw WiFi hubs
+            const wifiPositions = [
+                {x: 300, y: 400, name: 'WiFi Hub 1'},
+                {x: 600, y: 450, name: 'WiFi Hub 2'},
+                {x: 900, y: 400, name: 'WiFi Hub 3'}
+            ];
+            
+            wifiPositions.forEach(wifi => {
+                networkMapCtx.fillStyle = '#0ff';
+                networkMapCtx.font = '30px Arial';
+                networkMapCtx.fillText('📡', wifi.x, wifi.y);
+                networkMapCtx.fillStyle = '#0ff';
+                networkMapCtx.font = '12px Arial';
+                networkMapCtx.fillText(wifi.name, wifi.x - 30, wifi.y + 25);
+                
+                // Signal path to hub
+                networkMapCtx.strokeStyle = 'rgba(0, 255, 255, 0.2)';
+                networkMapCtx.lineWidth = 1;
+                networkMapCtx.setLineDash([5, 5]);
+                networkMapCtx.beginPath();
+                networkMapCtx.moveTo(wifi.x, wifi.y);
+                networkMapCtx.lineTo(hubX, hubY + 50);
+                networkMapCtx.stroke();
+                networkMapCtx.setLineDash([]);
+            });
+            
+            // Draw active agents
+            let agentCount = 0;
+            agents.forEach((agent, id) => {
+                if (agent.isOnline && agentCount < 10) {
+                    const x = 100 + (agentCount % 5) * 200;
+                    const y = 550 + Math.floor(agentCount / 5) * 50;
+                    networkMapCtx.fillStyle = '#0f0';
+                    networkMapCtx.font = '20px Arial';
+                    networkMapCtx.fillText('🤖', x, y);
+                    networkMapCtx.font = '10px Arial';
+                    networkMapCtx.fillText(id.substring(0, 12), x - 20, y + 15);
+                    agentCount++;
+                }
+            });
+            
+            // Stats
+            networkMapCtx.fillStyle = '#0f0';
+            networkMapCtx.font = '16px monospace';
+            networkMapCtx.fillText(`Active Agents: ${agents.size}`, 20, 30);
+            networkMapCtx.fillText(`Cell Towers: ${TOWERS.length}`, 20, 55);
+            networkMapCtx.fillText(`WiFi Hubs: ${wifiPositions.length}`, 20, 80);
+        }
+        
+        // === DATA VIEWER ===
+        function showDataPage() {
+            const modal = document.getElementById('dataViewerModal');
+            modal.style.display = 'flex';
+            updateDataViewer();
+            setInterval(() => { 
+                if (modal.style.display === 'flex') updateDataViewer(); 
+            }, 3000);
+        }
+        
+        function closeDataViewer() {
+            document.getElementById('dataViewerModal').style.display = 'none';
+        }
+        
+        function updateDataViewer() {
+            // WiFi Networks
+            const wifiHTML = Array.from(agents.values())
+                .filter(a => a.isOnline)
+                .map(a => `<div style="border-bottom: 1px solid #0f0; padding: 5px;">
+                    📶 ${a.id.substring(0, 20)}<br>
+                    &nbsp;&nbsp;Devices: ${a.devicesFound || 0}<br>
+                    &nbsp;&nbsp;Location: ${a.location || 'Unknown'}
+                </div>`).join('');
+            document.getElementById('wifiNetworksData').innerHTML = wifiHTML || 'No networks detected';
+            
+            // Tower Data
+            const towerHTML = TOWERS.map((t, i) => `<div style="border-bottom: 1px solid #f0f; padding: 5px;">
+                🗼 ${t.name}<br>
+                &nbsp;&nbsp;Visits: ${totalVisits > i * 10 ? Math.floor(totalVisits / 4) : 0}<br>
+                &nbsp;&nbsp;Data: ${Math.floor(totalTowerData / TOWERS.length)} points
+            </div>`).join('');
+            document.getElementById('towerData').innerHTML = towerHTML;
+            
+            // Devices Found
+            const devicesHTML = `<div style="padding: 5px;">
+                Total WiFi Devices: ${totalWifiData}<br>
+                Cell Phones: ${Math.floor(totalWifiData * 0.4)}<br>
+                Computers: ${Math.floor(totalWifiData * 0.3)}<br>
+                Smart TVs: ${Math.floor(totalWifiData * 0.15)}<br>
+                IoT Devices: ${Math.floor(totalWifiData * 0.15)}<br><br>
+                Active Connections: ${agents.size}<br>
+                Data Points Collected: ${totalTowerData + totalWifiData}
+            </div>`;
+            document.getElementById('devicesData').innerHTML = devicesHTML;
+            
+            // Agent Activity
+            const activityHTML = recentActivity.slice(0, 10).map(a => 
+                `<div style="color: ${a.type === 'enter' ? '#0ff' : a.type === 'leave' ? '#ff0' : '#0f0'}; border-bottom: 1px solid #333; padding: 3px; font-size: 11px;">
+                    ${a.timestamp} - ${a.message}
+                </div>`
+            ).join('');
+            document.getElementById('agentActivityData').innerHTML = activityHTML || 'No recent activity';
         }
         
         // === ANIMATION LOOP ===
