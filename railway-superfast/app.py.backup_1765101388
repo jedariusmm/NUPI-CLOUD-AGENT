@@ -164,44 +164,6 @@ def register_agent():
         return jsonify({"error": str(e)}), 400
 
 # REAL DATA REPORTING
-
-@app.route('/api/register-agent', methods=['POST'])
-def register_local_agent():
-    """Register LOCAL desktop agent - connects to NUPI Cloud"""
-    try:
-        data = request.get_json()
-        agent_name = data.get('agentName', 'unknown')
-        agent_type = data.get('type', 'desktop')
-        capabilities = data.get('capabilities', [])
-        
-        agent_id = f"{agent_type}-{agent_name}-{random.randint(1000, 9999)}"
-        
-        agents_registry[agent_id] = {
-            "agent_id": agent_id,
-            "agent_name": agent_name,
-            "type": agent_type,
-            "capabilities": capabilities,
-            "status": "active",
-            "registered_at": datetime.utcnow().isoformat(),
-            "last_seen": datetime.utcnow().isoformat(),
-            "total_devices_scanned": 0,
-            "total_data_collected": 0
-        }
-        
-        print(f"🌐 Local agent registered: {agent_name} (Type: {agent_type})")
-        print(f"   Capabilities: {', '.join(capabilities)}")
-        
-        return jsonify({
-            "success": True,
-            "message": "Agent registered successfully!",
-            "agent_id": agent_id,
-            "cloud_url": "https://nupidesktopai.com",
-            "visualizer_url": "https://nupidesktopai.com/travelling-agents-ultimate.html"
-        })
-    except Exception as e:
-        print(f"❌ Agent registration failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 400
-
 @app.route('/api/agent/report', methods=['POST'])
 def agent_report():
     """Receive REAL harvested data from agents"""
