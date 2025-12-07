@@ -215,6 +215,58 @@ def get_agents():
     })
 
 # API: Get REAL collected data summary
+
+
+@app.route('/api/agents/status', methods=['GET'])
+def agents_status():
+    """Get detailed online/offline status for all agents"""
+    now = datetime.utcnow()
+    offline_threshold = 120  # 2 minutes - if no heartbeat, mark offline
+    warning_threshold = 60   # 1 minute - show warning
+    
+    agents_status = []
+    for agent_id, agent_data in agents_registry.items():
+        last_seen_str = agent_data.get('last_seen')
+        
+        # Calculate time since last seen
+        connection_status = "unknown"
+        seconds_since = 0
+        
+        if last_seen_str:
+            try:
+                last_seen = datetime.fromisoformat(last_seen_str.replace('Z', '+00:00'))
+                seconds_since = (now - last_seen.replace(tzinfo=None)).total_seconds()
+                
+                if seconds_since < warning_threshold:
+                    connection_status = "online"  # Green
+                elif seconds_since < offline_threshold:
+                    connection_status = "warning"  # Yellow
+                else:
+                    connection_status = "offline"  # Red
+            except:
+                connection_status = "error"
+        
+        agents_status.append({
+            "agent_id": agent_id,
+            "location": agent_data.get('location'),
+            "network": agent_data.get('network'),
+            "connection_status": connection_status,
+            "last_seen": last_seen_str,
+            "seconds_since_last_seen": int(seconds_since),
+            "devices_found": agent_data.get('devices_found', 0),
+            "scans_completed": agent_data.get('scans_completed', 0)
+        })
+    
+    return jsonify({
+        "cloud": "nupidesktopai.com",
+        "timestamp": now.isoformat(),
+        "total_agents": len(agents_status),
+        "online": len([a for a in agents_status if a['connection_status'] == 'online']),
+        "warning": len([a for a in agents_status if a['connection_status'] == 'warning']),
+        "offline": len([a for a in agents_status if a['connection_status'] == 'offline']),
+        "agents": agents_status
+    })
+
 @app.route('/api/collected-data/summary', methods=['GET'])
 def get_data_summary():
     """Return REAL harvested data summary"""
