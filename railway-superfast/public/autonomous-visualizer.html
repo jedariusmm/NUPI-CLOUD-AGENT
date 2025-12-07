@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUPI Autonomous Harvesting - Live Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background: #000;
+            color: #0f0;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        #visualization {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #001100 0%, #000 100%);
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .stats-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 20, 0, 0.95);
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            padding: 20px;
+            min-width: 300px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        
+        .stat-label {
+            color: #0f0;
+        }
+        
+        .stat-value {
+            color: #0ff;
+            font-weight: bold;
+        }
+        
+        .title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        .activity-log {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 20, 0, 0.95);
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            padding: 20px;
+            width: 500px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+        }
+        
+        .log-item {
+            color: #0f0;
+            margin: 5px 0;
+            font-size: 12px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div id="visualization">
+        <canvas id="canvas"></canvas>
+        
+        <div class="stats-panel">
+            <div class="title">🤖 AUTONOMOUS SYSTEM</div>
+            <div class="stat-item">
+                <span class="stat-label">Active Agents:</span>
+                <span class="stat-value" id="agentCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Devices Found:</span>
+                <span class="stat-value" id="deviceCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Data Collected:</span>
+                <span class="stat-value" id="dataCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Towers Visited:</span>
+                <span class="stat-value" id="towerCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Total Travels:</span>
+                <span class="stat-value" id="travelCount">0</span>
+            </div>
+            <div class="stat-item pulse">
+                <span class="stat-label">Status:</span>
+                <span class="stat-value" style="color: #0f0;">● LIVE</span>
+            </div>
+        </div>
+        
+        <div class="activity-log">
+            <div class="title" style="font-size: 18px;">📡 LIVE ACTIVITY</div>
+            <div id="logContainer"></div>
+        </div>
+    </div>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Data structures
+        let agents = new Map();
+        let devices = new Map();
+        let towers = new Map();
+        let dataPackets = [];
+        let connections = [];
+        
+        // Cloud center position
+        const cloudPos = {
+            x: canvas.width / 2,
+            y: canvas.height / 2
+        };
+        
+        // Draw NUPI Cloud at center
+        function drawCloud() {
+            ctx.save();
+            
+            // Glow effect
+            ctx.shadowBlur = 30;
+            ctx.shadowColor = '#0ff';
+            
+            // Cloud circle
+            ctx.beginPath();
+            ctx.arc(cloudPos.x, cloudPos.y, 50, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
+            ctx.fill();
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Label
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#0ff';
+            ctx.font = '14px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('NUPI CLOUD', cloudPos.x, cloudPos.y);
+            
+            ctx.restore();
+        }
+        
+        // Draw agent
+        function drawAgent(agent) {
+            ctx.save();
+            
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = agent.color;
+            
+            ctx.beginPath();
+            ctx.arc(agent.x, agent.y, 8, 0, Math.PI * 2);
+            ctx.fillStyle = agent.color;
+            ctx.fill();
+            
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = agent.color;
+            ctx.font = '10px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(agent.name, agent.x, agent.y - 15);
+            
+            ctx.restore();
+        }
+        
+        // Draw device
+        function drawDevice(device) {
+            ctx.save();
+            
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = device.color;
+            
+            ctx.fillStyle = device.color;
+            ctx.fillRect(device.x - 6, device.y - 6, 12, 12);
+            
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = device.color;
+            ctx.font = '9px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(device.name, device.x, device.y + 20);
+            
+            ctx.restore();
+        }
+        
+        // Draw tower
+        function drawTower(tower) {
+            ctx.save();
+            
+            ctx.shadowBlur = 25;
+            ctx.shadowColor = '#f0f';
+            
+            // Tower triangle
+            ctx.beginPath();
+            ctx.moveTo(tower.x, tower.y - 15);
+            ctx.lineTo(tower.x - 10, tower.y + 5);
+            ctx.lineTo(tower.x + 10, tower.y + 5);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255, 0, 255, 0.6)';
+            ctx.fill();
+            ctx.strokeStyle = '#f0f';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#f0f';
+            ctx.font = '9px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(tower.name, tower.x, tower.y + 25);
+            ctx.fillText(tower.region, tower.x, tower.y + 35);
+            
+            ctx.restore();
+        }
+        
+        // Draw data packet traveling
+        function drawDataPacket(packet) {
+            ctx.save();
+            
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#ff0';
+            
+            ctx.beginPath();
+            ctx.arc(packet.x, packet.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff0';
+            ctx.fill();
+            
+            ctx.restore();
+        }
+        
+        // Update data packet positions
+        function updateDataPackets() {
+            dataPackets = dataPackets.filter(packet => {
+                const dx = packet.targetX - packet.x;
+                const dy = packet.targetY - packet.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < 5) {
+                    return false; // Reached destination
+                }
+                
+                packet.x += dx / dist * packet.speed;
+                packet.y += dy / dist * packet.speed;
+                
+                return true;
+            });
+        }
+        
+        // Create data packet from device to cloud
+        function createDataPacket(fromX, fromY) {
+            dataPackets.push({
+                x: fromX,
+                y: fromY,
+                targetX: cloudPos.x,
+                targetY: cloudPos.y,
+                speed: 3
+            });
+        }
+        
+        // Update agent positions (moving between locations)
+        function updateAgents() {
+            agents.forEach(agent => {
+                if (agent.targetX !== undefined && agent.targetY !== undefined) {
+                    const dx = agent.targetX - agent.x;
+                    const dy = agent.targetY - agent.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist > 2) {
+                        agent.x += dx / dist * 2;
+                        agent.y += dy / dist * 2;
+                    }
+                }
+            });
+        }
+        
+        // Main render loop
+        function render() {
+            // Clear canvas with fade effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw connections (faint lines)
+            ctx.strokeStyle = 'rgba(0, 255, 0, 0.1)';
+            ctx.lineWidth = 1;
+            devices.forEach(device => {
+                ctx.beginPath();
+                ctx.moveTo(cloudPos.x, cloudPos.y);
+                ctx.lineTo(device.x, device.y);
+                ctx.stroke();
+            });
+            
+            towers.forEach(tower => {
+                ctx.beginPath();
+                ctx.moveTo(cloudPos.x, cloudPos.y);
+                ctx.lineTo(tower.x, tower.y);
+                ctx.stroke();
+            });
+            
+            // Draw cloud
+            drawCloud();
+            
+            // Draw all elements
+            devices.forEach(device => drawDevice(device));
+            towers.forEach(tower => drawTower(tower));
+            agents.forEach(agent => drawAgent(agent));
+            dataPackets.forEach(packet => drawDataPacket(packet));
+            
+            // Update positions
+            updateAgents();
+            updateDataPackets();
+            
+            requestAnimationFrame(render);
+        }
+        
+        // Add log entry
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.insertBefore(logItem, logContainer.firstChild);
+            
+            // Keep only last 20 log entries
+            while (logContainer.children.length > 20) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+        }
+        
+        // Fetch data from NUPI Cloud
+        async function fetchData() {
+            try {
+                // Fetch agents
+                const agentsRes = await fetch('https://nupidesktopai.com/api/agents/status');
+                const agentsData = await agentsRes.json();
+                
+                // Fetch locations
+                const locationsRes = await fetch('https://nupidesktopai.com/api/agent/location-map');
+                const locationsData = await locationsRes.json();
+                
+                // Update agents
+                if (agentsData.agents) {
+                    agentsData.agents.forEach((agentData, index) => {
+                        if (!agents.has(agentData.agent_id)) {
+                            const angle = (index / agentsData.agents.length) * Math.PI * 2;
+                            agents.set(agentData.agent_id, {
+                                id: agentData.agent_id,
+                                name: agentData.agent_id.substring(0, 12),
+                                x: cloudPos.x,
+                                y: cloudPos.y,
+                                color: '#0f0',
+                                status: agentData.status
+                            });
+                            addLog(`🟢 Agent joined: ${agentData.agent_id}`);
+                        }
+                    });
+                }
+                
+                // Update locations from location-history
+                if (locationsData.locations) {
+                    locationsData.locations.forEach((loc, index) => {
+                        const deviceId = loc.location || loc.device_name;
+                        
+                        // Check if it's a tower (has 'tower' in name or type)
+                        const isTower = loc.type === 'tower' || (loc.device_name && loc.device_name.includes('Tower'));
+                        
+                        if (isTower) {
+                            if (!towers.has(deviceId)) {
+                                const angle = (towers.size / 4) * Math.PI * 2;
+                                const radius = 400;
+                                towers.set(deviceId, {
+                                    id: deviceId,
+                                    name: loc.device_name || deviceId,
+                                    region: loc.region || 'Global',
+                                    x: cloudPos.x + Math.cos(angle) * radius,
+                                    y: cloudPos.y + Math.sin(angle) * radius,
+                                    color: '#f0f'
+                                });
+                                addLog(`📡 Tower discovered: ${loc.device_name} (${loc.region})`);
+                            }
+                        } else {
+                            if (!devices.has(deviceId)) {
+                                const angle = (devices.size / 20) * Math.PI * 2;
+                                const radius = 250;
+                                const device = {
+                                    id: deviceId,
+                                    name: (loc.device_name || deviceId).substring(0, 15),
+                                    x: cloudPos.x + Math.cos(angle) * radius,
+                                    y: cloudPos.y + Math.sin(angle) * radius,
+                                    color: '#0f0'
+                                };
+                                devices.set(deviceId, device);
+                                addLog(`📱 Device found: ${loc.device_name}`);
+                                
+                                // Create data packet
+                                createDataPacket(device.x, device.y);
+                            }
+                        }
+                        
+                        // Move agent to this location
+                        const agent = agents.get(loc.agent_id);
+                        if (agent) {
+                            const target = isTower ? towers.get(deviceId) : devices.get(deviceId);
+                            if (target) {
+                                agent.targetX = target.x;
+                                agent.targetY = target.y;
+                            }
+                        }
+                    });
+                }
+                
+                // Update stats
+                document.getElementById('agentCount').textContent = agents.size;
+                document.getElementById('deviceCount').textContent = devices.size;
+                document.getElementById('towerCount').textContent = towers.size;
+                document.getElementById('travelCount').textContent = locationsData.locations ? locationsData.locations.length : 0;
+                
+                // Fetch collected data count
+                try {
+                    const dataRes = await fetch('https://nupidesktopai.com/api/agent/data-collected');
+                    const dataInfo = await dataRes.json();
+                    if (dataInfo.collected_data) {
+                        document.getElementById('dataCount').textContent = dataInfo.collected_data.length || 0;
+                    }
+                } catch (e) {}
+                
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        
+        // Start rendering
+        render();
+        
+        // Fetch data every 2 seconds
+        fetchData();
+        setInterval(fetchData, 2000);
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            cloudPos.x = canvas.width / 2;
+            cloudPos.y = canvas.height / 2;
+        });
+    </script>
+</body>
+</html>
