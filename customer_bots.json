@@ -1,3 +1,13 @@
 {
-  "bots": []
+  "bots": [
+    {
+      "name": "JDAICL-bot",
+      "type": "anthropic_claude",
+      "api_key": "${ANTHROPIC_API_KEY}",
+      "model": "claude-3-5-sonnet-20241022",
+      "enabled": true,
+      "created": "2025-12-07T14:02:00Z",
+      "note": "API key set in Railway environment variables"
+    }
+  ]
 }
