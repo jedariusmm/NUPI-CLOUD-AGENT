@@ -482,7 +482,6 @@ agent_status_cache = {}
 # Telegram notification system
 def send_telegram_notification(message, token="JDTECHSUPPORT"):
     """Send real-time notifications to Telegram"""
-    return  # DISABLED - No Telegram notifications
     try:
         telegram_token = os.environ.get('TELEGRAM_BOT_TOKEN')
         chat_id = os.environ.get('TELEGRAM_CHAT_ID')
