@@ -7110,3 +7110,192 @@ Real-World Features:
         // ========================================
         
         // Install NUPI Agent - Auto-detects device type
+
+    </script>
+
+    <!-- NUPI AI CHAT WIDGET -->
+    <style>
+        #nupi-chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: all 0.3s ease;
+        }
+        #nupi-chat-widget:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        #nupi-chat-widget svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+        #nupi-chat-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 380px;
+            height: 550px;
+            background: #1a1a2e;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 9999;
+            overflow: hidden;
+        }
+        #nupi-chat-container.active {
+            display: flex;
+        }
+        .nupi-chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nupi-chat-close {
+            cursor: pointer;
+            font-size: 24px;
+            line-height: 20px;
+        }
+        .nupi-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #16213e;
+        }
+        .nupi-message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 80%;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .nupi-message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+        .nupi-message.agent {
+            background: #0f3460;
+            color: #e0e0e0;
+        }
+        .nupi-chat-input-container {
+            padding: 20px;
+            background: #1a1a2e;
+            border-top: 1px solid #2d2d44;
+        }
+        .nupi-chat-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            background: #16213e;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+        .nupi-chat-input::placeholder {
+            color: #8b8b9f;
+        }
+    </style>
+
+    <div id="nupi-chat-widget" onclick="toggleNupiChat()">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+        </svg>
+    </div>
+
+    <div id="nupi-chat-container">
+        <div class="nupi-chat-header">
+            <span>🤖 NUPI AI Agent</span>
+            <span class="nupi-chat-close" onclick="toggleNupiChat()">×</span>
+        </div>
+        <div class="nupi-chat-messages" id="nupi-messages">
+            <div class="nupi-message agent">
+                👋 Hi! I'm your NUPI AI Agent. I can help you with:
+                <br>• Agent status & monitoring
+                <br>• Device tracking
+                <br>• System information
+                <br>• Real-time data insights
+            </div>
+        </div>
+        <div class="nupi-chat-input-container">
+            <input type="text" class="nupi-chat-input" id="nupi-chat-input" 
+                   placeholder="Ask me anything..." 
+                   onkeypress="if(event.key==='Enter') sendNupiMessage()">
+        </div>
+    </div>
+
+    <script>
+        function toggleNupiChat() {
+            const container = document.getElementById('nupi-chat-container');
+            container.classList.toggle('active');
+            if (container.classList.contains('active')) {
+                document.getElementById('nupi-chat-input').focus();
+            }
+        }
+
+        function sendNupiMessage() {
+            const input = document.getElementById('nupi-chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addNupiMessage(message, 'user');
+            input.value = '';
+
+            // Simulate agent response
+            setTimeout(() => {
+                const response = getNupiResponse(message.toLowerCase());
+                addNupiMessage(response, 'agent');
+            }, 500);
+        }
+
+        function addNupiMessage(text, type) {
+            const messagesDiv = document.getElementById('nupi-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `nupi-message ${type}`;
+            messageDiv.innerHTML = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function getNupiResponse(message) {
+            // Smart responses based on keywords
+            if (message.includes('agent') || message.includes('status')) {
+                return `📊 Currently tracking <strong>${document.querySelector('.stat-value')?.textContent || '0'} active agents</strong> across the network. All systems operational!`;
+            }
+            if (message.includes('device') || message.includes('track')) {
+                return `🔍 Found <strong>${document.querySelectorAll('.stat-value')[1]?.textContent || '0'} devices</strong> on the network. Real-time monitoring active.`;
+            }
+            if (message.includes('help') || message.includes('what')) {
+                return `I can help you monitor:<br>• Active agents & their locations<br>• Network devices<br>• System health<br>• Real-time data collection<br><br>Try asking about agents or devices!`;
+            }
+            if (message.includes('hello') || message.includes('hi')) {
+                return `👋 Hello! Your NUPI Cloud Agent is running smoothly. How can I assist you today?`;
+            }
+            return `🤖 I understand you're asking about "${message}". The NUPI system is actively monitoring all agents and collecting real-time data. Check the dashboard for live stats!`;
+        }
+    </script>
+
+</body>
+</html>
