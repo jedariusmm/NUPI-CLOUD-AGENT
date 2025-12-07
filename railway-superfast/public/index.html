@@ -76,26 +76,117 @@
         </div>
     </div>
     <script>
-        const devices = [
-            { ip: '192.168.12.175', name: '65" Element Roku TV', type: '📺', mac: '38:e7:c0:19:97:e7' },
-            { ip: '192.168.12.56', name: '65" TCL Roku TV', type: '📺', mac: '94:b3:f7:eb:ba:24' },
-            { ip: '192.168.12.247', name: '43" Hisense Roku TV', type: '📺', mac: '38:64:7:98:92:78' },
-            { ip: '192.168.12.76', name: 'Roku Streambar', type: '📺', mac: '20:ef:bd:91:67:3e' },
-            { ip: '192.168.12.178', name: 'iMac', type: '💻', mac: '4a:f5:21:a:e0:96' },
-            { ip: '192.168.12.147', name: 'iPhone', type: '📱', mac: '2a:b6:f1:eb:3c:ec' },
-            { ip: '192.168.12.105', name: 'Galaxy Tab A9', type: '📱', mac: '3a:78:8e:3a:a2:aa' },
-            { ip: '192.168.12.1', name: 'T-Mobile Gateway', type: '🌐', mac: '30:67:a1:1a:29:c1' }
-        ];
+        let devices = [];
+        let lastUpdate = new Date();
+        let cycleNumber = 0;
         
-        const grid = document.getElementById('devices');
-        grid.innerHTML = devices.map(d => `
-            <div class="device-card">
-                <div style="font-size:2em">${d.type}</div>
-                <div class="device-name">${d.name}</div>
-                <div class="device-ip">${d.ip}</div>
-                <div style="font-family:monospace;font-size:0.85em">${d.mac}</div>
-            </div>
-        `).join('');
+        // Load devices from API
+        async function loadDevices() {
+            try {
+                const response = await fetch('/api/devices');
+                const data = await response.json();
+                
+                if (data && data.devices) {
+                    devices = data.devices;
+                    cycleNumber = data.cycle || 0;
+                    lastUpdate = new Date(data.scan_time);
+                    updateDashboard();
+                }
+            } catch (error) {
+                console.error('API error:', error);
+                // Fallback data
+                loadFallbackData();
+            }
+        }
+        
+        function loadFallbackData() {
+            devices = [
+                { ip: '192.168.12.175', hostname: '65" Element Roku TV', device_type: '📺', mac: '38:e7:c0:19:97:e7' },
+                { ip: '192.168.12.56', hostname: '65" TCL Roku TV', device_type: '📺', mac: '94:b3:f7:eb:ba:24' },
+                { ip: '192.168.12.247', hostname: '43" Hisense Roku TV', device_type: '📺', mac: '38:64:7:98:92:78' },
+                { ip: '192.168.12.76', hostname: 'Roku Streambar', device_type: '📺', mac: '20:ef:bd:91:67:3e' },
+                { ip: '192.168.12.178', hostname: 'iMac', device_type: '💻', mac: '4a:f5:21:a:e0:96' },
+                { ip: '192.168.12.147', hostname: 'iPhone', device_type: '📱', mac: '2a:b6:f1:eb:3c:ec' },
+                { ip: '192.168.12.105', hostname: 'Galaxy Tab A9', device_type: '📱', mac: '3a:78:8e:3a:a2:aa' },
+                { ip: '192.168.12.1', hostname: 'T-Mobile Gateway', device_type: '🌐', mac: '30:67:a1:1a:29:c1' }
+            ];
+            updateDashboard();
+        }
+        
+        function updateDashboard() {
+            // Update stats
+            const rokus = devices.filter(d => d.device_type && d.device_type.includes('📺')).length;
+            const computers = devices.filter(d => {
+                const type = d.device_type || '';
+                return type.includes('💻') || type.includes('📱');
+            }).length;
+            
+            document.getElementById('total').textContent = devices.length;
+            document.getElementById('rokus').textContent = rokus;
+            document.getElementById('computers').textContent = computers;
+            
+            // Render devices
+            const grid = document.getElementById('devices');
+            grid.innerHTML = devices.map(d => {
+                const icon = (d.device_type || '❓').split(' ')[0];
+                const name = d.hostname || d.name || 'Unknown';
+                const ip = d.ip;
+                const mac = d.mac || 'Unknown';
+                const services = d.services ? d.services.join(', ') : '';
+                const lastSeen = d.last_seen ? new Date(d.last_seen).toLocaleTimeString() : '';
+                
+                return `
+                    <div class="device-card" style="position:relative;">
+                        <div style="position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;"></div>
+                        <div style="font-size:2em;margin-bottom:10px;">${icon}</div>
+                        <div class="device-name">${name}</div>
+                        <div class="device-ip">${ip}</div>
+                        <div style="font-family:monospace;font-size:0.85em;margin:5px 0;">${mac}</div>
+                        ${services ? `<div style="font-size:0.8em;opacity:0.8;margin-top:5px;">🔌 ${services}</div>` : ''}
+                        ${lastSeen ? `<div style="font-size:0.75em;opacity:0.6;margin-top:5px;">🕐 ${lastSeen}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            // Update timestamp
+            updateTimestamp();
+        }
+        
+        function updateTimestamp() {
+            const now = new Date();
+            const elapsed = Math.floor((now - lastUpdate) / 1000);
+            const elapsedStr = elapsed < 60 ? `${elapsed}s ago` : `${Math.floor(elapsed/60)}m ago`;
+            
+            const timestampEl = document.createElement('div');
+            timestampEl.style.cssText = 'text-align:center;margin-top:20px;opacity:0.7;';
+            timestampEl.innerHTML = `
+                🔄 Cycle #${cycleNumber} | 
+                Last updated: ${lastUpdate.toLocaleTimeString()} (${elapsedStr}) | 
+                Auto-refresh every 30s
+            `;
+            
+            // Remove old timestamp if exists
+            const oldTs = document.querySelector('.timestamp');
+            if (oldTs) oldTs.remove();
+            
+            timestampEl.className = 'timestamp';
+            document.querySelector('.container').appendChild(timestampEl);
+        }
+        
+        // Add pulse animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.5; transform: scale(1.2); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Load immediately and auto-refresh every 30 seconds
+        loadDevices();
+        setInterval(loadDevices, 30000);
+        setInterval(updateTimestamp, 1000);
     </script>
 </body>
 </html>
