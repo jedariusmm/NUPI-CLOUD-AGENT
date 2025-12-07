@@ -224,43 +224,74 @@ app.get('/health', (req, res) => {
 // ============================================
 let ChatAgent, chatAgent;
 
-// Try to load chat agent (optional feature)
-try {
-    ChatAgent = require('./chat_agent.js');
-    chatAgent = new ChatAgent();
-    console.log('✅ Autonomous chat agent loaded');
-} catch (error) {
-    console.log('⚠️  Chat agent not available:', error.message);
-}
+// Simple Claude API proxy (no dependencies needed)
+const CLAUDE_API_KEY = process.env.ANTHROPIC_API_KEY;
+const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
 
-app.post('/api/chat', async (req, res) => {
-    if (!chatAgent) {
-        return res.status(503).json({ 
-            error: 'Chat agent not available',
-            message: 'The autonomous chat system is currently unavailable. Please check server logs.'
-        });
+async function callClaude(messages, model = 'claude-3-5-sonnet-20241022') {
+    if (!CLAUDE_API_KEY) {
+        throw new Error('ANTHROPIC_API_KEY not configured');
     }
 
-    try {
-        const { message, model, webSearch, attachments, context } = req.body;
+    const axios = require('axios');
+    const response = await axios.post('https://api.anthropic.com/v1/messages', {
+        model: model,
+        max_tokens: 4096,
+        system: `You are NUPI Assistant, an autonomous AI agent for network monitoring. You help manage network agents, analyze device data, and provide technical assistance. Be concise and helpful.`,
+        messages: messages
+    }, {
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': CLAUDE_API_KEY,
+            'anthropic-version': '2023-06-01'
+        }
+    });
 
-        if (!message) {
+    return response.data;
+}
+
+console.log('✅ Claude API proxy ready');
+
+app.post('/api/chat', async (req, res) => {
+    try {
+        const { message, messages, model } = req.body;
+
+        if (!message && (!messages || messages.length === 0)) {
             return res.status(400).json({ error: 'Message is required' });
         }
 
-        console.log(`💬 Chat request: "${message.substring(0, 50)}..."`);
+        console.log(`💬 Chat request: "${message ? message.substring(0, 50) : 'conversation'}..."`);
 
-        // Get response from autonomous agent
-        const result = await chatAgent.chat(message, {
-            model: model || 'claude-3-5-sonnet-20241022',
-            webSearch: webSearch || false,
-            context: context || {}
+        // Build context
+        let contextInfo = `\n\nCurrent system status:\n`;
+        contextInfo += `- Active agents: ${agentPositions.size}\n`;
+        contextInfo += `- Devices tracked: ${deviceData.total_devices || 0}\n`;
+        contextInfo += `- Network: ${deviceData.network || '192.168.12.x'}\n`;
+
+        // Prepare messages array
+        let conversationMessages = messages || [];
+        if (message) {
+            conversationMessages.push({ 
+                role: 'user', 
+                content: message + contextInfo 
+            });
+        }
+
+        // Call Claude
+        const result = await callClaude(conversationMessages, model);
+
+        res.json({
+            success: true,
+            response: result.content[0].text,
+            model: result.model,
+            usage: result.usage
         });
-
-        res.json(result);
     } catch (error) {
         console.error('❌ Chat error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ 
+            error: error.message,
+            success: false
+        });
     }
 });
 
