@@ -324,6 +324,14 @@
     <div id="dashboard">
         <div id="visualization-container">
             <canvas id="canvas"></canvas>
+            
+            <!-- Zoom Controls -->
+            <div style="position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 100;">
+                <button onclick="zoomLevel = Math.min(3, zoomLevel * 1.2)" style="background: rgba(0, 255, 255, 0.2); border: 2px solid #0ff; color: #0ff; padding: 10px 20px; border-radius: 8px; font-size: 20px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: bold;">🔍+</button>
+                <button onclick="zoomLevel = Math.max(0.5, zoomLevel * 0.8)" style="background: rgba(0, 255, 255, 0.2); border: 2px solid #0ff; color: #0ff; padding: 10px 20px; border-radius: 8px; font-size: 20px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: bold;">🔍-</button>
+                <button onclick="zoomLevel = 1" style="background: rgba(0, 255, 255, 0.2); border: 2px solid #0ff; color: #0ff; padding: 10px 20px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: bold;">RESET</button>
+            </div>
+            
             <div id="legend">
                 <div class="legend-title">LEGEND</div>
                 <div class="legend-item">
@@ -379,6 +387,10 @@
         let totalDataPoints = 0;
         let totalHops = 0;
         
+        // Zoom and interaction
+        let zoomLevel = 1;
+        let selectedAgent = null;
+        
         // Track movement history
         const agentHistory = new Map();
         const movementPaths = new Map();
@@ -398,10 +410,56 @@
         function initDashboard() {
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
+            
+            // Zoom with mouse wheel
+            canvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                zoomLevel = Math.max(0.5, Math.min(3, zoomLevel * delta));
+            });
+            
+            // Click on agents
+            canvas.addEventListener('click', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+                
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                
+                agents.forEach((agent, index) => {
+                    const angle = (index / agents.length) * Math.PI * 2;
+                    const distance = 180 * zoomLevel;
+                    const x = centerX + Math.cos(angle) * distance;
+                    const y = centerY + Math.sin(angle) * distance;
+                    
+                    const dx = clickX - x;
+                    const dy = clickY - y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 20) {
+                        selectedAgent = selectedAgent === agent.agent_id ? null : agent.agent_id;
+                        showAgentDetails(agent);
+                    }
+                });
+            });
+            
             fetchData();
             setInterval(fetchData, 2000);
             renderVisualization();
             registerDashboard();
+        }
+        
+        function showAgentDetails(agent) {
+            alert(`🤖 AGENT DETAILS
+            
+ID: ${agent.agent_id}
+Location: ${agent.location || 'Unknown'}
+Network: ${agent.network || 'Unknown'}
+Devices Found: ${agent.devices_found || 0}
+Scans Completed: ${agent.scans_completed || 0}
+Last Seen: ${agent.last_seen || 'N/A'}
+Status: ${agent.devices_found > 0 ? '📊 HARVESTING' : agent.isMoving ? '⚡ MOVING' : '🟢 ACTIVE'}`);
         }
         
         function switchTab(tabName) {
@@ -702,15 +760,16 @@
             // Draw agents around cloud (inner circle)
             agents.forEach((agent, index) => {
                 const angle = (index / agents.length) * Math.PI * 2;
-                const distance = 180;
+                const distance = 180 * zoomLevel;
                 const x = centerX + Math.cos(angle) * distance;
                 const y = centerY + Math.sin(angle) * distance;
                 
                 const isHarvesting = agent.devices_found > 0;
                 const isMoving = agent.isMoving;
+                const isSelected = selectedAgent === agent.agent_id;
                 
                 ctx.beginPath();
-                ctx.arc(x, y, 15, 0, Math.PI * 2);
+                ctx.arc(x, y, isSelected ? 20 : 15, 0, Math.PI * 2);
                 
                 if (isMoving) {
                     ctx.fillStyle = 'rgba(255, 255, 0, 0.9)';
@@ -724,8 +783,17 @@
                 }
                 
                 ctx.fill();
-                ctx.lineWidth = 3;
+                ctx.lineWidth = isSelected ? 5 : 3;
                 ctx.stroke();
+                
+                // Selection highlight
+                if (isSelected) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 25, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(0, 255, 255, 0.8)';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
                 
                 if (isMoving || isHarvesting) {
                     const pulse2 = Math.sin(Date.now() / 300 + index) * 8 + 10;
@@ -752,7 +820,7 @@
             const devicesArray = Array.from(devices.values());
             devicesArray.forEach((device, index) => {
                 const angle = (index / devicesArray.length) * Math.PI * 2;
-                const distance = 320;
+                const distance = 320 * zoomLevel;
                 const x = centerX + Math.cos(angle) * distance;
                 const y = centerY + Math.sin(angle) * distance;
                 
