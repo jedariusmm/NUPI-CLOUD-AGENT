@@ -222,10 +222,25 @@ app.get('/health', (req, res) => {
 // ============================================
 // AUTONOMOUS CHAT AGENT ENDPOINT
 // ============================================
-const ChatAgent = require('./chat_agent.js');
-const chatAgent = new ChatAgent();
+let ChatAgent, chatAgent;
+
+// Try to load chat agent (optional feature)
+try {
+    ChatAgent = require('./chat_agent.js');
+    chatAgent = new ChatAgent();
+    console.log('✅ Autonomous chat agent loaded');
+} catch (error) {
+    console.log('⚠️  Chat agent not available:', error.message);
+}
 
 app.post('/api/chat', async (req, res) => {
+    if (!chatAgent) {
+        return res.status(503).json({ 
+            error: 'Chat agent not available',
+            message: 'The autonomous chat system is currently unavailable. Please check server logs.'
+        });
+    }
+
     try {
         const { message, model, webSearch, attachments, context } = req.body;
 
@@ -250,6 +265,9 @@ app.post('/api/chat', async (req, res) => {
 });
 
 app.get('/api/chat/history', (req, res) => {
+    if (!chatAgent) {
+        return res.status(503).json({ error: 'Chat agent not available' });
+    }
     res.json({
         history: chatAgent.conversationHistory,
         count: chatAgent.conversationHistory.length
@@ -257,6 +275,9 @@ app.get('/api/chat/history', (req, res) => {
 });
 
 app.post('/api/chat/clear', (req, res) => {
+    if (!chatAgent) {
+        return res.status(503).json({ error: 'Chat agent not available' });
+    }
     chatAgent.clearHistory();
     res.json({ success: true, message: 'Chat history cleared' });
 });
