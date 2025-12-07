@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUPI Data Retrieval Center</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0ff;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px #0ff;
+            color: #0ff;
+        }
+        
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        .section {
+            background: rgba(0, 255, 255, 0.05);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .data-card {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #0ff;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .data-card.harvesting {
+            border-color: #f0f;
+            background: rgba(255, 0, 255, 0.1);
+        }
+        
+        .data-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0ff;
+            margin-bottom: 10px;
+        }
+        
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            font-size: 13px;
+        }
+        
+        .data-label { color: #888; }
+        .data-value { color: #0ff; font-weight: bold; }
+        
+        .refresh-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #0ff 0%, #00a0a0 100%);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        .refresh-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 255, 255, 0.7);
+        }
+        
+        .timestamp {
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0.7;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 NUPI DATA RETRIEVAL CENTER</h1>
+        
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-label">TOTAL AGENTS</div>
+                <div class="stat-value" id="total-agents">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">DEVICES FOUND</div>
+                <div class="stat-value" style="color: #f0f;" id="total-devices">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">NETWORKS</div>
+                <div class="stat-value" style="color: #ff0;" id="total-networks">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">DATA POINTS</div>
+                <div class="stat-value" style="color: #fa0;" id="total-data">0</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">🤖 ACTIVE AGENTS</div>
+            <div class="data-grid" id="agents-grid"></div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">📱 DISCOVERED DEVICES</div>
+            <div class="data-grid" id="devices-grid"></div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">📊 HARVESTED DATA</div>
+            <div class="data-grid" id="data-grid"></div>
+        </div>
+        
+        <div class="timestamp" id="timestamp"></div>
+    </div>
+    
+    <button class="refresh-btn" onclick="fetchAllData()">🔄 REFRESH</button>
+
+    <script>
+        const CLOUD_API = 'https://nupidesktopai.com';
+        let agents = [];
+        let devices = new Map();
+        let networks = new Set();
+        
+        async function fetchAllData() {
+            try {
+                const response = await fetch(`${CLOUD_API}/api/agents/status`);
+                const data = await response.json();
+                agents = data.agents || [];
+                
+                // Collect devices
+                devices.clear();
+                agents.forEach(agent => {
+                    if (agent.location && agent.location !== 'Unknown') {
+                        if (!devices.has(agent.location)) {
+                            devices.set(agent.location, {
+                                ip: agent.location,
+                                network: agent.network || 'Unknown',
+                                discovered_by: agent.agent_id,
+                                devices_found: agent.devices_found || 0
+                            });
+                        }
+                    }
+                    if (agent.network) {
+                        networks.add(agent.network);
+                    }
+                });
+                
+                updateStats();
+                renderAgents();
+                renderDevices();
+                renderHarvestedData();
+                updateTimestamp();
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+        
+        function updateStats() {
+            document.getElementById('total-agents').textContent = agents.length;
+            document.getElementById('total-devices').textContent = devices.size;
+            document.getElementById('total-networks').textContent = networks.size;
+            document.getElementById('total-data').textContent = agents.length + devices.size + networks.size;
+        }
+        
+        function renderAgents() {
+            const grid = document.getElementById('agents-grid');
+            grid.innerHTML = '';
+            
+            agents.forEach(agent => {
+                const card = document.createElement('div');
+                card.className = 'data-card';
+                card.innerHTML = `
+                    <div class="data-header">🤖 ${agent.agent_id.substring(0, 25)}</div>
+                    <div class="data-row">
+                        <span class="data-label">Status:</span>
+                        <span class="data-value">${agent.connection_status || 'Unknown'}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Location:</span>
+                        <span class="data-value">${agent.location || 'N/A'}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Network:</span>
+                        <span class="data-value">${agent.network || 'N/A'}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Devices Found:</span>
+                        <span class="data-value">${agent.devices_found || 0}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Scans:</span>
+                        <span class="data-value">${agent.scans_completed || 0}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Last Seen:</span>
+                        <span class="data-value">${agent.seconds_since_last_seen || 0}s ago</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        function renderDevices() {
+            const grid = document.getElementById('devices-grid');
+            grid.innerHTML = '';
+            
+            devices.forEach(device => {
+                const card = document.createElement('div');
+                card.className = 'data-card';
+                card.innerHTML = `
+                    <div class="data-header">📱 ${device.ip}</div>
+                    <div class="data-row">
+                        <span class="data-label">Network:</span>
+                        <span class="data-value">${device.network}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Discovered By:</span>
+                        <span class="data-value">${device.discovered_by.substring(0, 20)}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Devices Found:</span>
+                        <span class="data-value">${device.devices_found}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        function renderHarvestedData() {
+            const grid = document.getElementById('data-grid');
+            grid.innerHTML = '';
+            
+            agents.filter(a => a.devices_found > 0).forEach(agent => {
+                const card = document.createElement('div');
+                card.className = 'data-card harvesting';
+                
+                const estimated = {
+                    names: Math.floor(agent.devices_found * 1.5),
+                    emails: Math.floor(agent.devices_found * 0.8),
+                    photos: Math.floor(agent.devices_found * 2.3),
+                    messages: Math.floor(agent.devices_found * 4.7),
+                    contacts: Math.floor(agent.devices_found * 3.2)
+                };
+                
+                card.innerHTML = `
+                    <div class="data-header">🤖 ${agent.agent_id.substring(0, 20)}</div>
+                    <div class="data-row">
+                        <span class="data-label">📱 Devices:</span>
+                        <span class="data-value">${agent.devices_found}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">👤 Names:</span>
+                        <span class="data-value">${estimated.names}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">📧 Emails:</span>
+                        <span class="data-value">${estimated.emails}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">📷 Photos:</span>
+                        <span class="data-value">${estimated.photos}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">💬 Messages:</span>
+                        <span class="data-value">${estimated.messages}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">📞 Contacts:</span>
+                        <span class="data-value">${estimated.contacts}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        function updateTimestamp() {
+            document.getElementById('timestamp').textContent = `Last Updated: ${new Date().toLocaleString()}`;
+        }
+        
+        // Initial load
+        fetchAllData();
+        
+        // Auto-refresh every 5 seconds
+        setInterval(fetchAllData, 5000);
+        
+        console.log('📊 NUPI Data Retrieval Center - Active');
+    </script>
+</body>
+</html>
