@@ -736,10 +736,16 @@
                     ctx.stroke();
                 }
                 
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 9px Courier New';
+                // Draw agent ID and location
+                ctx.fillStyle = '#0ff';
+                ctx.font = 'bold 10px Courier New';
                 ctx.textAlign = 'center';
-                ctx.fillText(agent.agent_id.substring(0, 10), x, y - 25);
+                ctx.fillText(agent.agent_id, x, y - 30);
+                
+                // Draw location below ID
+                ctx.fillStyle = '#fff';
+                ctx.font = '8px Courier New';
+                ctx.fillText(`📍 ${agent.location || 'Unknown'}`, x, y - 18);
             });
             
             // Draw devices around agents (outer circle)
