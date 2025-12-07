@@ -558,6 +558,12 @@
             listEl.innerHTML = '';
             
             const devicesArray = Array.from(devices.values());
+            
+            if (devicesArray.length === 0) {
+                listEl.innerHTML = '<div class="item" style="opacity: 0.5;">📱 No devices discovered yet...</div>';
+                return;
+            }
+            
             devicesArray.forEach(device => {
                 const item = document.createElement('div');
                 item.className = 'item';
@@ -583,6 +589,11 @@
         function renderDataHarvestList() {
             const listEl = document.getElementById('data-harvest-list');
             listEl.innerHTML = '';
+            
+            if (dataHarvested.size === 0) {
+                listEl.innerHTML = '<div class="item" style="opacity: 0.5;">📊 No data harvesting active yet...</div>';
+                return;
+            }
             
             dataHarvested.forEach((data, agentId) => {
                 const item = document.createElement('div');
