@@ -272,70 +272,123 @@ class WorldwideAgent:
         self.send_telegram(f"📺 *{name}*\n\n{result}")
     
     def handle_natural_language(self, text):
-        """Parse natural language commands"""
+        """Parse natural language with COMPLETE understanding"""
         text_lower = text.lower()
         
-        # Device mapping
+        # Device mapping - EXPANDED
         devices = {
             'element': ('192.168.12.175', '65" Element', '/e'),
             'living room': ('192.168.12.175', '65" Element', '/e'),
             'main tv': ('192.168.12.175', '65" Element', '/e'),
+            'big tv': ('192.168.12.175', '65" Element', '/e'),
             'streambar': ('192.168.12.76', 'Streambar', '/s'),
             'soundbar': ('192.168.12.76', 'Streambar', '/s'),
+            'sound bar': ('192.168.12.76', 'Streambar', '/s'),
             'tcl': ('192.168.12.56', '65" TCL', '/t'),
             'bedroom': ('192.168.12.56', '65" TCL', '/t'),
+            'bed room': ('192.168.12.56', '65" TCL', '/t'),
             'hisense': ('192.168.12.247', '43" Hisense', '/h'),
             'kitchen': ('192.168.12.247', '43" Hisense', '/h'),
+            'small tv': ('192.168.12.247', '43" Hisense', '/h'),
             'all tvs': ('all', 'All TVs', '/all'),
-            'every tv': ('all', 'All TVs', '/all')
+            'all tv': ('all', 'All TVs', '/all'),
+            'every tv': ('all', 'All TVs', '/all'),
+            'everything': ('all', 'All TVs', '/all'),
+            'all': ('all', 'All TVs', '/all')
         }
         
-        # Action mapping
+        # Action mapping - EXPANDED with variations
         actions = {
-            'turn on': 'on', 'power on': 'on', 'switch on': 'on',
-            'turn off': 'off', 'power off': 'off', 'shut off': 'off',
-            'netflix': 'netflix', 'watch netflix': 'netflix',
-            'hulu': 'hulu', 'watch hulu': 'hulu',
-            'youtube': 'youtube', 'watch youtube': 'youtube',
-            'disney': 'disney', 'watch disney': 'disney',
-            'prime': 'prime', 'amazon': 'prime',
-            'home': 'home', 'go home': 'home',
-            'play': 'play', 'unpause': 'play',
-            'pause': 'pause', 'stop': 'pause',
-            'mute': 'mute', 'silence': 'mute',
-            'volume up': 'volup', 'louder': 'volup',
-            'volume down': 'voldown', 'quieter': 'voldown',
-            'back': 'back'
+            # Power
+            'turn on': 'on', 'power on': 'on', 'switch on': 'on', 'start': 'on', 'wake': 'on',
+            'turn off': 'off', 'power off': 'off', 'switch off': 'off', 'shut off': 'off', 'shut down': 'off',
+            # Apps
+            'netflix': 'netflix', 'watch netflix': 'netflix', 'open netflix': 'netflix', 'launch netflix': 'netflix',
+            'hulu': 'hulu', 'watch hulu': 'hulu', 'open hulu': 'hulu', 'launch hulu': 'hulu',
+            'youtube': 'youtube', 'watch youtube': 'youtube', 'open youtube': 'youtube', 'launch youtube': 'youtube',
+            'disney': 'disney', 'disney plus': 'disney', 'watch disney': 'disney', 'open disney': 'disney',
+            'prime': 'prime', 'amazon': 'prime', 'prime video': 'prime', 'watch prime': 'prime',
+            # Navigation
+            'home': 'home', 'go home': 'home', 'home screen': 'home', 'main menu': 'home',
+            'back': 'back', 'go back': 'back', 'return': 'back',
+            # Playback
+            'play': 'play', 'resume': 'play', 'unpause': 'play', 'continue': 'play',
+            'pause': 'pause', 'stop': 'pause', 'halt': 'pause',
+            # Volume
+            'mute': 'mute', 'silence': 'mute', 'quiet': 'mute', 'shh': 'mute',
+            'volume up': 'volup', 'louder': 'volup', 'increase volume': 'volup', 'turn up': 'volup',
+            'volume down': 'voldown', 'quieter': 'voldown', 'decrease volume': 'voldown', 'turn down': 'voldown'
         }
         
-        # Find device
+        # Smart context - if only action mentioned, default to Element (main TV)
+        default_device = ('192.168.12.175', '65" Element', '/e')
+        
+        # Find device (longest match first for accuracy)
         found_device = None
-        for device_name, device_info in devices.items():
+        sorted_devices = sorted(devices.items(), key=lambda x: len(x[0]), reverse=True)
+        for device_name, device_info in sorted_devices:
             if device_name in text_lower:
                 found_device = device_info
                 break
         
-        # Find action
+        # Find action (longest match first for accuracy)
         found_action = None
-        for action_phrase, action_cmd in actions.items():
+        sorted_actions = sorted(actions.items(), key=lambda x: len(x[0]), reverse=True)
+        for action_phrase, action_cmd in sorted_actions:
             if action_phrase in text_lower:
                 found_action = action_cmd
                 break
         
-        # Execute
+        # Multi-command detection (e.g., "turn on and play netflix")
+        multi_commands = []
+        if ' and ' in text_lower:
+            parts = text_lower.split(' and ')
+            for part in parts:
+                for action_phrase, action_cmd in sorted_actions:
+                    if action_phrase in part and action_cmd not in multi_commands:
+                        multi_commands.append(action_cmd)
+        
+        # Execute with smart defaults
         if found_device and found_action:
             ip, name, cmd_prefix = found_device
             if ip == 'all':
                 self.control_all_tvs(found_action)
             else:
                 self.control_one_tv(ip, name, found_action)
-            self.send_telegram(f"✅ \"{text}\" → {cmd_prefix} {found_action}")
-        elif found_device:
-            self.send_telegram(f"🤔 I see {found_device[1]}, but what action?\n\nTry: \"turn on {list(devices.keys())[0]}\"")
-        elif found_action:
-            self.send_telegram(f"🤔 Which TV for \"{found_action}\"?\n\nTry: \"element {found_action}\"")
+            
+            # Execute multi-commands if detected
+            if len(multi_commands) > 1:
+                for cmd in multi_commands[1:]:  # Skip first, already executed
+                    time.sleep(1)  # Brief pause between commands
+                    if ip == 'all':
+                        self.control_all_tvs(cmd)
+                    else:
+                        self.control_one_tv(ip, name, cmd)
+            
+            response = f"✅ Understood: \"{text}\"\n\n"
+            if len(multi_commands) > 1:
+                response += f"Executed {len(multi_commands)} commands: {', '.join(multi_commands)}"
+            else:
+                response += f"Executed: {cmd_prefix} {found_action}"
+            self.send_telegram(response)
+        
+        elif found_action and not found_device:
+            # Smart default: use main TV (Element) if no device specified
+            ip, name, cmd_prefix = default_device
+            self.control_one_tv(ip, name, found_action)
+            self.send_telegram(f"✅ \"{text}\" → {name} (default)\n{cmd_prefix} {found_action}")
+        
+        elif found_device and not found_action:
+            self.send_telegram(f"🤔 I see {found_device[1]}, but what do you want to do?\n\nTry:\n• \"turn on {list(devices.keys())[0]}\"\n• \"play netflix on {list(devices.keys())[0]}\"")
+        
         else:
-            self.send_telegram(f"🤔 Try:\n\"turn on element\"\n\"play netflix on streambar\"\n\"mute all tvs\"")
+            examples = [
+                "\"turn on element\"",
+                "\"play netflix\" (defaults to main TV)",
+                "\"mute all tvs\"",
+                "\"turn on bedroom tv and play youtube\""
+            ]
+            self.send_telegram(f"🤔 I didn't understand: \"{text}\"\n\nTry:\n" + "\n".join(examples))
     
     def control_all_tvs(self, command):
         """Control ALL 4 TVs at once"""
