@@ -271,6 +271,72 @@ class WorldwideAgent:
         result = self.control_roku_tv(ip, command)
         self.send_telegram(f"📺 *{name}*\n\n{result}")
     
+    def handle_natural_language(self, text):
+        """Parse natural language commands"""
+        text_lower = text.lower()
+        
+        # Device mapping
+        devices = {
+            'element': ('192.168.12.175', '65" Element', '/e'),
+            'living room': ('192.168.12.175', '65" Element', '/e'),
+            'main tv': ('192.168.12.175', '65" Element', '/e'),
+            'streambar': ('192.168.12.76', 'Streambar', '/s'),
+            'soundbar': ('192.168.12.76', 'Streambar', '/s'),
+            'tcl': ('192.168.12.56', '65" TCL', '/t'),
+            'bedroom': ('192.168.12.56', '65" TCL', '/t'),
+            'hisense': ('192.168.12.247', '43" Hisense', '/h'),
+            'kitchen': ('192.168.12.247', '43" Hisense', '/h'),
+            'all tvs': ('all', 'All TVs', '/all'),
+            'every tv': ('all', 'All TVs', '/all')
+        }
+        
+        # Action mapping
+        actions = {
+            'turn on': 'on', 'power on': 'on', 'switch on': 'on',
+            'turn off': 'off', 'power off': 'off', 'shut off': 'off',
+            'netflix': 'netflix', 'watch netflix': 'netflix',
+            'hulu': 'hulu', 'watch hulu': 'hulu',
+            'youtube': 'youtube', 'watch youtube': 'youtube',
+            'disney': 'disney', 'watch disney': 'disney',
+            'prime': 'prime', 'amazon': 'prime',
+            'home': 'home', 'go home': 'home',
+            'play': 'play', 'unpause': 'play',
+            'pause': 'pause', 'stop': 'pause',
+            'mute': 'mute', 'silence': 'mute',
+            'volume up': 'volup', 'louder': 'volup',
+            'volume down': 'voldown', 'quieter': 'voldown',
+            'back': 'back'
+        }
+        
+        # Find device
+        found_device = None
+        for device_name, device_info in devices.items():
+            if device_name in text_lower:
+                found_device = device_info
+                break
+        
+        # Find action
+        found_action = None
+        for action_phrase, action_cmd in actions.items():
+            if action_phrase in text_lower:
+                found_action = action_cmd
+                break
+        
+        # Execute
+        if found_device and found_action:
+            ip, name, cmd_prefix = found_device
+            if ip == 'all':
+                self.control_all_tvs(found_action)
+            else:
+                self.control_one_tv(ip, name, found_action)
+            self.send_telegram(f"✅ \"{text}\" → {cmd_prefix} {found_action}")
+        elif found_device:
+            self.send_telegram(f"🤔 I see {found_device[1]}, but what action?\n\nTry: \"turn on {list(devices.keys())[0]}\"")
+        elif found_action:
+            self.send_telegram(f"🤔 Which TV for \"{found_action}\"?\n\nTry: \"element {found_action}\"")
+        else:
+            self.send_telegram(f"🤔 Try:\n\"turn on element\"\n\"play netflix on streambar\"\n\"mute all tvs\"")
+    
     def control_all_tvs(self, command):
         """Control ALL 4 TVs at once"""
         tvs = {
