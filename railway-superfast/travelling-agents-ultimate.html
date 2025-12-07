@@ -716,25 +716,39 @@
             const now = Date.now();
             
             if (isNew) {
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 200 + Math.random() * 150;
+                // Spawn at RANDOM position across entire canvas (not in circle!)
+                const spawnX = Math.random() * 1800 + 100;
+                const spawnY = Math.random() * 900 + 100;
+                
+                // Pick random tower as initial target
+                const targetTower = TOWERS[Math.floor(Math.random() * TOWERS.length)];
                 
                 agents.set(id, {
-                    id, x: nupiCloud.x + Math.cos(angle) * distance,
-                    y: nupiCloud.y + Math.sin(angle) * distance,
-                    vx: 0, vy: 0, location, status: 'entering',
-                    lastSeen: now, trail: [], size: 12,
-                    inCloud: false, traveling: false, targetTower: null,
-                    isOnline: true, devicesFound: data?.devices_found || 0
+                    id, 
+                    x: spawnX,
+                    y: spawnY,
+                    vx: 0, vy: 0, 
+                    location, 
+                    status: 'traveling',  // Start travelling immediately!
+                    lastSeen: now, 
+                    trail: [], 
+                    size: 12,
+                    inCloud: false, 
+                    traveling: true,  // Actually traveling!
+                    targetTower: targetTower,  // Has destination!
+                    isOnline: true, 
+                    devicesFound: data?.devices_found || 0,
+                    dataPackets: []  // For visible data transfer
                 });
                 
-                addActivity(`🟢 ${id.substring(0, 20)} CONNECTED`, 'enter');
+                addActivity(`� ${id.substring(0, 20)} → ${targetTower.name}`, 'travel');
                 
+                // Spawn particles at random location
                 for (let i = 0; i < 20; i++) {
                     particles.push({
-                        x: agents.get(id).x, y: agents.get(id).y,
+                        x: spawnX, y: spawnY,
                         vx: (Math.random() - 0.5) * 5, vy: (Math.random() - 0.5) * 5,
-                        life: 50, color: '#0ff'
+                        life: 50, color: '#0f0'
                     });
                 }
             } else {
@@ -781,17 +795,21 @@
                         break;
                         
                     case 'in-cloud':
-                        const orbit = (now / 1500 + Array.from(agents.keys()).indexOf(id)) % (Math.PI * 2);
-                        agent.x = nupiCloud.x + Math.cos(orbit) * 60;
-                        agent.y = nupiCloud.y + Math.sin(orbit) * 60;
-                        agent.vx = 0; agent.vy = 0;
+                        // Don't stay long - immediately pick next tower and leave!
+                        agent.towerTimer = (agent.towerTimer || 0) + 1;
                         
-                        if (Math.random() < 0.004) {
+                        if (agent.towerTimer > 30) {  // Only stay 30 frames (~1 second)
                             agent.status = 'leaving';
                             agent.targetTower = TOWERS[Math.floor(Math.random() * TOWERS.length)];
                             agent.inCloud = false;
                             agent.traveling = true;
+                            agent.towerTimer = 0;
                             addActivity(`🚀 ${id.substring(0, 20)} → ${agent.targetTower.name}`, 'travel');
+                        } else {
+                            // Quick orbit while uploading data
+                            const orbit = (now / 300 + Array.from(agents.keys()).indexOf(id)) % (Math.PI * 2);
+                            agent.x = nupiCloud.x + Math.cos(orbit) * 60;
+                            agent.y = nupiCloud.y + Math.sin(orbit) * 60;
                         }
                         break;
                         
@@ -803,7 +821,7 @@
                             
                             if (distT < 50) {
                                 agent.status = 'at-tower';
-                                agent.towerTimer = 100;
+                                agent.towerTimer = 60;  // Shorter stay at tower
                                 totalVisits++;
                                 
                                 const pts = Math.floor(Math.random() * 30) + 15;
@@ -826,8 +844,19 @@
                                     });
                                 }
                             } else {
-                                agent.vx = (dxT / distT) * 6;
-                                agent.vy = (dyT / distT) * 6;
+                                // FAST travel speed - 10x faster!
+                                agent.vx = (dxT / distT) * 12;
+                                agent.vy = (dyT / distT) * 12;
+                                
+                                // Create data packet trail every few frames
+                                if (Math.random() < 0.1) {
+                                    particles.push({
+                                        x: agent.x, y: agent.y,
+                                        vx: (Math.random() - 0.5) * 2,
+                                        vy: (Math.random() - 0.5) * 2,
+                                        life: 30, color: '#ff0'  // Yellow data packets
+                                    });
+                                }
                             }
                         }
                         break;
@@ -858,8 +887,19 @@
                             agent.inCloud = true;
                             addActivity(`☁️ ${id.substring(0, 20)} RE-ENTERED`, 'enter');
                         } else {
-                            agent.vx = (dxR / distR) * 5;
-                            agent.vy = (dyR / distR) * 5;
+                            // FAST return speed!
+                            agent.vx = (dxR / distR) * 12;
+                            agent.vy = (dyR / distR) * 12;  // Same speed both directions
+                            
+                            // Data packets returning to cloud
+                            if (Math.random() < 0.15) {
+                                particles.push({
+                                    x: agent.x, y: agent.y,
+                                    vx: (dxR / distR) * 3,
+                                    vy: (dyR / distR) * 3,
+                                    life: 40, color: '#0ff'  // Cyan data packets going to cloud
+                                });
+                            }
                         }
                         break;
                 }
