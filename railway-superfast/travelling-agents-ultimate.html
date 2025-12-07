@@ -613,17 +613,42 @@
                     if (agentsData.agents) {
                         agentsData.agents.forEach((agentData, index) => {
                             if (!agents.has(agentData.agent_id)) {
-                                const angle = (agents.size / 10) * Math.PI * 2;
+                            // ALWAYS UPDATE OR ADD AGENTS
+                            const angle = (index / Math.max(agentsData.agents.length, 1)) * Math.PI * 2;
+                            const radius = 200;
+                            
+                            if (!agents.has(agentData.agent_id)) {
+                                // NEW AGENT
                                 agents.set(agentData.agent_id, {
                                     id: agentData.agent_id,
-                                    name: agentData.agent_id.substring(0, 10),
-                                    x: cloudPos.x,
-                                    y: cloudPos.y,
+                                    name: agentData.agent_id.substring(0, 12),
+                                    x: cloudPos.x + Math.cos(angle) * radius,
+                                    y: cloudPos.y + Math.sin(angle) * radius,
+                                    targetX: cloudPos.x + Math.cos(angle) * radius,
+                                    targetY: cloudPos.y + Math.sin(angle) * radius,
                                     color: '#0f0',
-                                    status: agentData.status
+                                    status: agentData.connection_status || agentData.status || "active",
+                                    lastSeen: agentData.last_seen || Date.now()
                                 });
-                                addActivity(`Agent ${agentData.agent_id.substring(0, 12)} joined system`, 'agent');
+                                addActivity(`�� Agent ${agentData.agent_id.substring(0, 12)} joined`, 'agent');
+                            } else {
+                                // UPDATE EXISTING AGENT
+                                const agent = agents.get(agentData.agent_id);
+                                agent.status = agentData.connection_status || agentData.status || "active";
+                                agent.lastSeen = agentData.last_seen || Date.now();
+                                // Keep moving
+                                agent.targetX = cloudPos.x + Math.cos(angle) * radius;
+                                agent.targetY = cloudPos.y + Math.sin(angle) * radius;
                             }
+                        });
+                        
+                        // Remove offline agents after 5 minutes
+                        const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+                        agents.forEach((agent, id) => {
+                            if (agent.lastSeen && new Date(agent.lastSeen) < fiveMinutesAgo) {
+                                agents.delete(id);
+                                addActivity(`⚠️ Agent ${id.substring(0, 12)} timed out`, 'warning');
+                            }}
                         });
                     }
                     
@@ -919,7 +944,7 @@
                             x: cloudPos.x + (index === 0 ? -100 : 100),
                             y: cloudPos.y,
                             color: '#0f0',
-                            status: agentData.status
+                            status: agentData.connection_status || agentData.status || "active"
                         });
                         addActivity(`🤖 Agent ${agentData.agent_id} online`, 'agent');
                     }
