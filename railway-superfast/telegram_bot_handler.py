@@ -12,7 +12,7 @@ import time
 from datetime import datetime
 
 # Bot Configuration
-BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '8318301013:AAGCCSdgWcWR-4tM6dT39MHmU3oCs1BacpQ')
+BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y')
 CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '6523159355')
 CLOUD_URL = "https://nupidesktopai.com"
 
