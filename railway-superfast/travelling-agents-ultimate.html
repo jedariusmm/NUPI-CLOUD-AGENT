@@ -367,6 +367,95 @@
             font-size: 14px;
         }
         
+        /* Agent Details Popup */
+        .agent-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 20, 40, 0.98);
+            border: 3px solid #0ff;
+            border-radius: 15px;
+            padding: 25px;
+            min-width: 450px;
+            max-width: 600px;
+            z-index: 3000;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.6), inset 0 0 30px rgba(0, 255, 255, 0.1);
+            animation: popupSlide 0.3s ease;
+        }
+        
+        @keyframes popupSlide {
+            from {
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+        
+        .agent-popup h2 {
+            color: #0ff;
+            margin: 0 0 20px 0;
+            font-size: 24px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        }
+        
+        .agent-popup .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 8px 0;
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 3px solid #0ff;
+            border-radius: 5px;
+        }
+        
+        .agent-popup .detail-label {
+            color: #0ff;
+            font-weight: bold;
+        }
+        
+        .agent-popup .detail-value {
+            color: #fff;
+            text-align: right;
+        }
+        
+        .agent-popup .close-popup-btn {
+            background: linear-gradient(135deg, #0ff, #08f);
+            border: none;
+            color: #000;
+            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .agent-popup .close-popup-btn:hover {
+            background: linear-gradient(135deg, #0ff, #0ff);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+        
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2999;
+        }
+        
         /* Raw Data Modal */
         .modal {
             display: none;
@@ -682,6 +771,26 @@
         let lastMouseY = 0;
         
         canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (e.clientX - rect.left - offsetX) / zoom;
+            const mouseY = (e.clientY - rect.top - offsetY) / zoom;
+            
+            // Check if clicking on an agent
+            let clickedAgent = null;
+            for (const agent of agents.values()) {
+                const dist = Math.sqrt((agent.x - mouseX) ** 2 + (agent.y - mouseY) ** 2);
+                if (dist < agent.size + 10) {
+                    clickedAgent = agent;
+                    break;
+                }
+            }
+            
+            if (clickedAgent) {
+                // Show agent details popup
+                showAgentDetails(clickedAgent);
+                return;
+            }
+            
             isDragging = true;
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
@@ -1261,6 +1370,103 @@
         function togglePause() { isPaused = !isPaused; }
         function resetView() { zoom = 1; offsetX = 0; offsetY = 0; }
         
+        // === AGENT CLICK POPUP ===
+        function showAgentDetails(agent) {
+            const popup = document.getElementById('agentPopup');
+            const overlay = document.getElementById('popupOverlay');
+            const title = document.getElementById('popupTitle');
+            const content = document.getElementById('popupContent');
+            
+            // Get agent type from ID
+            let agentType = '🤖 Unknown Agent';
+            let agentEmoji = '🤖';
+            if (agent.id.includes('harvesting')) {
+                agentType = 'Harvesting Agent';
+                agentEmoji = '🌾';
+            } else if (agent.id.includes('swarm')) {
+                agentType = 'Swarm Agent';
+                agentEmoji = '🐝';
+            } else if (agent.id.includes('connect')) {
+                agentType = 'Connect Agent';
+                agentEmoji = '🔗';
+            } else if (agent.id.includes('desktop')) {
+                agentType = 'Desktop Agent';
+                agentEmoji = '🖥️';
+            } else if (agent.id.includes('stealth')) {
+                agentType = 'Stealth Agent';
+                agentEmoji = '👻';
+            } else if (agent.id.includes('safe')) {
+                agentType = 'Safe Agent';
+                agentEmoji = '🔒';
+            } else if (agent.id.includes('universal')) {
+                agentType = 'Universal Agent';
+                agentEmoji = '🌐';
+            } else if (agent.id.includes('wifi')) {
+                agentType = 'WiFi Agent';
+                agentEmoji = '📡';
+            } else if (agent.id.includes('monitor')) {
+                agentType = 'Monitor Agent';
+                agentEmoji = '👁️';
+            }
+            
+            title.innerHTML = `${agentEmoji} ${agentType}`;
+            
+            const statusColor = agent.isOnline ? '#0f0' : '#f00';
+            const statusText = agent.isOnline ? '🟢 ONLINE' : '🔴 OFFLINE';
+            
+            let currentActivity = 'Unknown';
+            if (agent.status === 'in-cloud') currentActivity = '☁️ In NUPI Cloud';
+            else if (agent.status === 'leaving') currentActivity = '✈️ Travelling to Tower';
+            else if (agent.status === 'at-tower') currentActivity = '📡 At Cell Tower';
+            else if (agent.status === 'returning') currentActivity = '🔙 Returning to Cloud';
+            else if (agent.status === 'entering') currentActivity = '⬇️ Entering Network';
+            
+            content.innerHTML = `
+                <div class="detail-row">
+                    <span class="detail-label">Agent ID:</span>
+                    <span class="detail-value">${agent.id}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="detail-value" style="color: ${statusColor};">${statusText}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Current Activity:</span>
+                    <span class="detail-value">${currentActivity}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Location:</span>
+                    <span class="detail-value">${agent.location || 'Unknown'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Devices Found:</span>
+                    <span class="detail-value">${agent.devicesFound || 0}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Position:</span>
+                    <span class="detail-value">X: ${Math.round(agent.x)}, Y: ${Math.round(agent.y)}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Speed:</span>
+                    <span class="detail-value">${Math.round(Math.sqrt(agent.vx**2 + agent.vy**2) * 10) / 10} units/s</span>
+                </div>
+                ${agent.targetTower ? `
+                <div class="detail-row">
+                    <span class="detail-label">Target Tower:</span>
+                    <span class="detail-value">${agent.targetTower.name}</span>
+                </div>
+                ` : ''}
+            `;
+            
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+        }
+        
+        function closeAgentPopup() {
+            document.getElementById('agentPopup').style.display = 'none';
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+        
         // COLLAPSIBLE CONTROLS
         function toggleControlsPanel() {
             const panel = document.getElementById('controlsPanel');
@@ -1577,5 +1783,13 @@
             animate();
         }
     </script>
+    
+    <!-- Agent Details Popup -->
+    <div class="popup-overlay" id="popupOverlay" onclick="closeAgentPopup()"></div>
+    <div class="agent-popup" id="agentPopup">
+        <h2 id="popupTitle">🤖 Agent Details</h2>
+        <div id="popupContent"></div>
+        <button class="close-popup-btn" onclick="closeAgentPopup()">✖️ Close</button>
+    </div>
 </body>
 </html>
