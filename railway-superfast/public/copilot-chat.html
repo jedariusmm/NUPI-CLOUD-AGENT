@@ -837,6 +837,12 @@
         }
 
         function formatMessage(text) {
+            // Handle undefined or null text
+            if (!text) return '';
+            
+            // Convert to string if not already
+            text = String(text);
+            
             // Convert markdown-style code blocks
             text = text.replace(/```(.*?)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
             // Convert inline code
