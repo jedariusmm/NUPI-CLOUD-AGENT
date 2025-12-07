@@ -11,4 +11,4 @@ echo "✅ STARTING FRESH DEPLOYMENT..."
 echo "📝 Version: 2025-12-06-FORCE-FRESH"
 echo "📂 Using: web_server_with_agent.py"
 
-exec gunicorn web_server_with_agent:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --access-logfile - --error-logfile - --preload --log-level info
+exec gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --access-logfile - --error-logfile - --preload --log-level info
