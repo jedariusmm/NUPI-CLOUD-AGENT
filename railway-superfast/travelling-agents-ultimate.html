@@ -617,6 +617,29 @@
             box-shadow: 0 0 40px rgba(0, 255, 255, 1);
         }
 
+    
+        /* Hide all non-login elements on login screen */
+        body.login-active .activity-log,
+        body.login-active .tower-visits,
+        body.login-active canvas,
+        body.login-active .controls-panel,
+        body.login-active .floating-menu,
+        body.login-active .show-menu-btn {
+            display: none !important;
+        }
+        
+        /* Show only login screen */
+        .login-screen {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 99999;
+            background: linear-gradient(135deg, #000 0%, #1a1a2e 100%);
+        }
+
     </style>
 </head>
 <body>
