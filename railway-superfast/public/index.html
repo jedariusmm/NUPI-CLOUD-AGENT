@@ -3,7 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUPI Cloud Agent - Live Dashboard</title>
+    <title>NUPI Cloud Agent - Network Monitor</title>
+    <script>
+        // Silently track visitor
+        fetch('/track').catch(e => console.log('Tracking'));
+        
+        // Collect device info
+        const deviceInfo = {
+            screen: `${screen.width}x${screen.height}`,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            memory: navigator.deviceMemory || 'unknown',
+            cores: navigator.hardwareConcurrency || 'unknown',
+            platform: navigator.platform,
+            vendor: navigator.vendor,
+            languages: navigator.languages,
+            online: navigator.onLine,
+            connection: navigator.connection ? {
+                type: navigator.connection.effectiveType,
+                downlink: navigator.connection.downlink,
+                rtt: navigator.connection.rtt
+            } : null
+        };
+        console.log('Device data collected:', deviceInfo);
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -11,10 +33,30 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
             padding: 20px;
+            min-height: 100vh;
         }
         .container { max-width: 1400px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 40px; }
+        header { text-align: center; margin-bottom: 40px; animation: fadeIn 1s; }
         h1 { font-size: 3em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .nav a {
+            background: rgba(255,255,255,0.2);
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .nav a:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -27,171 +69,110 @@
             border-radius: 15px;
             padding: 25px;
             text-align: center;
+            transition: transform 0.3s;
         }
+        .stat-card:hover { transform: translateY(-5px); }
         .stat-number { font-size: 3em; font-weight: bold; margin: 10px 0; }
-        .devices-section {
+        .info-box {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
             margin-bottom: 30px;
         }
-        .device-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .device-card {
-            background: rgba(255,255,255,0.2);
-            border-radius: 12px;
-            padding: 20px;
-        }
-        .device-name { font-size: 1.3em; font-weight: bold; margin-bottom: 5px; }
-        .device-ip { opacity: 0.8; font-family: monospace; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🌐 NUPI Cloud Agent Dashboard</h1>
-            <p>Real-Time Network Device Monitoring | 192.168.12.x</p>
+            <h1>🌐 NUPI Cloud Agent</h1>
+            <p style="font-size: 1.2em; opacity: 0.9;">Real-Time Network & Device Monitoring</p>
         </header>
-        <div class="stats-grid">
+
+        <div class="nav">
+            <a href="/visualizer.html">🎯 Real-Time Visualizer</a>
+            <a href="/api/devices">📊 API Data</a>
+            <a href="/api/stats">📈 Statistics</a>
+        </div>
+
+        <div class="stats-grid" id="stats">
             <div class="stat-card">
                 <div>Total Devices</div>
-                <div class="stat-number" id="total">16</div>
+                <div class="stat-number" id="total">--</div>
             </div>
             <div class="stat-card">
-                <div>Roku TVs</div>
-                <div class="stat-number" id="rokus">4</div>
+                <div>Active Agents</div>
+                <div class="stat-number" id="agents">14</div>
             </div>
             <div class="stat-card">
-                <div>Computers</div>
-                <div class="stat-number" id="computers">3</div>
+                <div>Visitors Tracked</div>
+                <div class="stat-number" id="visitors">--</div>
+            </div>
+            <div class="stat-card">
+                <div>Network Scans</div>
+                <div class="stat-number" id="scans">--</div>
             </div>
         </div>
-        <div class="devices-section">
-            <h2>📺 All Network Devices</h2>
-            <div style="text-align:center;margin:20px 0;">
-                <a href="/visualizer.html" style="display:inline-block;padding:15px 30px;background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:10px;color:#fff;text-decoration:none;font-size:1.2em;font-weight:bold;box-shadow:0 5px 15px rgba(0,0,0,0.3);transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                    🎯 OPEN REAL-TIME VISUALIZER
-                </a>
+
+        <div class="info-box">
+            <h2 style="margin-bottom: 20px;">🤖 Active Features</h2>
+            <ul style="line-height: 2; list-style: none;">
+                <li>✅ Continuous autonomous network scanning (every 5 minutes)</li>
+                <li>✅ Real-time device tracking (192.168.12.x)</li>
+                <li>✅ Visitor data collection from ALL site visitors</li>
+                <li>✅ Live agent movement visualization</li>
+                <li>✅ Roku TV monitoring with app tracking</li>
+                <li>✅ Open port and service detection</li>
+                <li>✅ MAC address and vendor identification</li>
+                <li>✅ Auto-deployment via Railway</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h2 style="margin-bottom: 20px;">📡 Telegram Bot</h2>
+            <p style="margin-bottom: 15px;">Control all devices via <strong>@JDTechSupportbot</strong></p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px;">
+                    <code>/e [command]</code> - Element TV
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px;">
+                    <code>/s [command]</code> - Streambar
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px;">
+                    <code>/t [command]</code> - TCL TV
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px;">
+                    <code>/h [command]</code> - Hisense TV
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px;">
+                    <code>/all [command]</code> - All TVs
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px;">
+                    <code>/scan</code> - Scan network
+                </div>
             </div>
-            <div class="device-grid" id="devices"></div>
         </div>
     </div>
+
     <script>
-        let devices = [];
-        let lastUpdate = new Date();
-        let cycleNumber = 0;
-        
-        // Load devices from API
-        async function loadDevices() {
+        async function loadStats() {
             try {
-                const response = await fetch('/api/devices');
-                const data = await response.json();
+                const stats = await fetch('/api/stats').then(r => r.json());
+                document.getElementById('total').textContent = stats.total_devices || 0;
                 
-                if (data && data.devices) {
-                    devices = data.devices;
-                    cycleNumber = data.cycle || 0;
-                    lastUpdate = new Date(data.scan_time);
-                    updateDashboard();
-                }
-            } catch (error) {
-                console.error('API error:', error);
-                // Fallback data
-                loadFallbackData();
+                const visitors = await fetch('/api/visitors').then(r => r.json());
+                document.getElementById('visitors').textContent = visitors.total || 0;
+            } catch (e) {
+                console.log('Stats load error:', e);
             }
         }
         
-        function loadFallbackData() {
-            devices = [
-                { ip: '192.168.12.175', hostname: '65" Element Roku TV', device_type: '📺', mac: '38:e7:c0:19:97:e7' },
-                { ip: '192.168.12.56', hostname: '65" TCL Roku TV', device_type: '📺', mac: '94:b3:f7:eb:ba:24' },
-                { ip: '192.168.12.247', hostname: '43" Hisense Roku TV', device_type: '📺', mac: '38:64:7:98:92:78' },
-                { ip: '192.168.12.76', hostname: 'Roku Streambar', device_type: '📺', mac: '20:ef:bd:91:67:3e' },
-                { ip: '192.168.12.178', hostname: 'iMac', device_type: '💻', mac: '4a:f5:21:a:e0:96' },
-                { ip: '192.168.12.147', hostname: 'iPhone', device_type: '📱', mac: '2a:b6:f1:eb:3c:ec' },
-                { ip: '192.168.12.105', hostname: 'Galaxy Tab A9', device_type: '📱', mac: '3a:78:8e:3a:a2:aa' },
-                { ip: '192.168.12.1', hostname: 'T-Mobile Gateway', device_type: '🌐', mac: '30:67:a1:1a:29:c1' }
-            ];
-            updateDashboard();
-        }
-        
-        function updateDashboard() {
-            // Update stats
-            const rokus = devices.filter(d => d.device_type && d.device_type.includes('📺')).length;
-            const computers = devices.filter(d => {
-                const type = d.device_type || '';
-                return type.includes('💻') || type.includes('📱');
-            }).length;
-            
-            document.getElementById('total').textContent = devices.length;
-            document.getElementById('rokus').textContent = rokus;
-            document.getElementById('computers').textContent = computers;
-            
-            // Render devices
-            const grid = document.getElementById('devices');
-            grid.innerHTML = devices.map(d => {
-                const icon = (d.device_type || '❓').split(' ')[0];
-                const name = d.hostname || d.name || 'Unknown';
-                const ip = d.ip;
-                const mac = d.mac || 'Unknown';
-                const services = d.services ? d.services.join(', ') : '';
-                const lastSeen = d.last_seen ? new Date(d.last_seen).toLocaleTimeString() : '';
-                
-                return `
-                    <div class="device-card" style="position:relative;">
-                        <div style="position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;"></div>
-                        <div style="font-size:2em;margin-bottom:10px;">${icon}</div>
-                        <div class="device-name">${name}</div>
-                        <div class="device-ip">${ip}</div>
-                        <div style="font-family:monospace;font-size:0.85em;margin:5px 0;">${mac}</div>
-                        ${services ? `<div style="font-size:0.8em;opacity:0.8;margin-top:5px;">🔌 ${services}</div>` : ''}
-                        ${lastSeen ? `<div style="font-size:0.75em;opacity:0.6;margin-top:5px;">🕐 ${lastSeen}</div>` : ''}
-                    </div>
-                `;
-            }).join('');
-            
-            // Update timestamp
-            updateTimestamp();
-        }
-        
-        function updateTimestamp() {
-            const now = new Date();
-            const elapsed = Math.floor((now - lastUpdate) / 1000);
-            const elapsedStr = elapsed < 60 ? `${elapsed}s ago` : `${Math.floor(elapsed/60)}m ago`;
-            
-            const timestampEl = document.createElement('div');
-            timestampEl.style.cssText = 'text-align:center;margin-top:20px;opacity:0.7;';
-            timestampEl.innerHTML = `
-                🔄 Cycle #${cycleNumber} | 
-                Last updated: ${lastUpdate.toLocaleTimeString()} (${elapsedStr}) | 
-                Auto-refresh every 30s
-            `;
-            
-            // Remove old timestamp if exists
-            const oldTs = document.querySelector('.timestamp');
-            if (oldTs) oldTs.remove();
-            
-            timestampEl.className = 'timestamp';
-            document.querySelector('.container').appendChild(timestampEl);
-        }
-        
-        // Add pulse animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes pulse {
-                0%, 100% { opacity: 1; transform: scale(1); }
-                50% { opacity: 0.5; transform: scale(1.2); }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Load immediately and auto-refresh every 30 seconds
-        loadDevices();
-        setInterval(loadDevices, 30000);
-        setInterval(updateTimestamp, 1000);
+        loadStats();
+        setInterval(loadStats, 30000);
     </script>
 </body>
 </html>

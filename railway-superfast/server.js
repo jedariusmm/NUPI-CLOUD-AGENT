@@ -155,27 +155,80 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Visitor tracking endpoint - collect data from ANY device that visits
+app.get('/track', (req, res) => {
+    const visitor = {
+        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+        user_agent: req.headers['user-agent'],
+        timestamp: new Date().toISOString(),
+        referer: req.headers['referer'],
+        language: req.headers['accept-language'],
+        platform: req.headers['sec-ch-ua-platform']
+    };
+    
+    console.log(`👁️  Visitor tracked: ${visitor.ip} - ${visitor.user_agent}`);
+    
+    // Save visitor data
+    try {
+        const visitorsFile = 'visitors.json';
+        let visitors = [];
+        if (fs.existsSync(visitorsFile)) {
+            visitors = JSON.parse(fs.readFileSync(visitorsFile, 'utf8'));
+        }
+        visitors.push(visitor);
+        fs.writeFileSync(visitorsFile, JSON.stringify(visitors, null, 2));
+    } catch (error) {
+        console.error('Error saving visitor:', error);
+    }
+    
+    res.json({ tracked: true, visitor });
+});
+
+// Get all tracked visitors
+app.get('/api/visitors', (req, res) => {
+    try {
+        if (fs.existsSync('visitors.json')) {
+            const visitors = JSON.parse(fs.readFileSync('visitors.json', 'utf8'));
+            res.json({ total: visitors.length, visitors });
+        } else {
+            res.json({ total: 0, visitors: [] });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`
 ╔══════════════════════════════════════════════════════════╗
 ║                                                          ║
-║        🌐 NUPI CLOUD AGENT API SERVER 🌐                ║
+║        🌐 NUPI CLOUD AGENT - LIVE ON RAILWAY 🌐         ║
 ║                                                          ║
 ║  Port: ${PORT}                                          ║
 ║  Devices: ${deviceData.total_devices}                   ║
 ║  Network: ${deviceData.network}                         ║
+║  Mode: VISITOR TRACKING ENABLED                          ║
+║                                                          ║
+║  Dashboards:                                             ║
+║  • /                    - Main dashboard                 ║
+║  • /visualizer.html     - Real-time visualizer           ║
 ║                                                          ║
 ║  API Endpoints:                                          ║
 ║  • GET  /api/devices    - All devices                   ║
 ║  • POST /api/devices    - Upload data                   ║
 ║  • GET  /api/stats      - Statistics                    ║
+║  • GET  /api/visitors   - Tracked visitors               ║
+║  • GET  /track          - Track visitor                  ║
 ║  • GET  /health         - Health check                  ║
+║                                                          ║
+║  🎯 COLLECTS DATA FROM ALL VISITORS TO nupidesktopai.com║
 ║                                                          ║
 ╚══════════════════════════════════════════════════════════╝
     `);
-    console.log(`🌐 Dashboard: http://localhost:${PORT}`);
-    console.log(`📊 API: http://localhost:${PORT}/api/devices`);
+    console.log(`🌐 Live at: https://nupidesktopai.com`);
+    console.log(`📊 API: https://nupidesktopai.com/api/devices`);
+    console.log(`👁️  Tracking: https://nupidesktopai.com/track`);
 });
 
 // Visualizer route

@@ -14704,3 +14704,169 @@ Found 0 devices on WiFi
 
 📍 Current Device: iMac.lan
 ⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+🌍 Initiating worldwide travel via cellular...
+
+📡 Detecting cellular towers...
+  📡 Connecting to T-Mobile-Global-Tower-1 (US-West)...
+    ✅ Connected to cellular tower!
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    🌍 Travelled worldwide: 192.168.12.178 → 8.8.8.8 (US-West)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 85
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 8.8.8.8 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 86
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.178 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 87
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.178 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+🌍 Initiating worldwide travel via cellular...
+
+📡 Detecting cellular towers...
+  📡 Connecting to T-Mobile-Global-Tower-1 (US-West)...
+    ✅ Connected to cellular tower!
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    🌍 Travelled worldwide: 192.168.12.178 → 8.8.8.8 (US-West)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 88
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
