@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-NUPI Worldwide Agent - WiFi + Cellular Travel
-- Controls ALL devices on YOUR WiFi (192.168.12.x)
-- Travels worldwide via T-Mobile cellular towers
-- Easy Telegram commands
+NUPI LOCAL NETWORK AGENT
+- Controls ALL devices on YOUR WiFi (192.168.12.x ONLY)
+- NO external connections
+- Real local network scanning only
+- Telegram natural language control
 """
 
 import requests
@@ -23,13 +24,8 @@ NUPI_CLOUD_URL = 'https://nupidesktopai.com'
 API_KEY = 'NUPI_TRAVELLING_AGENT_KEY_MILITARY_c8f2a9e7b4d6f3a1e9c5b7d2f8a4e6c3'
 YOUR_WIFI_NETWORK = '192.168.12'
 
-# T-Mobile Cellular Towers for worldwide travel
-TMOBILE_TOWERS = [
-    {'ip': '8.8.8.8', 'name': 'T-Mobile-Tower-Global-DNS', 'region': 'Global'},
-    {'ip': '1.1.1.1', 'name': 'T-Mobile-Tower-Cloudflare', 'region': 'Global'},
-    {'ip': '208.67.222.222', 'name': 'T-Mobile-Tower-OpenDNS', 'region': 'US'},
-    {'ip': '8.8.4.4', 'name': 'T-Mobile-Tower-Secondary', 'region': 'Global'},
-]
+# LOCAL NETWORK ONLY - NO EXTERNAL CONNECTIONS
+# Scans ONLY 192.168.12.x devices
 
 class WorldwideAgent:
     def __init__(self):
@@ -790,10 +786,10 @@ Or use quick commands:
     def run(self):
         """Main loop"""
         try:
-            print(f"🚀 Worldwide Agent Started: {self.agent_id}")
+            print(f"🚀 LOCAL Network Agent Started: {self.agent_id}")
             print(f"📡 Telegram: @JDTechSupportbot")
-            print(f"🏠 WiFi: {YOUR_WIFI_NETWORK}.x")
-            print(f"🌍 Towers: {len(TMOBILE_TOWERS)} T-Mobile towers available")
+            print(f"🏠 LOCAL Network ONLY: {YOUR_WIFI_NETWORK}.x")
+            print(f"🔒 NO external connections - Local devices only")
             
             # Initial scan
             print("\n🔍 Initial scan...")
@@ -803,15 +799,16 @@ Or use quick commands:
             # Send startup message
             print("📤 Sending startup message to Telegram...")
             self.send_telegram(f"""
-🟢 *Worldwide Agent Online*
+🟢 *LOCAL Network Agent Online*
 
 ID: `{self.agent_id}`
-WiFi: {YOUR_WIFI_NETWORK}.x ({len(devices)} devices)
-Towers: {len(TMOBILE_TOWERS)} T-Mobile available
+Network: {YOUR_WIFI_NETWORK}.x ONLY
+Devices: {len(devices)} real local devices
+Mode: 🔒 LOCAL ONLY (no external connections)
 
 Send /help for commands
-Send /scan to find WiFi devices
-Send /travel to visit cellular towers
+Send /scan to find local devices
+Just talk naturally to control TVs!
 """)
             print("✅ Startup message sent!")
         except Exception as e:
