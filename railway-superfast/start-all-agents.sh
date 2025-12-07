@@ -58,47 +58,19 @@ nohup python3 travelling-agent-wifi.py > logs/travelling-wifi.log 2>&1 &
 AGENT_COUNT=$((AGENT_COUNT + 1))
 sleep 1
 
-# 8. Payment Interceptor
-echo "8️⃣ Starting Payment Interceptor..."
-nohup python3 payment-interceptor.py > logs/payment-interceptor.log 2>&1 &
-AGENT_COUNT=$((AGENT_COUNT + 1))
-sleep 1
-
-# 9. Connect Local Agent
-echo "9️⃣ Starting Connect Local Agent..."
+# 8. Connect Local Agent
+echo "8️⃣ Starting Connect Local Agent..."
 nohup python3 connect-local-agent.py > logs/connect-local.log 2>&1 &
 AGENT_COUNT=$((AGENT_COUNT + 1))
 sleep 1
 
-# 10. Network Scanner Agent
-echo "🔟 Starting Network Scanner Agent..."
-nohup python3 network-scanner-agent.py > logs/network-scanner.log 2>&1 &
-AGENT_COUNT=$((AGENT_COUNT + 1))
-sleep 1
-
-# 11. Device Monitor Agent
-echo "1️⃣1️⃣ Starting Device Monitor Agent..."
-nohup python3 device-monitor-agent.py > logs/device-monitor.log 2>&1 &
-AGENT_COUNT=$((AGENT_COUNT + 1))
-sleep 1
-
-# 12. Data Collection Agent
-echo "1️⃣2️⃣ Starting Data Collection Agent..."
-nohup python3 data-collection-agent.py > logs/data-collection.log 2>&1 &
-AGENT_COUNT=$((AGENT_COUNT + 1))
-sleep 1
-
-# 13. Network Traffic Agent
-echo "1️⃣3️⃣ Starting Network Traffic Agent..."
-nohup python3 network-traffic-agent.py > logs/network-traffic.log 2>&1 &
-AGENT_COUNT=$((AGENT_COUNT + 1))
-sleep 1
-
-# 14. Real-Time Monitoring Agent
-echo "1️⃣4️⃣ Starting Real-Time Monitoring Agent..."
-nohup python3 real-time-monitoring-agent.py > logs/realtime-monitor.log 2>&1 &
-AGENT_COUNT=$((AGENT_COUNT + 1))
-sleep 2
+# 9-14: Additional Swarm Agents for 100% coverage (6 more)
+echo "9️⃣-1️⃣4️⃣ Starting 6 more Swarm Agents for FULL network coverage..."
+for i in {7..12}; do
+    nohup python3 autonomous-swarm-agent.py > logs/swarm-agent-$i.log 2>&1 &
+    AGENT_COUNT=$((AGENT_COUNT + 1))
+    sleep 0.5
+done
 
 echo ""
 echo "✅ Started $AGENT_COUNT agents!"
