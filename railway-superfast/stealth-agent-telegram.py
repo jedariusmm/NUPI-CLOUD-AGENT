@@ -51,15 +51,36 @@ class WorldwideAgent:
             pass
     
     def scan_real_devices(self):
-        """Find ONLY real active devices using ARP"""
+        """AGGRESSIVE SCAN: Ping all 255 IPs then read ARP cache"""
         devices = []
         
+        print(f"🚀 AGGRESSIVE SCAN starting on {YOUR_WIFI_NETWORK}.x")
+        
+        # STEP 1: Ping sweep to populate ARP cache
+        print("   ⏳ Pinging all 255 IPs...")
+        ping_procs = []
+        for i in range(1, 256):
+            ip = f"{YOUR_WIFI_NETWORK}.{i}"
+            proc = subprocess.Popen(['ping', '-c', '1', '-W', '1', ip], 
+                                   stdout=subprocess.DEVNULL, 
+                                   stderr=subprocess.DEVNULL)
+            ping_procs.append(proc)
+            
+            if i % 50 == 0:
+                for p in ping_procs:
+                    p.wait()
+                ping_procs = []
+        
+        for p in ping_procs:
+            p.wait()
+        
+        print("   ✅ Ping sweep done, reading ARP cache...")
+        
+        # STEP 2: Read populated ARP cache (give it 30 seconds after big ping sweep!)
         try:
-            # Run ARP to get only REAL active devices
-            result = subprocess.run(['arp', '-a'], capture_output=True, text=True, timeout=10)
+            result = subprocess.run(['arp', '-a'], capture_output=True, text=True, timeout=30)
             
             for line in result.stdout.split('\n'):
-                # Match: ? (192.168.12.X) at aa:bb:cc:dd:ee:ff
                 ip_match = re.search(r'\((\d+\.\d+\.\d+\.\d+)\)', line)
                 mac_match = re.search(r'([0-9a-f]{1,2}:[0-9a-f]{1,2}:[0-9a-f]{1,2}:[0-9a-f]{1,2}:[0-9a-f]{1,2}:[0-9a-f]{1,2})', line, re.IGNORECASE)
                 
@@ -67,13 +88,11 @@ class WorldwideAgent:
                     ip = ip_match.group(1)
                     mac = mac_match.group(1)
                     
-                    # ONLY YOUR WiFi
                     if not ip.startswith(YOUR_WIFI_NETWORK + '.'):
                         continue
                     
-                    # Get name (quick, skip if slow)
                     try:
-                        socket.setdefaulttimeout(1)
+                        socket.setdefaulttimeout(0.5)
                         name = socket.gethostbyaddr(ip)[0]
                         socket.setdefaulttimeout(None)
                     except:
@@ -91,13 +110,12 @@ class WorldwideAgent:
         except Exception as e:
             print(f"Scan error: {e}")
         
+        print(f"   🎯 FOUND {len(devices)} REAL DEVICES!")
         return devices
     
-    def travel_cellular_towers(self):
-        """Travel to T-Mobile cellular towers worldwide"""
-        visited_count = 0
-        
-        for tower in TMOBILE_TOWERS:
+    def scan_network_aggressive(self):
+        """REMOVED - Use scan_real_devices() for LOCAL ONLY scanning"""
+        return self.scan_real_devices()
             if tower['ip'] in self.visited_towers:
                 print(f"   ⏭️  Already visited: {tower['name']}")
                 continue

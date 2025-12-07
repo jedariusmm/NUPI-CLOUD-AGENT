@@ -1,0 +1,192 @@
+{
+  "scan_time": "2025-12-07T12:24:08.093362",
+  "network": "192.168.12.x",
+  "total_devices": 15,
+  "harvest_count": 15,
+  "devices": {
+    "192.168.12.10": {
+      "ip": "192.168.12.10",
+      "hostname": "Device-10",
+      "mac": "1e:c9:24:6e:60:57",
+      "device_type": "\u2753 Unknown Device",
+      "open_ports": [],
+      "port_count": 0,
+      "last_seen": "2025-12-07T12:24:03.071511",
+      "scan_timestamp": 1765128243.07158
+    },
+    "192.168.12.1": {
+      "ip": "192.168.12.1",
+      "hostname": "f5688w.lan",
+      "mac": "30:67:a1:1a:29:c1",
+      "device_type": "\ud83c\udf10 Router/Gateway",
+      "open_ports": [
+        {
+          "port": 80,
+          "service": "HTTP"
+        },
+        {
+          "port": 8080,
+          "service": "HTTP-ALT"
+        }
+      ],
+      "port_count": 2,
+      "last_seen": "2025-12-07T12:24:03.467307",
+      "scan_timestamp": 1765128243.46736
+    },
+    "192.168.12.56": {
+      "ip": "192.168.12.56",
+      "hostname": "65tclrokutvjedarius.lan",
+      "mac": "94:b3:f7:eb:ba:24",
+      "device_type": "\ud83d\udcfa TV/Roku",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku"
+        }
+      ],
+      "port_count": 1,
+      "last_seen": "2025-12-07T12:24:04.067842",
+      "scan_timestamp": 1765128244.067901
+    },
+    "192.168.12.76": {
+      "ip": "192.168.12.76",
+      "hostname": "rokustreambar.lan",
+      "mac": "20:ef:bd:91:67:3e",
+      "device_type": "\ud83d\udcfa TV/Roku",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku"
+        }
+      ],
+      "port_count": 1,
+      "last_seen": "2025-12-07T12:24:04.096649",
+      "scan_timestamp": 1765128244.0966961
+    },
+    "192.168.12.91": {
+      "ip": "192.168.12.91",
+      "hostname": "Device-91",
+      "mac": "2e:56:2f:30:9d:f",
+      "device_type": "\u2753 Unknown Device",
+      "open_ports": [],
+      "port_count": 0,
+      "last_seen": "2025-12-07T12:24:04.214103",
+      "scan_timestamp": 1765128244.214165
+    },
+    "192.168.12.105": {
+      "ip": "192.168.12.105",
+      "hostname": "galaxy-tab-a9-5g.lan",
+      "mac": "3a:78:8e:3a:a2:aa",
+      "device_type": "\ud83c\udf10 Router/Gateway",
+      "open_ports": [],
+      "port_count": 0,
+      "last_seen": "2025-12-07T12:24:04.655347",
+      "scan_timestamp": 1765128244.655398
+    },
+    "192.168.12.109": {
+      "ip": "192.168.12.109",
+      "hostname": "Device-109",
+      "mac": "e8:6e:3a:48:65:7f",
+      "device_type": "\u2753 Unknown Device",
+      "open_ports": [],
+      "port_count": 0,
+      "last_seen": "2025-12-07T12:24:05.065421",
+      "scan_timestamp": 1765128245.06549
+    },
+    "192.168.12.127": {
+      "ip": "192.168.12.127",
+      "hostname": "Device-127",
+      "mac": "0:bd:3e:94:f:3a",
+      "device_type": "\u2753 Unknown Device",
+      "open_ports": [
+        {
+          "port": 8008,
+          "service": "Chromecast"
+        }
+      ],
+      "port_count": 1,
+      "last_seen": "2025-12-07T12:24:05.109968",
+      "scan_timestamp": 1765128245.110027
+    },
+    "192.168.12.141": {
+      "ip": "192.168.12.141",
+      "hostname": "Device-141",
+      "mac": "e8:61:7e:b1:24:41",
+      "device_type": "\u2753 Unknown Device",
+      "open_ports": [],
+      "port_count": 0,
+      "last_seen": "2025-12-07T12:24:05.151126",
+      "scan_timestamp": 1765128245.151187
+    },
+    "192.168.12.147": {
+      "ip": "192.168.12.147",
+      "hostname": "iphone.lan",
+      "mac": "2a:b6:f1:eb:3c:ec",
+      "device_type": "\ud83d\udcf1 iOS Device",
+      "open_ports": [],
+      "port_count": 0,
+      "last_seen": "2025-12-07T12:24:05.192988",
+      "scan_timestamp": 1765128245.1930602
+    },
+    "192.168.12.158": {
+      "ip": "192.168.12.158",
+      "hostname": "Device-158",
+      "mac": "e8:6e:3a:1c:37:43",
+      "device_type": "\u2753 Unknown Device",
+      "open_ports": [],
+      "port_count": 0,
+      "last_seen": "2025-12-07T12:24:05.662483",
+      "scan_timestamp": 1765128245.6625469
+    },
+    "192.168.12.178": {
+      "ip": "192.168.12.178",
+      "hostname": "imac.lan",
+      "mac": "4a:f5:21:a:e0:96",
+      "device_type": "\ud83d\udcbb Mac Computer",
+      "open_ports": [],
+      "port_count": 0,
+      "last_seen": "2025-12-07T12:24:06.017778",
+      "scan_timestamp": 1765128246.017809
+    },
+    "192.168.12.175": {
+      "ip": "192.168.12.175",
+      "hostname": "65elementrokutv.lan",
+      "mac": "38:e7:c0:19:97:e7",
+      "device_type": "\ud83d\udcfa TV/Roku",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku"
+        }
+      ],
+      "port_count": 1,
+      "last_seen": "2025-12-07T12:24:06.081733",
+      "scan_timestamp": 1765128246.081981
+    },
+    "192.168.12.255": {
+      "ip": "192.168.12.255",
+      "hostname": "Device-255",
+      "mac": "ff:ff:ff:ff:ff:ff",
+      "device_type": "\u2753 Unknown Device",
+      "open_ports": [],
+      "port_count": 0,
+      "last_seen": "2025-12-07T12:24:07.111609",
+      "scan_timestamp": 1765128247.111648
+    },
+    "192.168.12.247": {
+      "ip": "192.168.12.247",
+      "hostname": "43hisenserokutv.lan",
+      "mac": "38:64:7:98:92:78",
+      "device_type": "\ud83d\udcfa TV/Roku",
+      "open_ports": [
+        {
+          "port": 8060,
+          "service": "Roku"
+        }
+      ],
+      "port_count": 1,
+      "last_seen": "2025-12-07T12:24:07.156172",
+      "scan_timestamp": 1765128247.156183
+    }
+  }
+}
