@@ -20,6 +20,7 @@ CLOUD_URL = "https://nupidesktopai.com"
 last_update_id = 0
 
 def send_notification(message, silent=False):
+    return  # DISABLED - No Telegram notifications
     """Send notification to Telegram"""
     try:
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
