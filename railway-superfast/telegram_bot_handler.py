@@ -13,7 +13,7 @@ from datetime import datetime
 
 # Bot Configuration
 BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '8407882307:AAErVEXhC26xQtDWlXdBZf2JX_sMiTtT22Y')
-CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '6523159355')
+CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '')  # NEED YOUR CHAT ID FOR @JDTechSupportbot
 CLOUD_URL = "https://nupidesktopai.com"
 
 # Last update ID for polling
@@ -160,6 +160,12 @@ def handle_command(text):
             "/errors - Recent errors\n"
             "/improvements - System improvements\n"
             "/live - Live monitoring data\n"
+            "\n*📺 TV Control:*\n"
+            "/tv_status - Check TV status\n"
+            "/tv_power - Power on/off TV\n"
+            "/tv_volume_up - Increase volume\n"
+            "/tv_volume_down - Decrease volume\n"
+            "/tv_mute - Mute/unmute TV\n"
             "/help - This message\n\n"
             "_Bot running concurrently with cloud agent_"
         )
@@ -205,6 +211,44 @@ def handle_command(text):
         msg = format_system_health() + "\n\n"
         msg += format_agents_status()
         return msg
+    
+    elif text == '/tv_status':
+        try:
+            response = requests.get('http://192.168.12.175:8060/query/device-info', timeout=5)
+            if response.status_code == 200:
+                return "📺 *TV Status*\n\n✅ TV is *ONLINE*\nIP: 192.168.12.175\nModel: 65 Element Roku TV"
+            else:
+                return "📺 *TV Status*\n\n⚠️ TV responded but status unclear"
+        except:
+            return "📺 *TV Status*\n\n❌ TV is *OFFLINE* or unreachable"
+    
+    elif text == '/tv_power':
+        try:
+            requests.post('http://192.168.12.175:8060/keypress/Power', timeout=3)
+            return "📺 *TV Power*\n\n✅ Power toggle command sent!"
+        except:
+            return "📺 *TV Power*\n\n❌ Failed to send command"
+    
+    elif text == '/tv_volume_up':
+        try:
+            requests.post('http://192.168.12.175:8060/keypress/VolumeUp', timeout=3)
+            return "📺 *Volume*\n\n🔊 Volume increased!"
+        except:
+            return "📺 *Volume*\n\n❌ Failed to send command"
+    
+    elif text == '/tv_volume_down':
+        try:
+            requests.post('http://192.168.12.175:8060/keypress/VolumeDown', timeout=3)
+            return "📺 *Volume*\n\n🔉 Volume decreased!"
+        except:
+            return "📺 *Volume*\n\n❌ Failed to send command"
+    
+    elif text == '/tv_mute':
+        try:
+            requests.post('http://192.168.12.175:8060/keypress/VolumeMute', timeout=3)
+            return "📺 *Mute*\n\n🔇 Mute toggled!"
+        except:
+            return "📺 *Mute*\n\n❌ Failed to send command"
     
     else:
         return "❓ Unknown command. Type /help for available commands."
