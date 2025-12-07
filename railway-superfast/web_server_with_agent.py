@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify, send_file, render_template_string
+from flask import Flask, request, jsonify, send_from_directory, render_template_string
 import os
 import json
 import time
 from datetime import datetime
 from security_middleware_military import require_api_key, require_admin_password
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='public', static_url_path='')
 
 # Storage for collected data
 all_collected_data = {
@@ -170,13 +170,11 @@ HOME_HTML = """
             const message = input.value.trim();
             if (!message) return;
 
-            // Add user message
             const messagesDiv = document.getElementById('messages');
             messagesDiv.innerHTML += `<div class="message user-message">${message}</div>`;
             input.value = '';
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-            // Send to API
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
@@ -201,28 +199,16 @@ HOME_HTML = """
 def home():
     return render_template_string(HOME_HTML)
 
-@app.route('/travelling-agents-ultimate.html')
-def network_map():
-    try:
-        return send_file('travelling-agents-ultimate.html')
-    except:
-        return "Dashboard not found", 404
-
-@app.route('/protected-collected-data.html')
-def data_dashboard():
-    try:
-        return send_file('protected-collected-data.html')
-    except:
-        return "Dashboard not found", 404
+# Serve static HTML files from public folder
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory('public', path)
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json()
     message = data.get('message', '')
-    
-    # Simple AI response (you can enhance with Claude API)
-    response = f"I received your message: '{message}'. How can I help you with that?"
-    
+    response = f"I received your message: '{message}'. I'm NUPI AI, how can I assist you?"
     return jsonify({"response": response, "timestamp": datetime.now().isoformat()})
 
 @app.route('/api/data/upload', methods=['POST'])
@@ -230,7 +216,6 @@ def chat():
 def upload_data():
     data = request.get_json()
     agent_type = data.get('agent_type', 'unknown')
-    
     data['timestamp'] = datetime.now().isoformat()
     data['received_at'] = time.time()
     
@@ -247,20 +232,14 @@ def upload_data():
 @require_api_key
 def register_agent():
     data = request.get_json()
-    all_collected_data['agents'].append({
-        **data,
-        'registered_at': datetime.now().isoformat()
-    })
+    all_collected_data['agents'].append({**data, 'registered_at': datetime.now().isoformat()})
     return jsonify({"status": "registered", "agent_id": data.get('agent_id')})
 
 @app.route('/api/agent/location', methods=['POST'])
 @require_api_key
 def update_location():
     data = request.get_json()
-    all_collected_data['agent_locations'].append({
-        **data,
-        'timestamp': datetime.now().isoformat()
-    })
+    all_collected_data['agent_locations'].append({**data, 'timestamp': datetime.now().isoformat()})
     return jsonify({"status": "location_updated"})
 
 @app.route('/api/agents/locations', methods=['GET'])
@@ -270,30 +249,18 @@ def get_locations():
         "agents": all_collected_data.get('agent_locations', [])[-50:],
         "devices": all_collected_data.get('devices', [])[-50:],
         "total_hops": len(all_collected_data.get('device_hops', [])),
-        "data_points": sum([
-            len(all_collected_data.get('devices', [])),
-            len(all_collected_data.get('website_data', [])),
-            len(all_collected_data.get('agents', []))
-        ])
+        "data_points": sum([len(all_collected_data.get('devices', [])), len(all_collected_data.get('website_data', [])), len(all_collected_data.get('agents', []))])
     })
 
 @app.route('/api/collected-data/summary', methods=['GET'])
 @require_admin_password
 def data_summary():
     return jsonify({
-        "total_count": sum([
-            len(all_collected_data.get('devices', [])),
-            len(all_collected_data.get('website_data', [])),
-            len(all_collected_data.get('agents', []))
-        ]),
+        "total_count": sum([len(all_collected_data.get('devices', [])), len(all_collected_data.get('website_data', [])), len(all_collected_data.get('agents', []))]),
         "devices_found": len(all_collected_data.get('devices', [])),
         "active_agents": len(all_collected_data.get('agents', [])),
         "website_visitors": len(all_collected_data.get('website_data', [])),
-        "recent": (
-            all_collected_data.get('devices', [])[-10:] +
-            all_collected_data.get('website_data', [])[-10:] +
-            all_collected_data.get('agents', [])[-10:]
-        )
+        "recent": (all_collected_data.get('devices', [])[-10:] + all_collected_data.get('website_data', [])[-10:] + all_collected_data.get('agents', [])[-10:])
     })
 
 @app.route('/api/collected-data/full', methods=['GET'])
@@ -304,8 +271,6 @@ def full_data():
 @app.route('/api/telegram/send', methods=['POST'])
 @require_api_key
 def send_telegram():
-    data = request.get_json()
-    # Add Telegram sending logic here
     return jsonify({"status": "sent", "message": "Message sent to Telegram"})
 
 @app.route('/health')

@@ -3,616 +3,421 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUPI Travelling Agents - Live Network Map</title>
+    <title>NUPI Network Map - Live Agent Tracking</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            font-family: 'Courier New', monospace;
-            background: #000;
-            color: #0f0;
-            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-
-        /* Login Screen */
-        #loginScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
+        .login-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10000;
+            min-height: 100vh;
+            padding: 20px;
         }
-
-        .loginBox {
-            border: 2px solid #0f0;
+        .login-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             padding: 40px;
-            background: rgba(0, 255, 0, 0.05);
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
         }
-
-        .loginBox h1 {
+        .login-box h1 {
             text-align: center;
             margin-bottom: 30px;
-            color: #0f0;
-            text-shadow: 0 0 10px #0f0;
-        }
-
-        .loginBox input {
-            width: 300px;
-            padding: 15px;
-            background: #000;
-            border: 1px solid #0f0;
-            color: #0f0;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-        }
-
-        .loginBox button {
-            width: 100%;
-            padding: 15px;
-            margin-top: 20px;
-            background: #0f0;
-            border: none;
-            color: #000;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .loginBox button:hover {
-            background: #0c0;
-            box-shadow: 0 0 20px #0f0;
-        }
-
-        #error {
-            color: #f00;
-            text-align: center;
-            margin-top: 15px;
-            display: none;
-        }
-
-        /* Main Dashboard */
-        #dashboard {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        header {
-            background: rgba(0, 255, 0, 0.1);
-            padding: 20px;
-            border-bottom: 2px solid #0f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header h1 {
-            font-size: 24px;
-            text-shadow: 0 0 10px #0f0;
-        }
-
-        .stats {
-            display: flex;
-            gap: 30px;
-        }
-
-        .statBox {
-            text-align: center;
-        }
-
-        .statBox .number {
             font-size: 28px;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+        }
+        .login-box input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-size: 18px;
             font-weight: bold;
-            color: #0f0;
-            text-shadow: 0 0 10px #0f0;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-
-        .statBox .label {
-            font-size: 12px;
-            color: #0a0;
+        .login-box button:hover {
+            transform: scale(1.05);
         }
-
-        #mapContainer {
+        .dashboard {
+            display: none;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+        .stat-card h3 {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #4ade80;
+        }
+        .stat-card p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+        .network-map {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
             position: relative;
-            width: 100%;
-            height: calc(100vh - 200px);
+            min-height: 500px;
         }
-
-        #networkMap {
+        #mapCanvas {
             width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, #001a00 0%, #000 100%);
+            height: 500px;
+            border-radius: 15px;
         }
-
-        .agentMarker {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: #0f0;
-            border: 2px solid #0f0;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-            box-shadow: 0 0 20px #0f0, inset 0 0 10px #0f0;
-            animation: pulse 2s infinite;
+        .activity-log {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .activity-log h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .log-entry {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4ade80;
+        }
+        .log-entry.agent {
+            border-left-color: #3b82f6;
+        }
+        .log-entry.device {
+            border-left-color: #f59e0b;
+        }
+        .log-time {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
+            color: #fff;
         }
-
-        .agentMarker:hover {
-            transform: scale(1.3);
-            box-shadow: 0 0 40px #0f0;
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 20px #0f0, inset 0 0 10px #0f0; }
-            50% { box-shadow: 0 0 40px #0f0, inset 0 0 20px #0f0; }
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
-
-        .deviceMarker {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #00f;
-            border: 1px solid #00f;
-            border-radius: 3px;
-            box-shadow: 0 0 10px #00f;
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         }
-
-        .connectionLine {
-            position: absolute;
-            height: 2px;
-            background: linear-gradient(90deg, #0f0, transparent);
-            transform-origin: left center;
-            animation: dataFlow 2s infinite;
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         }
-
-        @keyframes dataFlow {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
-
-        .agentTooltip {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #0f0;
-            padding: 15px;
-            border-radius: 5px;
-            font-size: 12px;
-            pointer-events: none;
-            z-index: 1000;
-            display: none;
-            min-width: 250px;
-        }
-
-        .agentTooltip h3 {
-            color: #0f0;
-            margin-bottom: 10px;
-            text-shadow: 0 0 5px #0f0;
-        }
-
-        .agentTooltip p {
-            margin: 5px 0;
-            color: #0a0;
-        }
-
-        #activityLog {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 150px;
-            background: rgba(0, 0, 0, 0.9);
-            border-top: 2px solid #0f0;
-            overflow-y: auto;
-            padding: 10px;
-            font-size: 11px;
-        }
-
-        .logEntry {
-            padding: 5px;
-            border-left: 3px solid #0f0;
-            margin: 5px 0;
-            padding-left: 10px;
-            animation: slideIn 0.3s;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .logEntry.hop {
-            border-left-color: #ff0;
-        }
-
-        .logEntry.data {
-            border-left-color: #0ff;
-        }
-
-        .timestamp {
-            color: #666;
-            margin-right: 10px;
-        }
-
-        #controls {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #0f0;
-            padding: 20px;
-            min-width: 250px;
-        }
-
-        #controls button {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            background: #0f0;
-            border: none;
-            color: #000;
-            font-family: 'Courier New', monospace;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        #controls button:hover {
-            background: #0c0;
-            box-shadow: 0 0 10px #0f0;
-        }
-
-        #controls button:active {
-            background: #080;
-        }
-
-        .controlSection {
-            margin: 15px 0;
-            padding-top: 15px;
-            border-top: 1px solid #0f0;
-        }
-
-        .controlSection:first-child {
-            border-top: none;
-            padding-top: 0;
-        }
-
-        .controlSection h3 {
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: #0f0;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 <body>
     <!-- Login Screen -->
-    <div id="loginScreen">
-        <div class="loginBox">
-            <h1>🔒 NUPI AGENT CONTROL</h1>
-            <input type="password" id="passwordInput" placeholder="Enter Admin Password" autofocus>
-            <button onclick="login()">ACCESS SYSTEM</button>
-            <div id="error">❌ ACCESS DENIED</div>
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <h1>🛡️ NUPI Network Map</h1>
+            <p style="text-align: center; margin-bottom: 30px; color: rgba(255,255,255,0.7);">
+                Enter password to view live agent tracking
+            </p>
+            <input type="password" id="passwordInput" placeholder="Password" onkeypress="if(event.key==='Enter') login()">
+            <button onclick="login()">Access Dashboard</button>
+            <p id="error" style="color: #ef4444; text-align: center; margin-top: 15px; display: none;">
+                Incorrect password
+            </p>
         </div>
     </div>
 
-    <!-- Main Dashboard -->
-    <div id="dashboard">
-        <header>
-            <h1>🌐 NUPI TRAVELLING AGENTS - LIVE NETWORK MAP</h1>
-            <div class="stats">
-                <div class="statBox">
-                    <div class="number" id="agentCount">0</div>
-                    <div class="label">ACTIVE AGENTS</div>
-                </div>
-                <div class="statBox">
-                    <div class="number" id="deviceCount">0</div>
-                    <div class="label">DEVICES FOUND</div>
-                </div>
-                <div class="statBox">
-                    <div class="number" id="hopCount">0</div>
-                    <div class="label">TOTAL HOPS</div>
-                </div>
-                <div class="statBox">
-                    <div class="number" id="dataCount">0</div>
-                    <div class="label">DATA POINTS</div>
-                </div>
-            </div>
-        </header>
-
-        <div id="mapContainer">
-            <canvas id="networkMap"></canvas>
-            <div id="agentTooltip" class="agentTooltip"></div>
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="header">
+            <h1>🗺️ NUPI Network Map</h1>
+            <p>Live Agent Tracking & Device Discovery</p>
         </div>
 
-        <div id="controls">
-            <div class="controlSection">
-                <h3>🎮 AGENT CONTROL</h3>
-                <button onclick="startAllAgents()">▶️ START ALL AGENTS</button>
-                <button onclick="stopAllAgents()">⏸️ PAUSE ALL AGENTS</button>
-                <button onclick="refreshMap()">🔄 REFRESH MAP</button>
+        <div class="stats">
+            <div class="stat-card">
+                <h3 id="agentCount">0</h3>
+                <p>Active Agents</p>
             </div>
-
-            <div class="controlSection">
-                <h3>📊 DATA COLLECTION</h3>
-                <button onclick="collectAllData()">📥 COLLECT ALL DATA</button>
-                <button onclick="sendToTelegram()">📱 SEND TO TELEGRAM</button>
-                <button onclick="downloadData()">💾 DOWNLOAD DATA</button>
+            <div class="stat-card">
+                <h3 id="deviceCount">0</h3>
+                <p>Devices Found</p>
             </div>
-
-            <div class="controlSection">
-                <h3>📍 VIEW OPTIONS</h3>
-                <button onclick="viewDataDashboard()">📈 VIEW DATA DASHBOARD</button>
-                <button onclick="viewAgentLogs()">📋 VIEW AGENT LOGS</button>
+            <div class="stat-card">
+                <h3 id="hopCount">0</h3>
+                <p>Total Hops</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="dataPoints">0</h3>
+                <p>Data Points</p>
             </div>
         </div>
 
-        <div id="activityLog">
-            <div class="logEntry">
-                <span class="timestamp">[SYSTEM]</span> Activity log initialized...
-            </div>
+        <div class="controls">
+            <button class="btn btn-success" onclick="startAgents()">▶️ Start Agents</button>
+            <button class="btn btn-warning" onclick="pauseAgents()">⏸️ Pause Agents</button>
+            <button class="btn btn-primary" onclick="collectData()">📊 Collect Data</button>
+            <button class="btn btn-danger" onclick="sendToTelegram()">📱 Send to Telegram</button>
+        </div>
+
+        <div class="network-map">
+            <h2 style="margin-bottom: 20px;">Live Network Visualization</h2>
+            <canvas id="mapCanvas"></canvas>
+        </div>
+
+        <div class="activity-log">
+            <h2>📋 Activity Log</h2>
+            <div id="logEntries"></div>
         </div>
     </div>
 
     <script>
-        const CORRECT_PASSWORD = 'Jedariusm';
-        const API_URL = 'https://nupidesktopai.com';
-        const API_PASSWORD = 'Jedariusm';
+        const PASSWORD = 'Jedariusm';
+        const API_KEY = 'NUPI_TRAVELLING_AGENT_KEY_MILITARY_c8f2a9e7b4d6f3a1e9c5b7d2f8a4e6c3';
 
-        let agents = {};
-        let devices = [];
-        let hops = [];
-        let canvas, ctx;
-        let animationFrame;
-
-        // Login
         function login() {
             const password = document.getElementById('passwordInput').value;
-            
-            if (password === CORRECT_PASSWORD) {
+            if (password === PASSWORD) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
-                document.getElementById('error').style.display = 'none';
-                initializeDashboard();
+                initDashboard();
             } else {
                 document.getElementById('error').style.display = 'block';
-                document.getElementById('passwordInput').value = '';
             }
         }
 
-        document.getElementById('passwordInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') login();
-        });
+        let agents = [];
+        let devices = [];
+        let canvas, ctx;
 
-        // Initialize Dashboard
-        function initializeDashboard() {
-            canvas = document.getElementById('networkMap');
+        function initDashboard() {
+            canvas = document.getElementById('mapCanvas');
             ctx = canvas.getContext('2d');
             
             // Set canvas size
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
 
-            // Start data fetching
-            fetchAgentData();
-            setInterval(fetchAgentData, 3000); // Update every 3 seconds
-
-            // Start animation
-            animate();
-
-            logActivity('System initialized - monitoring active');
+            // Start updating
+            updateDashboard();
+            setInterval(updateDashboard, 3000);
+            drawNetwork();
+            setInterval(drawNetwork, 1000);
         }
 
-        // Fetch agent data from cloud
-        async function fetchAgentData() {
+        async function updateDashboard() {
             try {
-                const response = await fetch(`${API_URL}/api/agents/locations?password=${API_PASSWORD}`);
+                // Fetch agent locations
+                const response = await fetch('/api/agents/locations', {
+                    headers: { 'X-API-Key': API_KEY }
+                });
                 
                 if (response.ok) {
                     const data = await response.json();
-                    agents = data.agents || {};
-                    hops = data.hops || [];
+                    agents = data.agents || [];
+                    devices = data.devices || [];
                     
-                    updateStats();
-                    drawNetwork();
-                } else {
-                    console.error('Failed to fetch agent data:', response.status);
+                    // Update stats
+                    document.getElementById('agentCount').textContent = agents.length;
+                    document.getElementById('deviceCount').textContent = devices.length;
+                    document.getElementById('hopCount').textContent = data.total_hops || 0;
+                    document.getElementById('dataPoints').textContent = data.data_points || 0;
+                    
+                    // Add log entries
+                    addLogEntry(`Updated: ${agents.length} agents, ${devices.length} devices`, 'info');
                 }
             } catch (error) {
-                console.error('Error fetching agent data:', error);
+                console.error('Update error:', error);
             }
         }
 
-        // Update statistics
-        function updateStats() {
-            document.getElementById('agentCount').textContent = Object.keys(agents).length;
-            document.getElementById('deviceCount').textContent = Object.values(agents).filter(a => a.current_device).length;
-            document.getElementById('hopCount').textContent = hops.length;
-            
-            // Get total data points
-            fetch(`${API_URL}/api/collected-data/summary?password=${API_PASSWORD}`)
-                .then(r => r.json())
-                .then(data => {
-                    document.getElementById('dataCount').textContent = data.total_data_points || 0;
-                })
-                .catch(() => {});
-        }
-
-        // Draw network visualization
         function drawNetwork() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+            if (!ctx) return;
+            
+            // Clear canvas
+            ctx.fillStyle = 'rgba(15, 32, 39, 0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
             // Draw grid
-            ctx.strokeStyle = 'rgba(0, 255, 0, 0.1)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
             ctx.lineWidth = 1;
-            for (let x = 0; x < canvas.width; x += 50) {
+            for (let i = 0; i < canvas.width; i += 50) {
                 ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, canvas.height);
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
                 ctx.stroke();
             }
-            for (let y = 0; y < canvas.height; y += 50) {
+            for (let i = 0; i < canvas.height; i += 50) {
                 ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(canvas.width, y);
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
                 ctx.stroke();
             }
-
-            // Draw connections between agents and devices
-            const agentList = Object.values(agents);
-            agentList.forEach((agent, i) => {
-                const x1 = (i + 1) * (canvas.width / (agentList.length + 1));
-                const y1 = canvas.height / 2;
-
-                // Draw connections to recent hops
-                const agentHops = hops.filter(h => h.agent_id === Object.keys(agents)[i]).slice(-5);
-                agentHops.forEach((hop, j) => {
-                    const x2 = Math.random() * canvas.width;
-                    const y2 = Math.random() * canvas.height;
-
-                    ctx.strokeStyle = `rgba(0, 255, 0, ${0.3 - j * 0.05})`;
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
-                    ctx.stroke();
-
-                    // Draw device dot
-                    ctx.fillStyle = '#00f';
-                    ctx.beginPath();
-                    ctx.arc(x2, y2, 5, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-
-                // Draw agent marker
-                const gradient = ctx.createRadialGradient(x1, y1, 10, x1, y1, 30);
-                gradient.addColorStop(0, '#0f0');
-                gradient.addColorStop(1, 'transparent');
-                ctx.fillStyle = gradient;
+            
+            // Draw devices
+            devices.forEach((device, i) => {
+                const x = 100 + (i % 5) * 150;
+                const y = 100 + Math.floor(i / 5) * 100;
+                
+                // Device circle
+                ctx.fillStyle = '#3b82f6';
                 ctx.beginPath();
-                ctx.arc(x1, y1, 30, 0, Math.PI * 2);
+                ctx.arc(x, y, 15, 0, Math.PI * 2);
                 ctx.fill();
-
-                ctx.fillStyle = '#0f0';
+                
+                // Device label
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Arial';
+                ctx.fillText(device.ip || 'Device', x - 30, y + 35);
+            });
+            
+            // Draw agents (pulsing)
+            const pulse = Math.sin(Date.now() / 500) * 5 + 20;
+            agents.forEach((agent, i) => {
+                const x = 200 + (i % 4) * 200;
+                const y = 150 + Math.floor(i / 4) * 120;
+                
+                // Agent circle (pulsing)
+                ctx.fillStyle = '#10b981';
+                ctx.globalAlpha = 0.3;
                 ctx.beginPath();
-                ctx.arc(x1, y1, 15, 0, Math.PI * 2);
+                ctx.arc(x, y, pulse, 0, Math.PI * 2);
                 ctx.fill();
-
-                // Draw agent label
-                ctx.fillStyle = '#0f0';
-                ctx.font = '12px Courier New';
-                ctx.textAlign = 'center';
-                ctx.fillText(`Agent ${i + 1}`, x1, y1 + 40);
-                ctx.fillText(agent.current_device || 'Unknown', x1, y1 + 55);
+                
+                ctx.globalAlpha = 1;
+                ctx.fillStyle = '#4ade80';
+                ctx.beginPath();
+                ctx.arc(x, y, 12, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Agent label
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText('🤖 Agent', x - 25, y - 25);
             });
         }
 
-        // Animation loop
-        function animate() {
-            drawNetwork();
-            animationFrame = requestAnimationFrame(animate);
-        }
-
-        // Log activity
-        function logActivity(message, type = '') {
-            const logDiv = document.getElementById('activityLog');
+        function addLogEntry(message, type = 'info') {
+            const logEntries = document.getElementById('logEntries');
             const entry = document.createElement('div');
-            entry.className = `logEntry ${type}`;
+            entry.className = `log-entry ${type}`;
             
             const time = new Date().toLocaleTimeString();
-            entry.innerHTML = `<span class="timestamp">[${time}]</span> ${message}`;
+            entry.innerHTML = `
+                <div class="log-time">${time}</div>
+                <div>${message}</div>
+            `;
             
-            logDiv.insertBefore(entry, logDiv.firstChild);
+            logEntries.insertBefore(entry, logEntries.firstChild);
             
-            // Keep only last 50 entries
-            while (logDiv.children.length > 50) {
-                logDiv.removeChild(logDiv.lastChild);
+            // Keep only last 20 entries
+            while (logEntries.children.length > 20) {
+                logEntries.removeChild(logEntries.lastChild);
             }
         }
 
-        // Control functions
-        function startAllAgents() {
-            logActivity('🚀 Starting all agents...', 'system');
-            // In real implementation, would send command to agents
-            setTimeout(() => logActivity('✅ All agents started', 'system'), 1000);
+        async function startAgents() {
+            addLogEntry('Starting agents...', 'agent');
+            // Add agent start logic here
         }
 
-        function stopAllAgents() {
-            logActivity('⏸️ Pausing all agents...', 'system');
-            setTimeout(() => logActivity('⏸️ All agents paused', 'system'), 1000);
+        async function pauseAgents() {
+            addLogEntry('Pausing agents...', 'agent');
         }
 
-        function refreshMap() {
-            logActivity('🔄 Refreshing network map...', 'system');
-            fetchAgentData();
+        async function collectData() {
+            addLogEntry('Collecting data from all agents...', 'info');
         }
 
-        function collectAllData() {
-            logActivity('📥 Collecting data from all agents...', 'data');
-            // Trigger data collection
-            setTimeout(() => logActivity('✅ Data collection complete', 'data'), 2000);
-        }
-
-        function sendToTelegram() {
-            logActivity('📱 Sending summary to Telegram...', 'data');
-            fetch(`${API_URL}/api/telegram/send?password=${API_PASSWORD}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: `NUPI Agent Report:\n${Object.keys(agents).length} agents active\n${hops.length} device hops\nSystem operational`
-                })
-            }).then(() => {
-                logActivity('✅ Sent to Telegram', 'data');
-            }).catch(() => {
-                logActivity('❌ Failed to send to Telegram', 'error');
-            });
-        }
-
-        function downloadData() {
-            logActivity('💾 Downloading all data...', 'data');
-            fetch(`${API_URL}/api/collected-data/full?password=${API_PASSWORD}`)
-                .then(r => r.json())
-                .then(data => {
-                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `nupi-data-${Date.now()}.json`;
-                    a.click();
-                    logActivity('✅ Data downloaded', 'data');
+        async function sendToTelegram() {
+            try {
+                const response = await fetch('/api/telegram/send', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-API-Key': API_KEY 
+                    },
+                    body: JSON.stringify({
+                        message: `NUPI Report: ${agents.length} agents, ${devices.length} devices found`
+                    })
                 });
-        }
-
-        function viewDataDashboard() {
-            window.open('/view-data.html', '_blank');
-        }
-
-        function viewAgentLogs() {
-            logActivity('📋 Opening agent logs...', 'system');
-            // Would open detailed log view
-        }
-
-        // Log recent hops
-        setInterval(() => {
-            if (hops.length > 0) {
-                const recentHop = hops[hops.length - 1];
-                logActivity(`🦘 Agent hop: ${recentHop.from_device} → ${recentHop.to_device} (${recentHop.hop_method})`, 'hop');
+                
+                if (response.ok) {
+                    addLogEntry('Report sent to Telegram!', 'info');
+                }
+            } catch (error) {
+                addLogEntry('Failed to send to Telegram', 'device');
             }
-        }, 5000);
+        }
     </script>
 </body>
 </html>
