@@ -96,15 +96,6 @@ def track_visitor():
         if len(visitor_data) > 1000:  # Keep last 1000
             visitor_data.pop(0)
 
-# Serve static files
-@app.route('/<path:filename>')
-def serve_public(filename):
-    """Serve HTML files from public folder"""
-    try:
-        return send_from_directory('public', filename)
-    except:
-        return "File not found", 404
-
 @app.route('/')
 def home():
     return render_template_string(HOME_HTML)
@@ -249,6 +240,15 @@ def visitor_stats():
         "total_visitors": len(visitor_data),
         "recent_visitors": visitor_data[-20:] if visitor_data else []
     })
+
+# Serve static files - MUST BE LAST (after all API routes)
+@app.route('/<path:filename>')
+def serve_public(filename):
+    """Serve HTML files from public folder"""
+    try:
+        return send_from_directory('public', filename)
+    except:
+        return "File not found", 404
 
 HOME_HTML = """
 <!DOCTYPE html>
