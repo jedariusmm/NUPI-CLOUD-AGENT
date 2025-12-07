@@ -183,36 +183,36 @@ class WorldwideAgent:
         print(f"📱 Command: {command}")
         
         # Element TV (65") - 192.168.12.175
-        if cmd == '/element':
+        if cmd == '/e':
             if len(parts) >= 2:
                 action = parts[1].lower()
                 self.control_one_tv('192.168.12.175', '65" Element', action)
             else:
-                self.send_telegram("Usage: /element [netflix|hulu|youtube|disney|home|play|mute|volup|voldown|power|poweron|poweroff]")
+                self.send_telegram("Usage: /e [on|netflix|hulu|youtube|disney|home|play|mute|up|down]")
         
         # Streambar - 192.168.12.76
-        elif cmd == '/streambar':
+        elif cmd == '/s':
             if len(parts) >= 2:
                 action = parts[1].lower()
                 self.control_one_tv('192.168.12.76', 'Streambar', action)
             else:
-                self.send_telegram("Usage: /streambar [netflix|hulu|youtube|disney|home|play|mute|volup|voldown|power|poweron|poweroff]")
+                self.send_telegram("Usage: /s [on|netflix|hulu|youtube|disney|home|play|mute|up|down]")
         
         # TCL TV (65") - 192.168.12.56
-        elif cmd == '/tcl':
+        elif cmd == '/t':
             if len(parts) >= 2:
                 action = parts[1].lower()
                 self.control_one_tv('192.168.12.56', '65" TCL', action)
             else:
-                self.send_telegram("Usage: /tcl [netflix|hulu|youtube|disney|home|play|mute|volup|voldown|power|poweron|poweroff]")
+                self.send_telegram("Usage: /t [on|netflix|hulu|youtube|disney|home|play|mute|up|down]")
         
         # Hisense TV (43") - 192.168.12.247
-        elif cmd == '/hisense':
+        elif cmd == '/h':
             if len(parts) >= 2:
                 action = parts[1].lower()
                 self.control_one_tv('192.168.12.247', '43" Hisense', action)
             else:
-                self.send_telegram("Usage: /hisense [netflix|hulu|youtube|disney|home|play|mute|volup|voldown|power|poweron|poweroff]")
+                self.send_telegram("Usage: /h [on|netflix|hulu|youtube|disney|home|play|mute|up|down]")
         
         # Other commands
         elif cmd == '/scan':
