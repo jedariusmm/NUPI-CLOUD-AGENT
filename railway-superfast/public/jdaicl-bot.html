@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 JDAICL-Bot Access Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .status-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .status-item h3 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .status-item .value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .endpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .endpoint h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .endpoint code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .endpoint .url {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .output {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .token-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 JDAICL-Bot Access Portal</h1>
+            <p>Full Access to NUPI Cloud Agent</p>
+        </div>
+        
+        <div class="panel">
+            <h2>Bot Status</h2>
+            <div class="status-grid" id="statusGrid">
+                <div class="status-item">
+                    <h3>Status</h3>
+                    <div class="value">Loading...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>🔐 Authentication</h2>
+            <p style="margin-bottom: 15px;">Enter your bot token to test API endpoints:</p>
+            <input type="text" class="token-input" id="tokenInput" 
+                   placeholder="jdaicl-bot-master-key-2025 or master-access" 
+                   value="jdaicl-bot-master-key-2025">
+        </div>
+        
+        <div class="panel">
+            <h2>📤 File Upload</h2>
+            <div class="endpoint">
+                <h3>POST /api/upload</h3>
+                <div class="url">https://nupidesktopai.com/api/upload</div>
+                <p><strong>Headers:</strong> <code>x-bot-token: your-token</code></p>
+                <p><strong>Body:</strong> FormData with files</p>
+                <p><strong>Limits:</strong> 100MB per file, 20 files max</p>
+            </div>
+            <input type="file" id="fileInput" multiple>
+            <button class="btn" onclick="testUpload()">📤 Upload Files</button>
+        </div>
+        
+        <div class="panel">
+            <h2>🐙 GitHub Integration</h2>
+            <div class="endpoint">
+                <h3>POST /api/github/push</h3>
+                <div class="url">https://nupidesktopai.com/api/github/push</div>
+                <p><strong>Access:</strong> All jedariusmm repositories</p>
+            </div>
+            <button class="btn" onclick="testGitHub()">🐙 Test GitHub Push</button>
+        </div>
+        
+        <div class="panel">
+            <h2>🚂 Railway Deployment</h2>
+            <div class="endpoint">
+                <h3>POST /api/railway/deploy</h3>
+                <div class="url">https://nupidesktopai.com/api/railway/deploy</div>
+                <p><strong>Access:</strong> NUPI-Cloud-Agent project</p>
+            </div>
+            <button class="btn" onclick="testRailway()">🚂 Test Railway Deploy</button>
+        </div>
+        
+        <div class="panel">
+            <h2>⚡ Command Execution</h2>
+            <div class="endpoint">
+                <h3>POST /api/execute</h3>
+                <div class="url">https://nupidesktopai.com/api/execute</div>
+                <p><strong>Timeout:</strong> 30 seconds</p>
+            </div>
+            <input type="text" class="token-input" id="commandInput" 
+                   placeholder="ls -la" 
+                   value="ls -la">
+            <button class="btn" onclick="testExecute()">⚡ Execute Command</button>
+        </div>
+        
+        <div class="panel">
+            <h2>📂 File Management</h2>
+            <div class="endpoint">
+                <h3>GET /api/files</h3>
+                <div class="url">https://nupidesktopai.com/api/files</div>
+            </div>
+            <button class="btn" onclick="testListFiles()">📂 List All Files</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test Output</h3>
+            <div class="output" id="output">No tests run yet...</div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'https://nupidesktopai.com';
+        const output = document.getElementById('output');
+        
+        function log(message) {
+            output.textContent = message + '\n' + output.textContent;
+        }
+        
+        function getToken() {
+            return document.getElementById('tokenInput').value;
+        }
+        
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/api/bot/status`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('statusGrid');
+                grid.innerHTML = `
+                    <div class="status-item">
+                        <h3>Status</h3>
+                        <div class="value">${data.status === 'active' ? '✅ Active' : '❌ Inactive'}</div>
+                    </div>
+                    <div class="status-item">
+                        <h3>File Upload</h3>
+                        <div class="value">${data.permissions.file_upload ? '✅' : '❌'}</div>
+                    </div>
+                    <div class="status-item">
+                        <h3>GitHub Access</h3>
+                        <div class="value">${data.permissions.github_access ? '✅' : '❌'}</div>
+                    </div>
+                    <div class="status-item">
+                        <h3>Railway Access</h3>
+                        <div class="value">${data.permissions.railway_access ? '✅' : '❌'}</div>
+                    </div>
+                    <div class="status-item">
+                        <h3>Command Exec</h3>
+                        <div class="value">${data.permissions.command_execution ? '✅' : '❌'}</div>
+                    </div>
+                    <div class="status-item">
+                        <h3>Full Access</h3>
+                        <div class="value">${data.permissions.full_access ? '✅ YES' : '❌ NO'}</div>
+                    </div>
+                `;
+                
+                log('✅ Bot status loaded successfully');
+                log(JSON.stringify(data, null, 2));
+            } catch (error) {
+                log('❌ Error loading status: ' + error.message);
+            }
+        }
+        
+        async function testUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                log('❌ No files selected');
+                return;
+            }
+            
+            const formData = new FormData();
+            for (let file of files) {
+                formData.append('files', file);
+            }
+            formData.append('uploaded_by', 'JDAICL-bot');
+            
+            try {
+                log(`📤 Uploading ${files.length} file(s)...`);
+                const response = await fetch(`${API_BASE}/api/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'x-bot-token': getToken()
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                log('✅ Upload successful!');
+                log(JSON.stringify(data, null, 2));
+            } catch (error) {
+                log('❌ Upload error: ' + error.message);
+            }
+        }
+        
+        async function testGitHub() {
+            try {
+                log('🐙 Testing GitHub push...');
+                const response = await fetch(`${API_BASE}/api/github/push`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-bot-token': getToken()
+                    },
+                    body: JSON.stringify({
+                        repo: 'jedariusmm/NUPI-CLOUD-AGENT',
+                        branch: 'main',
+                        files: [
+                            { path: 'test.txt', content: 'Hello from JDAICL-bot' }
+                        ],
+                        message: 'Test commit from JDAICL-bot'
+                    })
+                });
+                
+                const data = await response.json();
+                log('✅ GitHub API response:');
+                log(JSON.stringify(data, null, 2));
+            } catch (error) {
+                log('❌ GitHub error: ' + error.message);
+            }
+        }
+        
+        async function testRailway() {
+            try {
+                log('🚂 Testing Railway deploy...');
+                const response = await fetch(`${API_BASE}/api/railway/deploy`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-bot-token': getToken()
+                    },
+                    body: JSON.stringify({
+                        project: 'NUPI-Cloud-Agent',
+                        service: 'NUPI-CLOUD-AGENT',
+                        command: 'npm start'
+                    })
+                });
+                
+                const data = await response.json();
+                log('✅ Railway API response:');
+                log(JSON.stringify(data, null, 2));
+            } catch (error) {
+                log('❌ Railway error: ' + error.message);
+            }
+        }
+        
+        async function testExecute() {
+            const command = document.getElementById('commandInput').value;
+            try {
+                log(`⚡ Executing: ${command}`);
+                const response = await fetch(`${API_BASE}/api/execute`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-bot-token': getToken()
+                    },
+                    body: JSON.stringify({ command })
+                });
+                
+                const data = await response.json();
+                log('✅ Command executed:');
+                log('STDOUT:\n' + data.stdout);
+                if (data.stderr) log('STDERR:\n' + data.stderr);
+                if (data.error) log('ERROR:\n' + data.error);
+            } catch (error) {
+                log('❌ Execute error: ' + error.message);
+            }
+        }
+        
+        async function testListFiles() {
+            try {
+                log('📂 Fetching file list...');
+                const response = await fetch(`${API_BASE}/api/files?token=${getToken()}`);
+                const data = await response.json();
+                log('✅ Files listed:');
+                log(JSON.stringify(data, null, 2));
+            } catch (error) {
+                log('❌ List files error: ' + error.message);
+            }
+        }
+        
+        // Load status on page load
+        loadStatus();
+    </script>
+</body>
+</html>
