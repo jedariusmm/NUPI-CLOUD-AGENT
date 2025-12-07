@@ -9275,3 +9275,2498 @@ AUTONOMOUS CYCLE #45
   ❌ Could not hop to 192.168.12.76
 
 🦘 Attempting hop to: 192.168.12.91
+   📶 Tower reachable: T-Mobile-Tower-Secondary
+   🔍 Hostname: dns.google
+   🛰️  Discovering network route...
+   💾 Harvested 11 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+✅ Worldwide travel complete: 4 towers visited
+💾 Total data collected: 76 data points
+🧠 All data sent to NUPI Cloud for learning and improvements
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #46
+============================================================
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #47
+============================================================
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #48
+============================================================
+
+🌍 Time for worldwide travel...
+
+🌍 WORLDWIDE TRAVEL INITIATED
+============================================================
+
+📡 Traveling to: T-Mobile-Tower-Global-DNS
+   Region: Global
+   IP: 8.8.8.8
+   Location: (37.7749, -122.4194)
+   📶 Tower reachable: T-Mobile-Tower-Global-DNS
+   🔍 Hostname: dns.google
+   🛰️  Discovering network route...
+   💾 Harvested 11 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+📡 Traveling to: T-Mobile-Tower-Cloudflare
+   Region: Global
+   IP: 1.1.1.1
+   Location: (51.5074, -0.1278)
+   ✅ Connected to T-Mobile-Tower-Cloudflare
+   📊 Collected 56614 bytes of data
+   🔍 Hostname: one.one.one.one
+   🛰️  Discovering network route...
+   💾 Harvested 32 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+📡 Traveling to: T-Mobile-Tower-OpenDNS
+   Region: US-East
+   IP: 208.67.222.222
+   Location: (40.7128, -74.006)
+   ✅ Connected to T-Mobile-Tower-OpenDNS
+   📊 Collected 146 bytes of data
+   🔍 Hostname: dns.umbrella.com
+   🛰️  Discovering network route...
+   💾 Harvested 22 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+📡 Traveling to: T-Mobile-Tower-Secondary
+   Region: US-West
+   IP: 8.8.4.4
+   Location: (34.0522, -118.2437)
+   📶 Tower reachable: T-Mobile-Tower-Secondary
+   🔍 Hostname: dns.google
+   🛰️  Discovering network route...
+   💾 Harvested 11 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+✅ Worldwide travel complete: 4 towers visited
+💾 Total data collected: 76 data points
+🧠 All data sent to NUPI Cloud for learning and improvements
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #49
+============================================================
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #50
+============================================================
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #51
+============================================================
+
+🌍 Time for worldwide travel...
+
+🌍 WORLDWIDE TRAVEL INITIATED
+============================================================
+
+📡 Traveling to: T-Mobile-Tower-Global-DNS
+   Region: Global
+   IP: 8.8.8.8
+   Location: (37.7749, -122.4194)
+   📶 Tower reachable: T-Mobile-Tower-Global-DNS
+   🔍 Hostname: dns.google
+   🛰️  Discovering network route...
+   💾 Harvested 11 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+📡 Traveling to: T-Mobile-Tower-Cloudflare
+   Region: Global
+   IP: 1.1.1.1
+   Location: (51.5074, -0.1278)
+   ✅ Connected to T-Mobile-Tower-Cloudflare
+   📊 Collected 56614 bytes of data
+   🔍 Hostname: one.one.one.one
+   🛰️  Discovering network route...
+   💾 Harvested 32 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+📡 Traveling to: T-Mobile-Tower-OpenDNS
+   Region: US-East
+   IP: 208.67.222.222
+   Location: (40.7128, -74.006)
+   ✅ Connected to T-Mobile-Tower-OpenDNS
+   📊 Collected 146 bytes of data
+   🔍 Hostname: dns.umbrella.com
+   🛰️  Discovering network route...
+   💾 Harvested 22 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+📡 Traveling to: T-Mobile-Tower-Secondary
+   Region: US-West
+   IP: 8.8.4.4
+   Location: (34.0522, -118.2437)
+   📶 Tower reachable: T-Mobile-Tower-Secondary
+   🔍 Hostname: dns.google
+   🛰️  Discovering network route...
+   💾 Harvested 11 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+✅ Worldwide travel complete: 4 towers visited
+💾 Total data collected: 76 data points
+🧠 All data sent to NUPI Cloud for learning and improvements
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #52
+============================================================
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #53
+============================================================
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 60
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 192.168.12.178 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ✅ Reported 3 discovered devices to cloud
+  🔒 Securely reported 3 data collections to cloud (ENCRYPTED)
+
+🌍 Initiating worldwide travel via cellular...
+
+📡 Detecting cellular towers...
+  📡 Connecting to T-Mobile-Global-Tower-1 (US-West)...
+    ✅ Connected to cellular tower!
+  ✅ Hop reported to NUPI Cloud
+    🌍 Travelled worldwide: 192.168.12.178 → 8.8.8.8 (US-West)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 61
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 8.8.8.8 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ✅ Reported 3 discovered devices to cloud
+  🔒 Securely reported 3 data collections to cloud (ENCRYPTED)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 62
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 192.168.12.178 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ✅ Reported 3 discovered devices to cloud
+  🔒 Securely reported 3 data collections to cloud (ENCRYPTED)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 63
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ❌ offline
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 192.168.12.178 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ✅ Hop reported to NUPI Cloud
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 2 hops in local network!
+  📊 Discovered 2 devices
+  💾 Collected data from 2 devices
+  ✅ Reported 2 discovered devices to cloud
+  🔒 Securely reported 2 data collections to cloud (ENCRYPTED)
+
+🌍 Initiating worldwide travel via cellular...
+
+📡 Detecting cellular towers...
+  📡 Connecting to T-Mobile-Global-Tower-1 (US-West)...
+    ✅ Connected to cellular tower!
+  ✅ Hop reported to NUPI Cloud
+    🌍 Travelled worldwide: 192.168.12.178 → 8.8.8.8 (US-West)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 64
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 8.8.8.8 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200...   ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 14 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 14 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.134
+  ❌ Could not hop to 192.168.12.134
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 14 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.169
+  ❌ Could not hop to 192.168.12.169
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ✅ Data sent to NUPI Cloud
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 13 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.134
+  ❌ Could not hop to 192.168.12.134
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+⚠️  Could not update location: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Upload failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 13 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+⚠️  Could not update location: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Upload failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 14 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.134
+  ❌ Could not hop to 192.168.12.134
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 65
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.178 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 66
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.178 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  🔒 Securely reported 3 data collections to cloud (ENCRYPTED)
+
+🌍 Initiating worldwide travel via cellular...
+
+📡 Detecting cellular towers...
+  📡 Connecting to T-Mobile-Global-Tower-1 (US-West)...
+    ✅ Connected to cellular tower!
+  ✅ Hop reported to NUPI Cloud
+    🌍 Travelled worldwide: 192.168.12.178 → 8.8.8.8 (US-West)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 67
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 8.8.8.8 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 68
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.178 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... 
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #54
+============================================================
+
+🌍 Time for worldwide travel...
+
+🌍 WORLDWIDE TRAVEL INITIATED
+============================================================
+
+📡 Traveling to: T-Mobile-Tower-Global-DNS
+   Region: Global
+   IP: 8.8.8.8
+   Location: (37.7749, -122.4194)
+   📶 Tower reachable: T-Mobile-Tower-Global-DNS
+   🔍 Hostname: dns.google
+   🛰️  Discovering network route...
+   💾 Harvested 11 data points from tower
+   ⚠️ Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📡 Traveling to: T-Mobile-Tower-Cloudflare
+   Region: Global
+   IP: 1.1.1.1
+   Location: (51.5074, -0.1278)
+   ✅ Connected to T-Mobile-Tower-Cloudflare
+   📊 Collected 56614 bytes of data
+   🔍 Hostname: one.one.one.one
+   🛰️  Discovering network route...
+   💾 Harvested 32 data points from tower
+   ⚠️ Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📡 Traveling to: T-Mobile-Tower-OpenDNS
+   Region: US-East
+   IP: 208.67.222.222
+   Location: (40.7128, -74.006)
+   ✅ Connected to T-Mobile-Tower-OpenDNS
+   📊 Collected 146 bytes of data
+   🔍 Hostname: dns.umbrella.com
+   🛰️  Discovering network route...
+   💾 Harvested 22 data points from tower
+   ⚠️ Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📡 Traveling to: T-Mobile-Tower-Secondary
+   Region: US-West
+   IP: 8.8.4.4
+   Location: (34.0522, -118.2437)
+   📶 Tower reachable: T-Mobile-Tower-Secondary
+   🔍 Hostname: dns.google
+   🛰️  Discovering network route...
+   💾 Harvested 11 data points from tower
+   ⚠️ Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+✅ Worldwide travel complete: 4 towers visited
+💾 Total data collected: 76 data points
+🧠 All data sent to NUPI Cloud for learning and improvements
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #55
+============================================================
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #56
+============================================================
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #57
+============================================================
+
+🌍 Time for worldwide travel...
+
+🌍 WORLDWIDE TRAVEL INITIATED
+============================================================
+
+📡 Traveling to: T-Mobile-Tower-Global-DNS
+   Region: Global
+   IP: 8.8.8.8
+   Location: (37.7749, -122.4194)
+   📶 Tower reachable: T-Mobile-Tower-Global-DNS
+   🔍 Hostname: dns.google
+   🛰️  Discovering network route...
+   💾 Harvested 11 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+📡 Traveling to: T-Mobile-Tower-Cloudflare
+   Region: Global
+   IP: 1.1.1.1
+   Location: (51.5074, -0.1278)
+   ✅ Connected to T-Mobile-Tower-Cloudflare
+   📊 Collected 56614 bytes of data
+   🔍 Hostname: one.one.one.one
+   🛰️  Discovering network route...
+   💾 Harvested 32 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+📡 Traveling to: T-Mobile-Tower-OpenDNS
+   Region: US-East
+   IP: 208.67.222.222
+   Location: (40.7128, -74.006)
+   ✅ Connected to T-Mobile-Tower-OpenDNS
+   📊 Collected 146 bytes of data
+   🔍 Hostname: dns.umbrella.com
+   🛰️  Discovering network route...
+   💾 Harvested 22 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+📡 Traveling to: T-Mobile-Tower-Secondary
+   Region: US-West
+   IP: 8.8.4.4
+   Location: (34.0522, -118.2437)
+   📶 Tower reachable: T-Mobile-Tower-Secondary
+   🔍 Hostname: dns.google
+   🛰️  Discovering network route...
+   💾 Harvested 11 data points from tower
+   📤 Tower data reported to cloud for AI learning
+
+✅ Worldwide travel complete: 4 towers visited
+💾 Total data collected: 76 data points
+🧠 All data sent to NUPI Cloud for learning and improvements
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #58
+============================================================
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #59
+============================================================
+
+🤖 Running harvest cycle...
+
+🤖 AUTONOMOUS HARVESTING CYCLE
+============================================================
+Scan error: Command '['arp', '-a']' timed out after 10 seconds
+Found 0 devices on WiFi
+
+✅ Harvested data from 0 new devices
+📊 Total data collected: 0 items
+   ℹ️ All devices already visited, rescanning...
+
+💤 Sleeping 30 seconds before next cycle...
+
+============================================================
+AUTONOMOUS CYCLE #60
+============================================================
+
+🌍 Time for worldwide travel...
+
+🌍 WORLDWIDE TRAVEL INITIATED
+============================================================
+
+📡 Traveling to: T-Mobile-Tower-Global-DNS
+   Region: Global
+   IP: 8.8.8.8
+   Location: (37.7749, -122.4194)
+   📶 Tower reachable: T-Mobile-Tower-Global-DNS
+   🔍 Hostname: dns.google
+   🛰️  Discovering network route...
+   💾 Harvested 11 data points from tower
+   ⚠️ Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📡 Traveling to: T-Mobile-Tower-Cloudflare
+   Region: Global
+   IP: 1.1.1.1
+   Location: (51.5074, -0.1278)
+   ✅ Connected to T-Mobile-Tower-Cloudflare
+   📊 Collected 56614 bytes of data
+   🔍 Hostname: one.one.one.one
+   🛰️  Discovering network route...
+   💾 Harvested 32 data points from tower
+   ⚠️ Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📡 Traveling to: T-Mobile-Tower-OpenDNS
+   Region: US-East
+   IP: 208.67.222.222
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+⚠️  Could not update location: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Upload failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 13 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+  ⚠️  Upload response: 502
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 13 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+⚠️  Could not update location: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Upload failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 14 active devices
+
+🦘 Attempting hop to: 192.168.12.10
+  ❌ Could not hop to 192.168.12.10
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+⚠️  Could not update location: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Upload failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 13 active devices
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.147
+  ❌ Could not hop to 192.168.12.147
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+⚠️  Could not update location: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Upload failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 12 active devices
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.158
+  ❌ Could not hop to 192.168.12.158
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+⚠️  Could not update location: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Upload failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 12 active devices
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+
+🦘 Attempting hop to: 192.168.12.76
+  ❌ Could not hop to 192.168.12.76
+
+🦘 Attempting hop to: 192.168.12.91
+  ❌ Could not hop to 192.168.12.91
+
+🦘 Attempting hop to: 192.168.12.105
+  ❌ Could not hop to 192.168.12.105
+
+🦘 Attempting hop to: 192.168.12.109
+  ❌ Could not hop to 192.168.12.109
+
+🦘 Attempting hop to: 192.168.12.127
+  ❌ Could not hop to 192.168.12.127
+
+🦘 Attempting hop to: 192.168.12.141
+  ❌ Could not hop to 192.168.12.141
+
+🦘 Attempting hop to: 192.168.12.169
+  ❌ Could not hop to 192.168.12.169
+
+🦘 Attempting hop to: 192.168.12.175
+  ❌ Could not hop to 192.168.12.175
+
+🦘 Attempting hop to: 192.168.12.247
+  ❌ Could not hop to 192.168.12.247
+
+⏳ Waiting 30 seconds before next scan...
+
+📍 Current Device: iMac.lan
+⚠️  Error extracting data: '<' not supported between instances of 'NoneType' and 'float'
+⚠️  Could not update location: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Upload failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+
+🔍 Scanning network: 192.168.12.1-254
+✅ Found 11 active devices
+
+🦘 Attempting hop to: 192.168.12.56
+  ❌ Could not hop to 192.168.12.56
+   🚀 Total Travels: 24
+   💾 Data Points: 24
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 8 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #27
+============================================================
+⏰ Time: 12:34:26
+�� Current Location: 192.168.12.134
+🤖 Other Agents Detected: 0
+
+🔍 Scanning network 192.168.12.x for devices...
+  ✅ Found: 192.168.12.1 (f5688w.lan) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.10 (Device-10) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.56 (65tclrokutvjedarius.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.76 (rokustreambar.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.91 (Device-91) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.105 (galaxy-tab-a9-5g.lan) - 📱 Phone
+  ✅ Found: 192.168.12.109 (Device-109) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.127 (Device-127) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.134 (Device-134) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.141 (Device-141) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.147 (iphone.lan) - 📱 Phone
+  ✅ Found: 192.168.12.175 (65elementrokutv.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.178 (imac.lan) - 💻 Computer
+  ✅ Found: 192.168.12.247 (43hisenserokutv.lan) - 📺 Smart TV
+📊 Total devices discovered: 17
+
+🚀 TRAVELLING: 192.168.12.134 → 192.168.12.1
+   Target: f5688w.lan
+   ✅ Arrived at f5688w.lan
+   📍 New location: 192.168.12.1
+  💾 Collecting data from f5688w.lan (192.168.12.1)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 25
+   💾 Data Points: 25
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 5 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #28
+============================================================
+⏰ Time: 12:38:34
+�� Current Location: 192.168.12.1
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.1 → 192.168.12.247
+   Target: 43hisenserokutv.lan
+   ✅ Arrived at 43hisenserokutv.lan
+   📍 New location: 192.168.12.247
+  💾 Collecting data from 43hisenserokutv.lan (192.168.12.247)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 26
+   💾 Data Points: 26
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 7 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #29
+============================================================
+⏰ Time: 12:38:41
+�� Current Location: 192.168.12.247
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.247 → 192.168.12.178
+   Target: imac.lan
+   ✅ Arrived at imac.lan
+   📍 New location: 192.168.12.178
+  💾 Collecting data from imac.lan (192.168.12.178)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 27
+   💾 Data Points: 27
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 10 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #30
+============================================================
+⏰ Time: 12:38:51
+�� Current Location: 192.168.12.178
+🤖 Other Agents Detected: 0
+
+🔍 Scanning network 192.168.12.x for devices...
+  ✅ Found: 192.168.12.1 (f5688w.lan) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.10 (Device-10) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.56 (65tclrokutvjedarius.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.76 (rokustreambar.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.91 (Device-91) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.105 (galaxy-tab-a9-5g.lan) - 📱 Phone
+  ✅ Found: 192.168.12.109 (Device-109) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.127 (Device-127) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.141 (Device-141) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.147 (iphone.lan) - 📱 Phone
+  ✅ Found: 192.168.12.158 (Device-158) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.175 (65elementrokutv.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.178 (imac.lan) - 💻 Computer
+  ✅ Found: 192.168.12.247 (43hisenserokutv.lan) - 📺 Smart TV
+📊 Total devices discovered: 17
+
+🚀 TRAVELLING: 192.168.12.178 → 192.168.12.10
+   Target: Device-10
+   ✅ Arrived at Device-10
+   📍 New location: 192.168.12.10
+  💾 Collecting data from Device-10 (192.168.12.10)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 28
+   💾 Data Points: 28
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 6 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #31
+============================================================
+⏰ Time: 12:43:00
+�� Current Location: 192.168.12.10
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.10 → 192.168.12.169
+   Target: Device-169
+   ✅ Arrived at Device-169
+   📍 New location: 192.168.12.169
+  💾 Collecting data from Device-169 (192.168.12.169)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 29
+   💾 Data Points: 29
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 14 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #32
+============================================================
+⏰ Time: 12:43:14
+�� Current Location: 192.168.12.169
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.169 → 192.168.12.1
+   Target: f5688w.lan
+   ✅ Arrived at f5688w.lan
+   📍 New location: 192.168.12.1
+  💾 Collecting data from f5688w.lan (192.168.12.1)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 30
+   💾 Data Points: 30
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 7 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #33
+============================================================
+⏰ Time: 12:43:21
+�� Current Location: 192.168.12.1
+🤖 Other Agents Detected: 0
+
+🔍 Scanning network 192.168.12.x for devices...
+  ✅ Found: 192.168.12.1 (f5688w.lan) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.10 (Device-10) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.56 (65tclrokutvjedarius.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.76 (rokustreambar.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.91 (Device-91) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.105 (galaxy-tab-a9-5g.lan) - 📱 Phone
+  ✅ Found: 192.168.12.109 (Device-109) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.127 (Device-127) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.134 (Device-134) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.141 (Device-141) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.158 (Device-158) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.175 (65elementrokutv.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.178 (imac.lan) - 💻 Computer
+  ✅ Found: 192.168.12.247 (43hisenserokutv.lan) - 📺 Smart TV
+📊 Total devices discovered: 17
+
+🚀 TRAVELLING: 192.168.12.1 → 192.168.12.127
+   Target: Device-127
+   ✅ Arrived at Device-127
+   📍 New location: 192.168.12.127
+  💾 Collecting data from Device-127 (192.168.12.127)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 31
+   💾 Data Points: 31
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 5 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #34
+============================================================
+⏰ Time: 12:47:29
+�� Current Location: 192.168.12.127
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.127 → 192.168.12.1
+   Target: f5688w.lan
+   ✅ Arrived at f5688w.lan
+   📍 New location: 192.168.12.1
+  💾 Collecting data from f5688w.lan (192.168.12.1)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 32
+   💾 Data Points: 32
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 14 seconds before next travel...
+
+🔄 Cycle 25: 12:22:43
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 26: 12:23:45
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 27: 12:24:47
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 28: 12:25:48
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 29: 12:26:50
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 30: 12:27:51
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 31: 12:28:53
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 32: 12:29:55
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 33: 12:30:56
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 34: 12:31:58
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 35: 12:33:00
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 36: 12:34:02
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 37: 12:35:04
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 38: 12:36:05
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 39: 12:37:07
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 40: 12:38:08
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 41: 12:39:10
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+✅ Data transferred (Total points: 0)
+   ✅ Data transferred successfully
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 42: 12:40:12
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+⚠️  Transfer failed: 502
+   ⚠️  Transfer failed
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 43: 12:41:14
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+⚠️  Transfer error: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+   ⚠️  Transfer failed
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 44: 12:42:30
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+⚠️  Transfer error: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+   ⚠️  Transfer failed
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 45: 12:43:47
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+⚠️  Transfer error: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+   ⚠️  Transfer failed
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 46: 12:45:04
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+⚠️  Transfer error: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+   ⚠️  Transfer failed
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 47: 12:46:20
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+⚠️  Transfer error: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+   ⚠️  Transfer failed
+   📋 Checking for commands...
+   ⏳ Waiting 60 seconds...
+
+🔄 Cycle 48: 12:47:37
+   📊 Collecting local data...
+⚠️  Error collecting data: '<' not supported between instances of 'NoneType' and 'float'
+   📤 Transferring to NUPI Cloud...
+⚠️  Transfer error: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=10)
+   ⚠️  Transfer failed
+   🤖 Other Agents: 0
+
+⏳ Waiting 9 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #27
+============================================================
+⏰ Time: 12:35:00
+�� Current Location: 192.168.12.10
+🤖 Other Agents Detected: 0
+
+🔍 Scanning network 192.168.12.x for devices...
+  ✅ Found: 192.168.12.1 (f5688w.lan) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.10 (Device-10) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.56 (65tclrokutvjedarius.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.76 (rokustreambar.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.91 (Device-91) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.105 (galaxy-tab-a9-5g.lan) - 📱 Phone
+  ✅ Found: 192.168.12.109 (Device-109) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.127 (Device-127) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.141 (Device-141) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.158 (Device-158) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.175 (65elementrokutv.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.178 (imac.lan) - 💻 Computer
+  ✅ Found: 192.168.12.247 (43hisenserokutv.lan) - 📺 Smart TV
+📊 Total devices discovered: 18
+
+🚀 TRAVELLING: 192.168.12.10 → 192.168.12.1
+   Target: f5688w.lan
+   ✅ Arrived at f5688w.lan
+   📍 New location: 192.168.12.1
+  💾 Collecting data from f5688w.lan (192.168.12.1)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 25
+   💾 Data Points: 25
+   🌐 Devices Known: 18
+   🤖 Other Agents: 0
+
+⏳ Waiting 9 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #28
+============================================================
+⏰ Time: 12:39:14
+�� Current Location: 192.168.12.1
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.1 → 192.168.12.158
+   Target: Device-158
+   ✅ Arrived at Device-158
+   📍 New location: 192.168.12.158
+  💾 Collecting data from Device-158 (192.168.12.158)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 26
+   💾 Data Points: 26
+   🌐 Devices Known: 18
+   🤖 Other Agents: 0
+
+⏳ Waiting 10 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #29
+============================================================
+⏰ Time: 12:39:24
+�� Current Location: 192.168.12.158
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.158 → 192.168.12.134
+   Target: Device-134
+   ✅ Arrived at Device-134
+   📍 New location: 192.168.12.134
+  💾 Collecting data from Device-134 (192.168.12.134)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 27
+   💾 Data Points: 27
+   🌐 Devices Known: 18
+   🤖 Other Agents: 0
+
+⏳ Waiting 5 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #30
+============================================================
+⏰ Time: 12:39:29
+�� Current Location: 192.168.12.134
+🤖 Other Agents Detected: 0
+
+🔍 Scanning network 192.168.12.x for devices...
+  ✅ Found: 192.168.12.1 (f5688w.lan) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.10 (Device-10) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.56 (65tclrokutvjedarius.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.76 (rokustreambar.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.91 (Device-91) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.105 (galaxy-tab-a9-5g.lan) - 📱 Phone
+  ✅ Found: 192.168.12.109 (Device-109) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.134 (Device-134) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.141 (Device-141) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.147 (iphone.lan) - 📱 Phone
+  ✅ Found: 192.168.12.158 (Device-158) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.175 (65elementrokutv.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.178 (imac.lan) - 💻 Computer
+  ✅ Found: 192.168.12.247 (43hisenserokutv.lan) - 📺 Smart TV
+📊 Total devices discovered: 18
+
+🚀 TRAVELLING: 192.168.12.134 → 192.168.12.91
+   Target: Device-91
+   ✅ Arrived at Device-91
+   📍 New location: 192.168.12.91
+  💾 Collecting data from Device-91 (192.168.12.91)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 28
+   💾 Data Points: 28
+   🌐 Devices Known: 18
+   🤖 Other Agents: 0
+
+⏳ Waiting 11 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #31
+============================================================
+⏰ Time: 12:43:43
+�� Current Location: 192.168.12.91
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.91 → 192.168.12.232
+   Target: Device-232
+   ✅ Arrived at Device-232
+   📍 New location: 192.168.12.232
+  💾 Collecting data from Device-232 (192.168.12.232)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 29
+   💾 Data Points: 29
+   🌐 Devices Known: 18
+   🤖 Other Agents: 0
+
+⏳ Waiting 8 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #32
+============================================================
+⏰ Time: 12:43:51
+�� Current Location: 192.168.12.232
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.232 → 192.168.12.127
+   Target: Device-127
+   ✅ Arrived at Device-127
+   📍 New location: 192.168.12.127
+  💾 Collecting data from Device-127 (192.168.12.127)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 30
+   💾 Data Points: 30
+   🌐 Devices Known: 18
+   🤖 Other Agents: 0
+
+⏳ Waiting 8 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #33
+============================================================
+⏰ Time: 12:43:59
+�� Current Location: 192.168.12.127
+🤖 Other Agents Detected: 0
+
+🔍 Scanning network 192.168.12.x for devices...
+  ✅ Found: 192.168.12.1 (f5688w.lan) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.10 (Device-10) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.56 (65tclrokutvjedarius.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.76 (rokustreambar.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.91 (Device-91) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.105 (galaxy-tab-a9-5g.lan) - 📱 Phone
+  ✅ Found: 192.168.12.109 (Device-109) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.127 (Device-127) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.141 (Device-141) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.158 (Device-158) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.175 (65elementrokutv.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.178 (imac.lan) - 💻 Computer
+  ✅ Found: 192.168.12.247 (43hisenserokutv.lan) - 📺 Smart TV
+📊 Total devices discovered: 18
+
+🚀 TRAVELLING: 192.168.12.127 → 192.168.12.91
+   Target: Device-91
+   ✅ Arrived at Device-91
+   📍 New location: 192.168.12.91
+  💾 Collecting data from Device-91 (192.168.12.91)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 31
+   💾 Data Points: 31
+   🌐 Devices Known: 18
+   🤖 Other Agents: 0
+
+⏳ Waiting 6 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #34
+============================================================
+⏰ Time: 12:48:09
+�� Current Location: 192.168.12.91
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.91 → 192.168.12.141
+   Target: Device-141
+   ✅ Arrived at Device-141
+   📍 New location: 192.168.12.141
+  💾 Collecting data from Device-141 (192.168.12.141)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 32
+   💾 Data Points: 32
+   🌐 Devices Known: 18
+   🤖 Other Agents: 0
+
+⏳ Waiting 8 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #35
+============================================================
+⏰ Time: 12:48:17
+�� Current Location: 192.168.12.141
+
+�� AUTONOMOUS CYCLE #27
+============================================================
+⏰ Time: 12:34:58
+�� Current Location: 192.168.12.147
+🤖 Other Agents Detected: 0
+
+🔍 Scanning network 192.168.12.x for devices...
+  ✅ Found: 192.168.12.1 (f5688w.lan) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.10 (Device-10) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.56 (65tclrokutvjedarius.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.76 (rokustreambar.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.91 (Device-91) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.105 (galaxy-tab-a9-5g.lan) - 📱 Phone
+  ✅ Found: 192.168.12.109 (Device-109) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.127 (Device-127) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.141 (Device-141) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.147 (iphone.lan) - 📱 Phone
+  ✅ Found: 192.168.12.158 (Device-158) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.175 (65elementrokutv.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.178 (imac.lan) - 💻 Computer
+  ✅ Found: 192.168.12.247 (43hisenserokutv.lan) - 📺 Smart TV
+📊 Total devices discovered: 17
+
+🚀 TRAVELLING: 192.168.12.147 → 192.168.12.76
+   Target: rokustreambar.lan
+   ✅ Arrived at rokustreambar.lan
+   📍 New location: 192.168.12.76
+  💾 Collecting data from rokustreambar.lan (192.168.12.76)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 25
+   💾 Data Points: 25
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 5 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #28
+============================================================
+⏰ Time: 12:39:06
+�� Current Location: 192.168.12.76
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.76 → 192.168.12.141
+   Target: Device-141
+   ✅ Arrived at Device-141
+   📍 New location: 192.168.12.141
+  💾 Collecting data from Device-141 (192.168.12.141)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 26
+   💾 Data Points: 26
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 8 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #29
+============================================================
+⏰ Time: 12:39:15
+�� Current Location: 192.168.12.141
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.141 → 192.168.12.76
+   Target: rokustreambar.lan
+   ✅ Arrived at rokustreambar.lan
+   📍 New location: 192.168.12.76
+  💾 Collecting data from rokustreambar.lan (192.168.12.76)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 27
+   💾 Data Points: 27
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 10 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #30
+============================================================
+⏰ Time: 12:39:25
+�� Current Location: 192.168.12.76
+🤖 Other Agents Detected: 0
+
+🔍 Scanning network 192.168.12.x for devices...
+  ✅ Found: 192.168.12.1 (f5688w.lan) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.10 (Device-10) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.56 (65tclrokutvjedarius.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.76 (rokustreambar.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.91 (Device-91) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.105 (galaxy-tab-a9-5g.lan) - 📱 Phone
+  ✅ Found: 192.168.12.109 (Device-109) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.127 (Device-127) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.134 (Device-134) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.141 (Device-141) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.158 (Device-158) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.175 (65elementrokutv.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.178 (imac.lan) - 💻 Computer
+  ✅ Found: 192.168.12.247 (43hisenserokutv.lan) - 📺 Smart TV
+📊 Total devices discovered: 17
+
+🚀 TRAVELLING: 192.168.12.76 → 192.168.12.158
+   Target: Device-158
+   ✅ Arrived at Device-158
+   📍 New location: 192.168.12.158
+  💾 Collecting data from Device-158 (192.168.12.158)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 28
+   💾 Data Points: 28
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 5 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #31
+============================================================
+⏰ Time: 12:43:32
+�� Current Location: 192.168.12.158
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.158 → 192.168.12.141
+   Target: Device-141
+   ✅ Arrived at Device-141
+   📍 New location: 192.168.12.141
+  💾 Collecting data from Device-141 (192.168.12.141)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 29
+   💾 Data Points: 29
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 11 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #32
+============================================================
+⏰ Time: 12:43:43
+�� Current Location: 192.168.12.141
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.141 → 192.168.12.91
+   Target: Device-91
+   ✅ Arrived at Device-91
+   📍 New location: 192.168.12.91
+  💾 Collecting data from Device-91 (192.168.12.91)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 30
+   💾 Data Points: 30
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 11 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #33
+============================================================
+⏰ Time: 12:43:54
+�� Current Location: 192.168.12.91
+🤖 Other Agents Detected: 0
+
+🔍 Scanning network 192.168.12.x for devices...
+  ✅ Found: 192.168.12.1 (f5688w.lan) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.10 (Device-10) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.56 (65tclrokutvjedarius.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.76 (rokustreambar.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.91 (Device-91) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.105 (galaxy-tab-a9-5g.lan) - 📱 Phone
+  ✅ Found: 192.168.12.109 (Device-109) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.127 (Device-127) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.141 (Device-141) - 🖥️ Unknown Device
+  ✅ Found: 192.168.12.175 (65elementrokutv.lan) - 📺 Smart TV
+  ✅ Found: 192.168.12.178 (imac.lan) - 💻 Computer
+  ✅ Found: 192.168.12.247 (43hisenserokutv.lan) - 📺 Smart TV
+📊 Total devices discovered: 17
+
+🚀 TRAVELLING: 192.168.12.91 → 192.168.12.134
+   Target: Device-134
+   ✅ Arrived at Device-134
+   📍 New location: 192.168.12.134
+  💾 Collecting data from Device-134 (192.168.12.134)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 31
+   💾 Data Points: 31
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 6 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #34
+============================================================
+⏰ Time: 12:48:06
+�� Current Location: 192.168.12.134
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.134 → 192.168.12.127
+   Target: Device-127
+   ✅ Arrived at Device-127
+   📍 New location: 192.168.12.127
+  💾 Collecting data from Device-127 (192.168.12.127)...
+  ✅ Collected 4 data types
+
+📊 AGENT STATISTICS:
+   🚀 Total Travels: 32
+   💾 Data Points: 32
+   🌐 Devices Known: 17
+   🤖 Other Agents: 0
+
+⏳ Waiting 12 seconds before next travel...
+
+============================================================
+�� AUTONOMOUS CYCLE #35
+============================================================
+⏰ Time: 12:48:18
+�� Current Location: 192.168.12.127
+🤖 Other Agents Detected: 0
+
+🚀 TRAVELLING: 192.168.12.127 → 192.168.12.134
+❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 69
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.178 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+🌍 Initiating worldwide travel via cellular...
+
+📡 Detecting cellular towers...
+  📡 Connecting to T-Mobile-Global-Tower-1 (US-West)...
+    ✅ Connected to cellular tower!
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    🌍 Travelled worldwide: 192.168.12.178 → 8.8.8.8 (US-West)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 70
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 8.8.8.8 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 71
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.178 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)
+  🦘 Attempting hop to 192.168.12.200... ❌ offline
+  🦘 Attempting hop to 192.168.12.254... ❌ offline
+
+  ✈️  Made 3 hops in local network!
+  📊 Discovered 3 devices
+  💾 Collected data from 3 devices
+  ⚠️  Device report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+  ⚠️  Sensitive data report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+
+📊 Status:
+   Networks detected: 3
+   Gateways discovered: 1
+
+⏳ Waiting 30 seconds before next travel...
+
+🔄 Travel Cycle 72
+============================================================
+📡 Found 3 wireless networks (WiFi + Cellular)
+   • For (WIFI, signal: Wi-Fi)
+   • T-Mobile-5G-Tower (CELLULAR, signal: strong)
+   • T-Mobile-LTE-Tower (CELLULAR, signal: medium)
+🌐 Gateway found: 192.168.12.1
+🔄 Gateway 192.168.12.1 already explored - hopping to devices
+
+🔍 Exploring network beyond gateway 192.168.12.1...
+  🦘 Attempting hop to 192.168.12.100... ❌ offline
+  🦘 Attempting hop to 192.168.12.150... ❌ offline
+  🦘 Attempting hop to 192.168.12.158... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.178 → 192.168.12.158 (Unknown Device)
+  🦘 Attempting hop to 192.168.12.175... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.158 → 192.168.12.175 (65" Roku TV)
+  🦘 Attempting hop to 192.168.12.178... ✅ ONLINE!
+    💾 Collected: 10 data types (28 items)
+  ⚠️  Cloud report failed: HTTPSConnectionPool(host='nupidesktopai.com', port=443): Read timed out. (read timeout=5)
+    📍 Travelled: 192.168.12.175 → 192.168.12.178 (iMac Desktop)

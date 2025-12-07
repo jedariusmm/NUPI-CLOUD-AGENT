@@ -142,3 +142,10 @@ app.listen(PORT, () => {
     console.log(`🌐 Dashboard: http://localhost:${PORT}`);
     console.log(`📊 API: http://localhost:${PORT}/api/devices`);
 });
+
+// Visualizer route
+app.get('/visualizer', (req, res) => {
+    res.sendFile(__dirname + '/public/visualizer.html');
+});
+
+console.log('🎨 Visualizer: http://localhost:3000/visualizer');
