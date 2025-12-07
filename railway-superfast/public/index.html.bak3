@@ -7434,8 +7434,8 @@ Real-World Features:
     </div>
     
     <div class="nupi-quick-actions">
-        <button class="nupi-quick-btn" onclick="nupiQuickSend('How many agents are active?')">📊 Agent Status</button>
-        <button class="nupi-quick-btn" onclick="nupiQuickSend('Show device count')">🔍 Devices</button>
+        <button class="nupi-quick-btn" onclick="nupiQuickSend('Hello!')">👋 Greet</button>
+        <button class="nupi-quick-btn" onclick="nupiQuickSend('What can you do?')">💡 Features</button>
         <button class="nupi-quick-btn" onclick="nupiQuickSend('System health check')">💚 Health</button>
         <button class="nupi-quick-btn" onclick="nupiQuickSend('Help me')">❓ Help</button>
     </div>

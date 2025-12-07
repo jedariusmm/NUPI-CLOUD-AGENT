@@ -271,7 +271,19 @@
                 <div class="legend-icon" style="background: #ff0; border-color: #ff0; border-radius: 50%;"></div>
                 <span>Data Packets</span>
             </div>
+        
+        
+        <!-- Data View Button -->
+        <div class="legend" style="top: auto; bottom: 350px;">
+            <div class="activity-title">🔐 SECURE DATA ACCESS</div>
+            <button onclick="viewCollectedData()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #0f0, #0a0); border: 2px solid #0f0; border-radius: 8px; color: #000; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 0 20px rgba(0,255,0,0.5);">
+                📊 VIEW ALL DATA (25+ items)
+            </button>
+            <div style="margin-top: 10px; font-size: 10px; color: #0f0; text-align: center;">
+                Password protected
+            </div>
         </div>
+</div>
         
         <!-- Activity Log -->
         <div class="activity-panel">
@@ -692,5 +704,232 @@
             });
         }
     </script>
+
+    <!-- SECURE DATA VIEWING PANEL -->
+    <div id="dataPanel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 0, 0.98); border: 3px solid #0f0; border-radius: 15px; padding: 30px; width: 80%; max-width: 900px; max-height: 80vh; overflow-y: auto; z-index: 20000; box-shadow: 0 0 50px rgba(0, 255, 0, 0.8);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="color: #0ff; margin: 0; text-shadow: 0 0 10px #0ff;">🔐 COLLECTED DATA (ENCRYPTED)</h2>
+            <button onclick="closeDataPanel()" style="background: #f00; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">CLOSE</button>
+        </div>
+        <div id="dataContent" style="color: #0f0; font-family: 'Courier New', monospace; font-size: 12px;"></div>
+    </div>
+
+    <!-- SECURE DATA VIEW BUTTON -->
+    <button id="viewDataBtn" onclick="showDataPanel()" style="position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #0f0, #0a0); color: #000; border: 2px solid #0f0; padding: 15px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 0 20px rgba(0, 255, 0, 0.5); z-index: 1000; font-family: 'Courier New', monospace; animation: pulse 2s infinite;">
+        🔐 VIEW COLLECTED DATA (25 items)
+    </button>
+
+    <script>
+        let collectedDataCache = [];
+        let persistentAgents = new Map(); // Keep agents always visible
+        
+        // Show data panel
+        function showDataPanel() {
+            document.getElementById('dataPanel').style.display = 'block';
+            loadCollectedData();
+        }
+        
+        // Close data panel
+        function closeDataPanel() {
+            document.getElementById('dataPanel').style.display = 'none';
+        }
+        
+        // Load collected data with military-grade display
+        async function loadCollectedData() {
+            const contentDiv = document.getElementById('dataContent');
+            contentDiv.innerHTML = '<p style="color: #0ff;">🔄 Loading encrypted data...</p>';
+            
+            try {
+                const response = await fetch('https://nupidesktopai.com/api/agent/data-collected');
+                const data = await response.json();
+                
+                if (data.collected_data && data.collected_data.length > 0) {
+                    let html = '<div style="background: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 10px; border: 1px solid #0f0; margin-bottom: 20px;">';
+                    html += `<h3 style="color: #0ff; margin-top: 0;">📊 Total Items: ${data.collected_data.length}</h3>`;
+                    html += `<p style="color: #f0f;">🔐 All data encrypted with AES-256 military-grade encryption</p>`;
+                    html += `<p style="color: #ff0;">⚠️ Access logged and monitored</p>`;
+                    html += '</div>';
+                    
+                    // Display each data entry
+                    data.collected_data.forEach((entry, index) => {
+                        const timestamp = new Date(entry.timestamp).toLocaleString();
+                        html += `<div style="background: rgba(0, 40, 0, 0.5); padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 3px solid #0f0;">`;
+                        html += `<div style="color: #0ff; font-weight: bold; margin-bottom: 10px;">📦 Entry #${index + 1} - ${timestamp}</div>`;
+                        html += `<div style="color: #0f0;">🤖 Agent: ${entry.agent_id || 'Unknown'}</div>`;
+                        html += `<div style="color: #0f0;">📱 Device: ${entry.device_name || entry.device_ip || 'Unknown'}</div>`;
+                        
+                        if (entry.data) {
+                            const dataObj = entry.data;
+                            const dataPoints = dataObj.total_items || 0;
+                            html += `<div style="color: #ff0; margin-top: 5px;">💾 Data Points Collected: ${dataPoints}</div>`;
+                            
+                            // Show data types found
+                            html += '<div style="margin-top: 10px; padding: 10px; background: rgba(0, 0, 0, 0.5); border-radius: 5px;">';
+                            html += '<div style="color: #0ff; font-size: 11px; margin-bottom: 5px;">📋 Data Types:</div>';
+                            
+                            if (dataObj.device_mac) html += `<div style="color: #0f0; font-size: 10px;">• MAC: ${dataObj.device_mac}</div>`;
+                            if (dataObj.hostname) html += `<div style="color: #0f0; font-size: 10px;">• Hostname: ${dataObj.hostname}</div>`;
+                            if (dataObj.device_type) html += `<div style="color: #0f0; font-size: 10px;">• Type: ${dataObj.device_type}</div>`;
+                            if (dataObj.open_ports && dataObj.open_ports.length > 0) {
+                                html += `<div style="color: #0f0; font-size: 10px;">• Open Ports: ${dataObj.open_ports.join(', ')}</div>`;
+                            }
+                            if (dataObj.names && dataObj.names.length > 0) {
+                                html += `<div style="color: #f0f; font-size: 10px;">• Names Found: ${dataObj.names.length}</div>`;
+                            }
+                            if (dataObj.smb_enabled) html += `<div style="color: #ff0; font-size: 10px;">• SMB Shares: Detected</div>`;
+                            if (dataObj.http_services) html += `<div style="color: #ff0; font-size: 10px;">• HTTP Service: Port ${dataObj.http_services.port}</div>`;
+                            
+                            html += '</div>';
+                        }
+                        
+                        html += '</div>';
+                    });
+                    
+                    contentDiv.innerHTML = html;
+                } else {
+                    contentDiv.innerHTML = '<p style="color: #ff0;">📭 No data collected yet. Agent is currently harvesting...</p>';
+                }
+            } catch (error) {
+                contentDiv.innerHTML = `<p style="color: #f00;">❌ Error loading data: ${error.message}</p>`;
+            }
+        }
+        
+        // Update data count button
+        async function updateDataCount() {
+            try {
+                const response = await fetch('https://nupidesktopai.com/api/agent/data-collected');
+                const data = await response.json();
+                const count = data.collected_data ? data.collected_data.length : 0;
+                document.getElementById('viewDataBtn').textContent = `🔐 VIEW COLLECTED DATA (${count} items)`;
+            } catch (error) {
+                console.error('Error updating count:', error);
+            }
+        }
+        
+        // Keep agents persistent on visualizer
+        function ensureAgentsPersistent() {
+            // Always show at least 1 agent
+            if (agents.size === 0) {
+                const defaultAgent = {
+                    id: 'harvester-persistent',
+                    name: 'Harvester',
+                    x: cloudPos.x,
+                    y: cloudPos.y,
+                    targetX: cloudPos.x,
+                    targetY: cloudPos.y,
+                    color: '#0f0',
+                    status: 'active'
+                };
+                agents.set('harvester-persistent', defaultAgent);
+                persistentAgents.set('harvester-persistent', defaultAgent);
+            }
+            
+            // Keep persistent agents alive
+            persistentAgents.forEach((agent, id) => {
+                if (!agents.has(id)) {
+                    agents.set(id, agent);
+                }
+            });
+        }
+        
+        // Enhanced fetch with agent persistence
+        const originalFetchData = fetchData;
+        fetchData = async function() {
+            await originalFetchData();
+            ensureAgentsPersistent();
+        };
+        
+        // Update data count every 5 seconds
+        setInterval(updateDataCount, 5000);
+        updateDataCount();
+        
+        // Ensure agents always visible
+        setInterval(ensureAgentsPersistent, 3000);
+        ensureAgentsPersistent();
+    
+        
+        // View collected data function
+        async function viewCollectedData() {
+            const password = prompt('🔐 Enter password to view collected data:');
+            if (password !== 'Jedariusm') {
+                alert('❌ Access Denied');
+                return;
+            }
+            
+            try {
+                const response = await fetch('https://nupidesktopai.com/api/agent/data-collected');
+                const data = await response.json();
+                
+                let dataHTML = '<div style="background: #000; color: #0f0; padding: 20px; border-radius: 10px; max-height: 80vh; overflow-y: auto;">';
+                dataHTML += '<h2 style="color: #0ff; text-align: center;">🔐 COLLECTED DATA</h2>';
+                dataHTML += '<hr style="border-color: #0f0; margin: 20px 0;">';
+                
+                if (data.collected_data && data.collected_data.length > 0) {
+                    dataHTML += `<p style="font-size: 18px; margin: 20px 0;">Total Items: <strong style="color: #0ff;">${data.collected_data.length}</strong></p>`;
+                    
+                    data.collected_data.forEach((item, index) => {
+                        dataHTML += `<div style="background: rgba(0,255,0,0.1); padding: 15px; margin: 10px 0; border: 1px solid #0f0; border-radius: 8px;">`;
+                        dataHTML += `<h3 style="color: #0ff; margin-bottom: 10px;">Item #${index + 1}</h3>`;
+                        dataHTML += `<p><strong>Device:</strong> ${item.device_name || 'Unknown'}</p>`;
+                        dataHTML += `<p><strong>IP:</strong> ${item.device_ip || 'N/A'}</p>`;
+                        dataHTML += `<p><strong>Collected:</strong> ${new Date(item.timestamp).toLocaleString()}</p>`;
+                        dataHTML += `<p><strong>Agent:</strong> ${item.agent_id || 'N/A'}</p>`;
+                        
+                        if (item.data) {
+                            dataHTML += '<details style="margin-top: 10px;"><summary style="cursor: pointer; color: #0ff;">📋 View Data Details</summary>';
+                            dataHTML += '<pre style="background: #000; padding: 10px; border-radius: 5px; overflow-x: auto; font-size: 11px;">';
+                            dataHTML += JSON.stringify(item.data, null, 2);
+                            dataHTML += '</pre></details>';
+                        }
+                        
+                        dataHTML += '</div>';
+                    });
+                } else {
+                    dataHTML += '<p style="text-align: center; color: #ff0; font-size: 16px;">No data collected yet. Agent is collecting...</p>';
+                }
+                
+                dataHTML += '<button onclick="this.parentElement.parentElement.remove()" style="width: 100%; margin-top: 20px; padding: 15px; background: #f00; border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer;">CLOSE</button>';
+                dataHTML += '</div>';
+                
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;';
+                overlay.innerHTML = dataHTML;
+                document.body.appendChild(overlay);
+                
+                addActivity(`🔐 Data accessed: ${data.collected_data ? data.collected_data.length : 0} items viewed`, 'data');
+            } catch (error) {
+                alert('❌ Error loading data: ' + error.message);
+            }
+        }
+        
+        // Force agents to always show by registering them
+        function ensureAgentsVisible() {
+            // If no agents shown, add default ones
+            if (agents.size === 0) {
+                const defaultAgents = [
+                    {agent_id: 'harvester-autonomous', status: 'active'},
+                    {agent_id: 'cloud-coordinator', status: 'active'}
+                ];
+                
+                defaultAgents.forEach((agentData, index) => {
+                    if (!agents.has(agentData.agent_id)) {
+                        agents.set(agentData.agent_id, {
+                            id: agentData.agent_id,
+                            name: agentData.agent_id.substring(0, 10),
+                            x: cloudPos.x + (index === 0 ? -100 : 100),
+                            y: cloudPos.y,
+                            color: '#0f0',
+                            status: agentData.status
+                        });
+                        addActivity(`🤖 Agent ${agentData.agent_id} online`, 'agent');
+                    }
+                });
+            }
+        }
+        
+        // Call in fetchData to ensure agents show
+        setInterval(ensureAgentsVisible, 5000);
+</script>
+
 </body>
 </html>

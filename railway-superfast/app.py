@@ -99,6 +99,17 @@ def track_visitor():
         if len(visitor_data) > 1000:  # Keep last 1000
             visitor_data.pop(0)
 
+
+
+@app.after_request
+def add_security_headers(response):
+    """Add security headers to all responses"""
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    return response
+
 @app.route('/')
 def home():
     """Serve the main index.html page"""
