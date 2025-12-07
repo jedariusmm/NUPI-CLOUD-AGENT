@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUPI Features Hub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e1e; color: #cccccc; min-height: 100vh;
+        }
+        header {
+            background: #252526; padding: 20px; border-bottom: 1px solid #3c3c3c;
+            text-align: center;
+        }
+        h1 { font-size: 24px; margin-bottom: 10px; }
+        .tagline { color: #858585; font-size: 14px; }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: #252526;
+            border: 1px solid #3c3c3c;
+            border-radius: 8px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .feature-card:hover {
+            border-color: #007acc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .feature-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .feature-desc {
+            color: #858585;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .feature-btn {
+            background: #0e639c;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 500;
+        }
+        .feature-btn:hover {
+            background: #1177bb;
+        }
+        
+        .stats-bar {
+            background: #2d2d30;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid #3c3c3c;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4ec9b0;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #858585;
+            text-transform: uppercase;
+        }
+        
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+            .stats-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚀 NUPI Features Hub</h1>
+        <p class="tagline">Everything you need to control, monitor & automate your digital life</p>
+    </header>
+    
+    <div class="stats-bar" id="stats">
+        <div class="stat">
+            <div class="stat-value" id="activeAgents">0</div>
+            <div class="stat-label">Active Agents</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="deviceCount">0</div>
+            <div class="stat-label">Devices</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="screenshotCount">0</div>
+            <div class="stat-label">Screenshots</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="backupCount">0</div>
+            <div class="stat-label">Backups</div>
+        </div>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card" onclick="location.href='/control.html'">
+            <div class="feature-icon">🖥️</div>
+            <div class="feature-title">Remote Computer Control</div>
+            <div class="feature-desc">
+                Control any computer from your phone. Execute commands, manage processes, view system info.
+            </div>
+            <button class="feature-btn">Launch Control Panel</button>
+        </div>
+        
+        <div class="feature-card" onclick="openFeature('clipboard')">
+            <div class="feature-icon">📋</div>
+            <div class="feature-title">Cross-Device Clipboard</div>
+            <div class="feature-desc">
+                Copy on one device, paste on another. Real-time clipboard sync across all your computers.
+            </div>
+            <button class="feature-btn">View Clipboard</button>
+        </div>
+        
+        <div class="feature-card" onclick="openFeature('screenshots')">
+            <div class="feature-icon">📸</div>
+            <div class="feature-title">Live Screen Sharing</div>
+            <div class="feature-desc">
+                View live screenshots from any connected device. Perfect for remote monitoring.
+            </div>
+            <button class="feature-btn">View Screenshots</button>
+        </div>
+        
+        <div class="feature-card" onclick="openFeature('system')">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">System Monitoring</div>
+            <div class="feature-desc">
+                Real-time CPU, memory, disk, and network monitoring for all devices.
+            </div>
+            <button class="feature-btn">View Stats</button>
+        </div>
+        
+        <div class="feature-card" onclick="openFeature('files')">
+            <div class="feature-icon">📁</div>
+            <div class="feature-title">File Transfer</div>
+            <div class="feature-desc">
+                Transfer files between devices instantly. Monitor file changes in real-time.
+            </div>
+            <button class="feature-btn">Transfer Files</button>
+        </div>
+        
+        <div class="feature-card" onclick="openFeature('backup')">
+            <div class="feature-icon">💾</div>
+            <div class="feature-title">Cloud Backup</div>
+            <div class="feature-desc">
+                Automatic backup of important files to NUPI cloud. Never lose data again.
+            </div>
+            <button class="feature-btn">View Backups</button>
+        </div>
+        
+        <div class="feature-card" onclick="openFeature('logs')">
+            <div class="feature-icon">📝</div>
+            <div class="feature-title">Log Analysis</div>
+            <div class="feature-desc">
+                Real-time log monitoring with error detection and alerts.
+            </div>
+            <button class="feature-btn">View Logs</button>
+        </div>
+        
+        <div class="feature-card" onclick="openFeature('tasks')">
+            <div class="feature-icon">⏰</div>
+            <div class="feature-title">Task Automation</div>
+            <div class="feature-desc">
+                Schedule commands and scripts to run automatically on any device.
+            </div>
+            <button class="feature-btn">Create Task</button>
+        </div>
+        
+        <div class="feature-card" onclick="location.href='/copilot-chat.html'">
+            <div class="feature-icon">💬</div>
+            <div class="feature-title">AI Assistant</div>
+            <div class="feature-desc">
+                Chat with NUPI AI for help with any task. Powered by Claude 3.5 Sonnet.
+            </div>
+            <button class="feature-btn">Open Chat</button>
+        </div>
+        
+        <div class="feature-card" onclick="location.href='/visualizer-real.html'">
+            <div class="feature-icon">🗺️</div>
+            <div class="feature-title">Agent Visualizer</div>
+            <div class="feature-desc">
+                Watch your agents move in real-time across the network map.
+            </div>
+            <button class="feature-btn">View Map</button>
+        </div>
+        
+        <div class="feature-card" onclick="location.href='/cloud-dashboard.html'">
+            <div class="feature-icon">☁️</div>
+            <div class="feature-title">Cloud Dashboard</div>
+            <div class="feature-desc">
+                View all registered devices and visitor analytics in real-time.
+            </div>
+            <button class="feature-btn">Open Dashboard</button>
+        </div>
+        
+        <div class="feature-card" onclick="downloadAgent()">
+            <div class="feature-icon">📥</div>
+            <div class="feature-title">Install Agents</div>
+            <div class="feature-desc">
+                Download and install monitoring agents on your computers.
+            </div>
+            <button class="feature-btn">Download Agents</button>
+        </div>
+    </div>
+    
+    <script>
+        async function loadStats() {
+            try {
+                const [health, screenshots, backups] = await Promise.all([
+                    fetch('/api/stats').then(r => r.json()),
+                    fetch('/api/screenshots/latest').then(r => r.json()),
+                    fetch('/api/backup/files').then(r => r.json())
+                ]);
+                
+                document.getElementById('activeAgents').textContent = health.active_agents || 0;
+                document.getElementById('deviceCount').textContent = health.total_devices || 0;
+                document.getElementById('screenshotCount').textContent = screenshots.screenshots?.length || 0;
+                document.getElementById('backupCount').textContent = backups.backups?.length || 0;
+            } catch (e) {
+                console.error('Stats error:', e);
+            }
+        }
+        
+        function openFeature(feature) {
+            // Create feature-specific pages
+            const pages = {
+                clipboard: '/clipboard.html',
+                screenshots: '/screenshots.html',
+                system: '/system-monitor.html',
+                files: '/file-transfer.html',
+                backup: '/backup.html',
+                logs: '/logs.html',
+                tasks: '/tasks.html'
+            };
+            
+            if (pages[feature]) {
+                window.location.href = pages[feature];
+            } else {
+                alert(`${feature} feature coming soon!`);
+            }
+        }
+        
+        function downloadAgent() {
+            alert('Agent Download:\n\n1. Clipboard Sync: /agents/clipboard-sync-agent.py\n2. Screenshot: /agents/screenshot-agent.py\n3. Process Monitor: /agents/process-monitor-agent.py\n4. Network Monitor: /agents/network-monitor-agent.py\n5. File Watcher: /agents/file-watcher-agent.py\n6. Log Analyzer: /agents/log-analyzer-agent.py\n7. Backup: /agents/backup-agent.py\n8. Task Scheduler: /agents/task-scheduler-agent.py\n\nRun: python3 <agent-name>.py');
+        }
+        
+        loadStats();
+        setInterval(loadStats, 5000);
+    </script>
+</body>
+</html>

