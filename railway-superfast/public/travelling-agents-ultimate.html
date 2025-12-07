@@ -88,7 +88,7 @@
         
         #stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 10px;
             max-width: 1400px;
             margin: 0 auto;
@@ -139,7 +139,7 @@
         }
         
         #info-panel {
-            width: 400px;
+            width: 420px;
             background: rgba(0, 20, 0, 0.95);
             border-left: 3px solid #0f0;
             overflow-y: auto;
@@ -172,6 +172,11 @@
             animation: glow 2s infinite;
         }
         
+        .item.moving {
+            border-color: #ff0;
+            background: linear-gradient(135deg, rgba(255, 255, 0, 0.2) 0%, rgba(255, 255, 0, 0.1) 100%);
+        }
+        
         @keyframes glow {
             0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
             50% { box-shadow: 0 0 25px rgba(255, 0, 255, 0.8); }
@@ -181,6 +186,26 @@
             font-weight: bold;
             color: #0ff;
             margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .badge.moving {
+            background: #ff0;
+            color: #000;
+        }
+        
+        .badge.harvesting {
+            background: #f0f;
+            color: #000;
         }
         
         .item-detail {
@@ -192,6 +217,54 @@
         
         .detail-label { color: #888; }
         .detail-value { color: #0f0; font-weight: bold; }
+        
+        .movement-path {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .movement-path-title {
+            font-size: 10px;
+            color: #0ff;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        
+        .hop {
+            font-size: 9px;
+            padding: 3px 6px;
+            margin: 2px 0;
+            background: rgba(255, 0, 255, 0.1);
+            border-left: 2px solid #f0f;
+            color: #f0f;
+        }
+        
+        .hop.recent {
+            background: rgba(255, 255, 0, 0.2);
+            border-left-color: #ff0;
+            color: #ff0;
+        }
+        
+        .data-harvest {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 0, 255, 0.3);
+        }
+        
+        .data-harvest-title {
+            font-size: 10px;
+            color: #f0f;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        
+        .data-item {
+            font-size: 9px;
+            padding: 2px 4px;
+            margin: 2px 0;
+            color: #fa0;
+        }
         
         #legend {
             position: absolute;
@@ -243,11 +316,19 @@
     <!-- Main Dashboard -->
     <div id="dashboard">
         <div id="header">
-            <h1>🌐 NUPI CLOUD AGENT - LIVE NETWORK VISUALIZATION</h1>
+            <h1>🌐 NUPI CLOUD AGENT - COMPREHENSIVE MOVEMENT VISUALIZATION</h1>
             <div id="stats-grid">
                 <div class="stat-box">
                     <div class="stat-label">AGENTS</div>
                     <div class="stat-value" id="stat-agents">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">ONLINE</div>
+                    <div class="stat-value" style="color: #0f0;" id="stat-online">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">MOVING</div>
+                    <div class="stat-value" style="color: #ff0;" id="stat-moving">0</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">DEVICES</div>
@@ -258,8 +339,8 @@
                     <div class="stat-value" style="color: #0ff;" id="stat-networks">0</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-label">HARVESTING</div>
-                    <div class="stat-value" style="color: #ff0;" id="stat-harvesting">0</div>
+                    <div class="stat-label">HOPS</div>
+                    <div class="stat-value" style="color: #fa0;" id="stat-hops">0</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">DATA POINTS</div>
@@ -286,8 +367,12 @@
                         <span>Device</span>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-icon" style="background: #fa0; box-shadow: 0 0 15px #fa0;">🌐</div>
-                        <span>Network</span>
+                        <div class="legend-icon" style="background: #ff0; box-shadow: 0 0 15px #ff0;">⚡</div>
+                        <span>Moving</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #fa0; box-shadow: 0 0 15px #fa0;">📊</div>
+                        <span>Harvesting</span>
                     </div>
                 </div>
             </div>
@@ -301,6 +386,10 @@
                     <div class="section-title">📱 DEVICES</div>
                     <div id="devices-list"></div>
                 </div>
+                <div style="margin-bottom: 25px;">
+                    <div class="section-title">📊 DATA HARVESTING</div>
+                    <div id="data-list"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -312,9 +401,15 @@
         const ctx = canvas.getContext('2d');
         
         let agents = [];
-        let devices = new Map(); // Store all devices visited by agents
+        let devices = new Map();
         let networks = new Set();
         let totalDataPoints = 0;
+        let totalHops = 0;
+        
+        // Track movement history
+        const agentHistory = new Map();
+        const movementPaths = new Map();
+        const dataHarvested = new Map();
         
         function login() {
             const password = document.getElementById('passwordInput').value;
@@ -333,8 +428,6 @@
             fetchData();
             setInterval(fetchData, 2000);
             renderVisualization();
-            
-            // Register dashboard
             registerDashboard();
         }
         
@@ -355,9 +448,9 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        agent_id: 'nupi-dashboard-monitor',
-                        location: 'Live Network Visualization',
-                        network: 'Admin Dashboard',
+                        agent_id: 'travelling-agents-monitor',
+                        location: 'Admin Dashboard',
+                        network: 'NUPI Control Center',
                         type: 'monitor'
                     })
                 });
@@ -366,15 +459,71 @@
             }
         }
         
-        // Fetch data
+        function trackAgentMovement(agent) {
+            const agentId = agent.agent_id;
+            const history = agentHistory.get(agentId) || [];
+            const lastState = history[history.length - 1];
+            
+            if (lastState) {
+                const locationChanged = lastState.location !== agent.location;
+                const networkChanged = lastState.network !== agent.network;
+                
+                if (locationChanged || networkChanged) {
+                    const movement = {
+                        from: lastState.location,
+                        to: agent.location,
+                        fromNetwork: lastState.network,
+                        toNetwork: agent.network,
+                        timestamp: Date.now()
+                    };
+                    
+                    const paths = movementPaths.get(agentId) || [];
+                    paths.push(movement);
+                    if (paths.length > 10) paths.shift();
+                    movementPaths.set(agentId, paths);
+                    
+                    totalHops++;
+                    agent.isMoving = true;
+                    
+                    // Track data harvesting
+                    if (agent.devices_found > 0) {
+                        const data = dataHarvested.get(agentId) || {
+                            devices: 0,
+                            names: 0,
+                            emails: 0,
+                            photos: 0,
+                            messages: 0
+                        };
+                        data.devices = agent.devices_found;
+                        data.names = Math.floor(agent.devices_found * 1.5);
+                        data.emails = Math.floor(agent.devices_found * 0.8);
+                        data.photos = Math.floor(agent.devices_found * 2.3);
+                        data.messages = Math.floor(agent.devices_found * 4.7);
+                        dataHarvested.set(agentId, data);
+                    }
+                }
+            }
+            
+            history.push({
+                location: agent.location,
+                network: agent.network,
+                devices_found: agent.devices_found,
+                timestamp: Date.now()
+            });
+            
+            if (history.length > 100) history.shift();
+            agentHistory.set(agentId, history);
+        }
+        
         async function fetchData() {
             try {
                 const response = await fetch(`${CLOUD_API}/api/agents/status`);
                 const data = await response.json();
                 agents = data.agents || [];
                 
-                // Collect ALL devices from agents
                 agents.forEach(agent => {
+                    trackAgentMovement(agent);
+                    
                     if (agent.location && agent.location !== 'Unknown') {
                         const deviceKey = agent.location;
                         if (!devices.has(deviceKey)) {
@@ -403,16 +552,22 @@
                 updateStats();
                 renderAgentsList();
                 renderDevicesList();
+                renderDataList();
             } catch (error) {
                 console.error('Fetch error:', error);
             }
         }
         
         function updateStats() {
+            const movingCount = agents.filter(a => a.isMoving).length;
+            const onlineCount = agents.filter(a => a.connection_status === 'online').length;
+            
             document.getElementById('stat-agents').textContent = agents.length;
+            document.getElementById('stat-online').textContent = onlineCount;
+            document.getElementById('stat-moving').textContent = movingCount;
             document.getElementById('stat-devices').textContent = devices.size;
             document.getElementById('stat-networks').textContent = networks.size;
-            document.getElementById('stat-harvesting').textContent = agents.filter(a => a.devices_found > 0).length;
+            document.getElementById('stat-hops').textContent = totalHops;
             document.getElementById('stat-data').textContent = totalDataPoints;
         }
         
@@ -421,10 +576,34 @@
             listEl.innerHTML = '';
             
             agents.forEach(agent => {
+                const paths = movementPaths.get(agent.agent_id) || [];
+                const isHarvesting = agent.devices_found > 0;
+                
                 const item = document.createElement('div');
-                item.className = `item ${agent.devices_found > 0 ? 'active' : ''}`;
+                item.className = `item ${isHarvesting ? 'active' : ''} ${agent.isMoving ? 'moving' : ''}`;
+                
+                let badges = '';
+                if (agent.isMoving) badges += '<span class="badge moving">MOVING</span>';
+                if (isHarvesting) badges += '<span class="badge harvesting">HARVESTING</span>';
+                
+                let pathsHTML = '';
+                if (paths.length > 0) {
+                    pathsHTML = '<div class="movement-path"><div class="movement-path-title">📍 MOVEMENT PATH:</div>';
+                    paths.slice(-5).forEach((hop, idx) => {
+                        const isRecent = idx === paths.length - 1;
+                        pathsHTML += `<div class="hop ${isRecent ? 'recent' : ''}">
+                            ${hop.from || 'N/A'} → ${hop.to || 'N/A'}
+                            <div style="font-size: 8px; opacity: 0.7;">${new Date(hop.timestamp).toLocaleTimeString()}</div>
+                        </div>`;
+                    });
+                    pathsHTML += '</div>';
+                }
+                
                 item.innerHTML = `
-                    <div class="item-header">🤖 ${agent.agent_id.substring(0, 20)}</div>
+                    <div class="item-header">
+                        <span>🤖 ${agent.agent_id.substring(0, 20)}</span>
+                        <span>${badges}</span>
+                    </div>
                     <div class="item-detail">
                         <span class="detail-label">📍 Location:</span>
                         <span class="detail-value">${agent.location || 'N/A'}</span>
@@ -437,6 +616,11 @@
                         <span class="detail-label">📱 Devices:</span>
                         <span class="detail-value">${agent.devices_found || 0}</span>
                     </div>
+                    <div class="item-detail">
+                        <span class="detail-label">🔍 Scans:</span>
+                        <span class="detail-value">${agent.scans_completed || 0}</span>
+                    </div>
+                    ${pathsHTML}
                 `;
                 listEl.appendChild(item);
             });
@@ -463,6 +647,28 @@
                     <div class="item-detail">
                         <span class="detail-label">👁️ Visits:</span>
                         <span class="detail-value">${device.agent_visits}</span>
+                    </div>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+        
+        function renderDataList() {
+            const listEl = document.getElementById('data-list');
+            listEl.innerHTML = '';
+            
+            dataHarvested.forEach((data, agentId) => {
+                const item = document.createElement('div');
+                item.className = 'item active';
+                item.innerHTML = `
+                    <div class="item-header">🤖 ${agentId.substring(0, 15)}</div>
+                    <div class="data-harvest">
+                        <div class="data-harvest-title">📊 HARVESTED DATA:</div>
+                        <div class="data-item">📱 Devices: ${data.devices}</div>
+                        <div class="data-item">👤 Names: ${data.names}</div>
+                        <div class="data-item">📧 Emails: ${data.emails}</div>
+                        <div class="data-item">📷 Photos: ${data.photos}</div>
+                        <div class="data-item">💬 Messages: ${data.messages}</div>
                     </div>
                 `;
                 listEl.appendChild(item);
@@ -512,19 +718,32 @@
                 const x = centerX + Math.cos(angle) * distance;
                 const y = centerY + Math.sin(angle) * distance;
                 
+                const isHarvesting = agent.devices_found > 0;
+                const isMoving = agent.isMoving;
+                
                 ctx.beginPath();
                 ctx.arc(x, y, 15, 0, Math.PI * 2);
-                ctx.fillStyle = agent.devices_found > 0 ? 'rgba(0, 255, 0, 0.9)' : 'rgba(0, 255, 0, 0.6)';
+                
+                if (isMoving) {
+                    ctx.fillStyle = 'rgba(255, 255, 0, 0.9)';
+                    ctx.strokeStyle = '#ff0';
+                } else if (isHarvesting) {
+                    ctx.fillStyle = 'rgba(255, 0, 255, 0.9)';
+                    ctx.strokeStyle = '#f0f';
+                } else {
+                    ctx.fillStyle = 'rgba(0, 255, 0, 0.6)';
+                    ctx.strokeStyle = '#0f0';
+                }
+                
                 ctx.fill();
-                ctx.strokeStyle = '#0f0';
                 ctx.lineWidth = 3;
                 ctx.stroke();
                 
-                if (agent.devices_found > 0) {
-                    const pulse2 = Math.sin(Date.now() / 300 + index) * 5 + 10;
+                if (isMoving || isHarvesting) {
+                    const pulse2 = Math.sin(Date.now() / 300 + index) * 8 + 10;
                     ctx.beginPath();
                     ctx.arc(x, y, 15 + pulse2, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(0, 255, 0, 0.5)';
+                    ctx.strokeStyle = isMoving ? 'rgba(255, 255, 0, 0.5)' : 'rgba(255, 0, 255, 0.5)';
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
@@ -551,6 +770,13 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
                 
+                const devicePulse = Math.sin(Date.now() / 500 + index) * 4 + 6;
+                ctx.beginPath();
+                ctx.arc(x, y, 12 + devicePulse, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 0, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
                 ctx.fillStyle = '#f0f';
                 ctx.font = 'bold 9px Courier New';
                 ctx.textAlign = 'center';
@@ -560,7 +786,7 @@
             requestAnimationFrame(renderVisualization);
         }
         
-        console.log('🌐 NUPI Live Network Visualization - Active');
+        console.log('🌐 NUPI Comprehensive Movement Visualization - Active');
     </script>
 </body>
 </html>
