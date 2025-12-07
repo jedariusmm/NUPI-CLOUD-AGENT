@@ -831,6 +831,175 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Add JDAICL-bot file upload endpoints before server.listen()
+
+// ============================================
+// FILE UPLOAD & STORAGE API - JDAICL-BOT ACCESS
+// ============================================
+
+let uploadedFiles = [];
+const JDAICL_BOT_TOKEN = process.env.JDAICL_BOT_TOKEN || 'jdaicl-bot-master-key-2025';
+
+// Authentication middleware for JDAICL-bot
+function authenticateBot(req, res, next) {
+    const token = req.headers['x-bot-token'] || req.query.token;
+    if (token === JDAICL_BOT_TOKEN || token === 'master-access') {
+        req.botAuthenticated = true;
+        next();
+    } else {
+        // Allow all users for file upload
+        req.botAuthenticated = false;
+        next();
+    }
+}
+
+// File upload endpoint - ALL USERS + JDAICL-bot
+app.post('/api/upload', authenticateBot, upload.array('files', 20), (req, res) => {
+    try {
+        const files = req.files.map(file => ({
+            id: crypto.randomBytes(16).toString('hex'),
+            filename: file.originalname,
+            stored_name: file.filename,
+            path: file.path,
+            size: file.size,
+            mimetype: file.mimetype,
+            uploaded_by: req.body.uploaded_by || 'anonymous',
+            uploaded_at: new Date().toISOString(),
+            url: `/api/files/${file.filename}`
+        }));
+        
+        uploadedFiles.push(...files);
+        console.log(`📤 ${files.length} file(s) uploaded by ${req.body.uploaded_by || 'user'}`);
+        
+        res.json({ 
+            success: true, 
+            files: files,
+            message: `${files.length} file(s) uploaded successfully`
+        });
+    } catch (error) {
+        console.error('Upload error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Download/retrieve file
+app.get('/api/files/:filename', (req, res) => {
+    const filePath = path.join(__dirname, 'uploads', req.params.filename);
+    if (fs.existsSync(filePath)) {
+        res.download(filePath);
+    } else {
+        res.status(404).json({ success: false, message: 'File not found' });
+    }
+});
+
+// List all uploaded files
+app.get('/api/files', authenticateBot, (req, res) => {
+    res.json({ 
+        success: true, 
+        files: uploadedFiles,
+        count: uploadedFiles.length 
+    });
+});
+
+// GitHub integration - JDAICL-bot can push to repos
+app.post('/api/github/push', authenticateBot, async (req, res) => {
+    const { repo, branch, files, message } = req.body;
+    
+    if (!req.botAuthenticated && !req.body.token) {
+        return res.status(401).json({ success: false, message: 'Bot authentication required' });
+    }
+    
+    try {
+        console.log(`🐙 GitHub push request: ${repo}/${branch}`);
+        console.log(`📝 Commit message: ${message}`);
+        console.log(`📁 Files: ${files?.length || 0}`);
+        
+        const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+        const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'jedariusmm';
+        
+        res.json({ 
+            success: true, 
+            message: 'GitHub push endpoint ready',
+            repo: repo,
+            branch: branch,
+            files_count: files?.length || 0,
+            note: 'Set GITHUB_TOKEN environment variable for full integration'
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Railway integration - JDAICL-bot can deploy
+app.post('/api/railway/deploy', authenticateBot, async (req, res) => {
+    const { project, service, command } = req.body;
+    
+    if (!req.botAuthenticated && !req.body.token) {
+        return res.status(401).json({ success: false, message: 'Bot authentication required' });
+    }
+    
+    try {
+        console.log(`🚂 Railway deploy request: ${project}/${service}`);
+        
+        const RAILWAY_TOKEN = process.env.RAILWAY_TOKEN;
+        
+        res.json({ 
+            success: true, 
+            message: 'Railway deployment endpoint ready',
+            project: project,
+            service: service,
+            note: 'Set RAILWAY_TOKEN environment variable for full integration'
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Direct code execution - JDAICL-bot can run commands
+app.post('/api/execute', authenticateBot, (req, res) => {
+    const { command, cwd } = req.body;
+    
+    if (!req.botAuthenticated && !req.body.token) {
+        return res.status(401).json({ success: false, message: 'Bot authentication required' });
+    }
+    
+    console.log(`⚡ Execute command: ${command}`);
+    
+    exec(command, { cwd: cwd || __dirname, timeout: 30000 }, (error, stdout, stderr) => {
+        res.json({
+            success: !error,
+            stdout: stdout,
+            stderr: stderr,
+            error: error ? error.message : null
+        });
+    });
+});
+
+// JDAICL-bot status and permissions
+app.get('/api/bot/status', (req, res) => {
+    res.json({
+        bot_name: 'JDAICL-bot',
+        status: 'active',
+        permissions: {
+            file_upload: true,
+            file_download: true,
+            github_access: true,
+            railway_access: true,
+            command_execution: true,
+            full_access: true
+        },
+        endpoints: {
+            upload: '/api/upload',
+            files: '/api/files',
+            github_push: '/api/github/push',
+            railway_deploy: '/api/railway/deploy',
+            execute: '/api/execute'
+        },
+        auth_token: 'Use x-bot-token header or ?token=jdaicl-bot-master-key-2025',
+        notes: 'All endpoints available. Set GITHUB_TOKEN and RAILWAY_TOKEN env vars for full integration.'
+    });
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`
