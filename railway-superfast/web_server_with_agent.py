@@ -4,6 +4,7 @@ NUPI CLOUD AGENT - REAL DATA ONLY
 Shows actual running agents and real harvested data
 """
 from flask import Flask, request, jsonify, send_from_directory, render_template_string
+from flask_cors import CORS
 from datetime import datetime
 import os
 import json
@@ -63,6 +64,21 @@ app = Flask(__name__)
 agents_registry = {}  # agent_id -> agent_data
 collected_data = []   # All harvested data
 visitor_data = []     # Worldwide visitor tracking
+
+# Configure CORS for nupiai.com and nupidesktopai.com
+CORS(app, resources={
+    r"/api/*": {
+        "origins": [
+            "https://nupiai.com",
+            "https://www.nupiai.com",
+            "https://nupidesktopai.com",
+            "https://www.nupidesktopai.com",
+            "http://localhost:*"
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 device_discoveries = []  # Local network discoveries
 
 @app.before_request
