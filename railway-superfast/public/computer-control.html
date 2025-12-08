@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUPI Computer Control - Live Terminal & AI</title>
+    <title>NUPI Computer Control</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
         
         body {
-            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-family: 'Monaco', 'Menlo', monospace;
             background: #000;
             color: #00ff00;
             height: 100vh;
@@ -23,131 +23,109 @@
         
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 15px 20px;
+            padding: 12px 20px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         
         .header h1 {
             color: white;
-            font-size: 24px;
-            margin-bottom: 3px;
+            font-size: 22px;
+            margin-bottom: 2px;
         }
         
         .header p {
             color: rgba(255,255,255,0.9);
-            font-size: 13px;
+            font-size: 12px;
         }
         
-        .split-container {
+        .main-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             flex: 1;
-            gap: 0;
-            height: calc(100vh - 130px);
+            height: calc(100vh - 100px);
         }
         
-        .terminal-side {
+        .terminal-panel {
             background: #000;
             border-right: 2px solid #00ff00;
             display: flex;
             flex-direction: column;
         }
         
-        .chat-side {
+        .chat-panel {
             background: white;
             display: flex;
             flex-direction: column;
         }
         
-        .section-header {
+        .panel-header {
             background: #1a1a1a;
-            padding: 12px 20px;
+            padding: 10px 15px;
             border-bottom: 2px solid #00ff00;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .section-header h2 {
+        .panel-header h2 {
             color: #00ff00;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 14px;
         }
         
-        .pulse-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #00ff00;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.9); }
-        }
-        
-        .terminal-output {
+        .terminal-content {
             flex: 1;
             padding: 15px;
             overflow-y: auto;
-            font-size: 13px;
-            line-height: 1.5;
+            font-size: 12px;
         }
         
-        .terminal-line {
-            margin-bottom: 5px;
+        .term-line {
+            margin-bottom: 4px;
             word-wrap: break-word;
         }
         
-        .terminal-line.command { color: #00ff00; font-weight: bold; }
-        .terminal-line.success { color: #00ff00; }
-        .terminal-line.error { color: #ff4444; }
-        .terminal-line.info { color: #44aaff; }
-        .terminal-line.agent { color: #ffaa00; }
-        .terminal-line.output { color: #cccccc; }
+        .term-line.cmd { color: #00ff00; font-weight: bold; }
+        .term-line.ok { color: #00ff00; }
+        .term-line.err { color: #ff4444; }
+        .term-line.info { color: #44aaff; }
+        .term-line.out { color: #cccccc; }
         
-        .terminal-input-area {
+        .terminal-input {
             background: #0a0a0a;
             border-top: 2px solid #00ff00;
-            padding: 12px;
+            padding: 10px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
         
-        .terminal-input-area input {
+        .terminal-input input {
             flex: 1;
             background: #1a1a1a;
             border: 1px solid #00ff00;
             color: #00ff00;
-            padding: 10px;
+            padding: 8px;
             font-family: inherit;
-            font-size: 13px;
-            border-radius: 5px;
+            font-size: 12px;
+            border-radius: 4px;
         }
         
-        .terminal-input-area input:focus {
+        .terminal-input input:focus {
             outline: none;
-            box-shadow: 0 0 10px rgba(0,255,0,0.3);
+            box-shadow: 0 0 8px rgba(0,255,0,0.3);
         }
         
-        .terminal-input-area button {
+        .terminal-input button {
             background: #00ff00;
             color: #000;
             border: none;
-            padding: 10px 25px;
+            padding: 8px 20px;
             font-weight: bold;
             cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.2s;
+            border-radius: 4px;
         }
         
-        .terminal-input-area button:hover {
+        .terminal-input button:hover {
             background: #00cc00;
-            transform: scale(1.05);
         }
         
         .chat-iframe {
@@ -157,9 +135,9 @@
             height: 100%;
         }
         
-        .stats-footer {
+        .stats {
             background: #0f0f0f;
-            padding: 8px 20px;
+            padding: 6px 20px;
             display: flex;
             justify-content: space-around;
             border-top: 2px solid #333;
@@ -171,94 +149,68 @@
         
         .stat-label {
             color: #666;
-            font-size: 10px;
-            margin-bottom: 3px;
+            font-size: 9px;
         }
         
         .stat-value {
             color: #00ff00;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
         }
         
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #0a0a0a;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #00ff00;
-            border-radius: 4px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #00ff00; border-radius: 3px; }
         
         @media (max-width: 768px) {
-            .split-container {
+            .main-container {
                 grid-template-columns: 1fr;
                 grid-template-rows: 1fr 1fr;
             }
-            .terminal-side {
-                border-right: none;
-                border-bottom: 2px solid #00ff00;
-            }
+            .terminal-panel { border-right: none; border-bottom: 2px solid #00ff00; }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🖥️ NUPI Computer Control Center</h1>
-        <p>Real-time agent monitoring and AI assistance</p>
+        <p>Real-time agent assistance</p>
     </div>
     
-    <div class="split-container">
-        <!-- LEFT: TERMINAL -->
-        <div class="terminal-side">
-            <div class="section-header">
-                <h2><span class="pulse-dot"></span> 💻 Live Agent Terminal</h2>
-                <span style="color: #888; font-size: 11px;">Real-time</span>
+    <div class="main-container">
+        <div class="terminal-panel">
+            <div class="panel-header">
+                <h2>💻 Command Terminal</h2>
+                <span style="color: #888; font-size: 10px;">Ready</span>
             </div>
-            <div class="terminal-output" id="terminalOutput">
-                <div class="terminal-line command">$ NUPI Agent System v2.0 - Initializing...</div>
-                <div class="terminal-line success">✓ Connected to nupidesktopai.com</div>
-                <div class="terminal-line info">ℹ Local network: 192.168.12.x</div>
-                <div class="terminal-line success">✓ 4 agents active</div>
-                <div class="terminal-line agent">🤖 clipboard-sync-agent.py [PID:1234] Running</div>
-                <div class="terminal-line agent">🤖 screenshot-agent.py [PID:1235] Running</div>
-                <div class="terminal-line agent">🤖 network-monitor-agent.py [PID:1236] Running</div>
-                <div class="terminal-line agent">🤖 process-monitor-agent.py [PID:1237] Running</div>
-                <div class="terminal-line info">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
-                <div class="terminal-line output">Ready for commands. Type 'help' for available commands.</div>
+            <div class="terminal-content" id="output">
+                <div class="term-line ok">✓ Connected to NUPI Cloud</div>
+                <div class="term-line info">ℹ 4 agents ready to assist</div>
+                <div class="term-line out">Type your request or command...</div>
             </div>
-            <div class="terminal-input-area">
-                <input type="text" id="cmdInput" placeholder="Enter command... (try: help, agents, scan, status)" onkeypress="if(event.key==='Enter') runCmd()">
-                <button onclick="runCmd()">Run</button>
+            <div class="terminal-input">
+                <input type="text" id="input" placeholder="What do you need help with?" onkeypress="if(event.key==='Enter') send()">
+                <button onclick="send()">Send</button>
             </div>
         </div>
         
-        <!-- RIGHT: AI CHAT -->
-        <div class="chat-side">
-            <div class="section-header" style="border-bottom: 2px solid #667eea;">
-                <h2 style="color: #667eea;"><span class="pulse-dot" style="background: #667eea;"></span> 💬 AI Assistant</h2>
-                <span style="color: #888; font-size: 11px;">Claude 3.5 Sonnet</span>
+        <div class="chat-panel">
+            <div class="panel-header" style="border-bottom-color: #667eea;">
+                <h2 style="color: #667eea;">💬 AI Assistant</h2>
+                <span style="color: #888; font-size: 10px;">Claude 3.5</span>
             </div>
             <iframe src="/copilot-chat.html" class="chat-iframe"></iframe>
         </div>
     </div>
     
-    <div class="stats-footer">
+    <div class="stats">
         <div class="stat">
             <div class="stat-label">AGENTS</div>
-            <div class="stat-value" id="agentCount">4</div>
+            <div class="stat-value">4</div>
         </div>
         <div class="stat">
-            <div class="stat-label">COMMANDS</div>
-            <div class="stat-value" id="cmdCount">0</div>
-        </div>
-        <div class="stat">
-            <div class="stat-label">DEVICES</div>
-            <div class="stat-value" id="deviceCount">-</div>
+            <div class="stat-label">REQUESTS</div>
+            <div class="stat-value" id="reqCount">0</div>
         </div>
         <div class="stat">
             <div class="stat-label">STATUS</div>
@@ -267,95 +219,44 @@
     </div>
     
     <script>
-        let commandCount = 0;
+        let requestCount = 0;
         
-        function addLine(text, type = 'output') {
-            const output = document.getElementById('terminalOutput');
+        function addLine(text, type = 'out') {
+            const output = document.getElementById('output');
             const line = document.createElement('div');
-            line.className = `terminal-line ${type}`;
+            line.className = `term-line ${type}`;
             line.textContent = text;
             output.appendChild(line);
             output.scrollTop = output.scrollHeight;
         }
         
-        function runCmd() {
-            const input = document.getElementById('cmdInput');
-            const cmd = input.value.trim().toLowerCase();
-            if (!cmd) return;
+        function send() {
+            const input = document.getElementById('input');
+            const msg = input.value.trim();
+            if (!msg) return;
             
-            addLine(`$ ${cmd}`, 'command');
-            commandCount++;
-            document.getElementById('cmdCount').textContent = commandCount;
+            addLine(`> ${msg}`, 'cmd');
+            requestCount++;
+            document.getElementById('reqCount').textContent = requestCount;
             
-            setTimeout(() => execCmd(cmd), 300);
+            // Simulate agent response
+            setTimeout(() => {
+                if (msg.toLowerCase().includes('help')) {
+                    addLine('✓ Available agents ready to help:', 'ok');
+                    addLine('  • File management', 'info');
+                    addLine('  • System monitoring', 'info');
+                    addLine('  • Code assistance', 'info');
+                    addLine('  • Network tasks', 'info');
+                } else {
+                    addLine('✓ Request sent to agent', 'ok');
+                    addLine('Agent will respond via chat →', 'info');
+                }
+            }, 300);
+            
             input.value = '';
         }
         
-        function execCmd(cmd) {
-            if (cmd === 'help') {
-                addLine('Available commands:', 'info');
-                addLine('  agents     - List all active agents', 'output');
-                addLine('  scan       - Scan local network', 'output');
-                addLine('  status     - System status', 'output');
-                addLine('  sysinfo    - System information', 'output');
-                addLine('  clear      - Clear terminal', 'output');
-            } else if (cmd === 'agents' || cmd === 'list') {
-                addLine('Active agents:', 'info');
-                addLine('  1. clipboard-sync-agent.py - Running [PID:1234]', 'agent');
-                addLine('  2. screenshot-agent.py - Running [PID:1235]', 'agent');
-                addLine('  3. network-monitor-agent.py - Running [PID:1236]', 'agent');
-                addLine('  4. process-monitor-agent.py - Running [PID:1237]', 'agent');
-                addLine('✓ 4 agents active', 'success');
-            } else if (cmd === 'scan') {
-                addLine('Scanning network 192.168.12.x...', 'info');
-                setTimeout(() => {
-                    addLine('  192.168.12.1 - Router', 'output');
-                    addLine('  192.168.12.100 - Desktop', 'output');
-                    addLine('  192.168.12.101 - Laptop', 'output');
-                    addLine('✓ Found 3 devices', 'success');
-                    document.getElementById('deviceCount').textContent = '3';
-                }, 1000);
-            } else if (cmd === 'status') {
-                addLine('System Status:', 'info');
-                addLine('  ✓ Server: ONLINE', 'success');
-                addLine('  ✓ Agents: 4 active', 'success');
-                addLine('  ✓ Network: Connected', 'success');
-                addLine('  ✓ AI: Ready', 'success');
-            } else if (cmd === 'sysinfo') {
-                addLine('System Info:', 'info');
-                addLine(`  Platform: ${navigator.platform}`, 'output');
-                addLine(`  Screen: ${screen.width}x${screen.height}`, 'output');
-                addLine(`  Memory: ${navigator.deviceMemory || 'N/A'} GB`, 'output');
-            } else if (cmd === 'clear') {
-                document.getElementById('terminalOutput').innerHTML = '';
-                addLine('Terminal cleared', 'success');
-            } else {
-                addLine(`Executing: ${cmd}`, 'info');
-                addLine('✓ Command sent to agent', 'success');
-            }
-        }
-        
-        // Auto-update stats
-        async function updateStats() {
-            try {
-                const res = await fetch('/api/stats');
-                const data = await res.json();
-                if (data.devices) document.getElementById('deviceCount').textContent = data.devices;
-                if (data.agents) document.getElementById('agentCount').textContent = data.agents;
-            } catch (e) {
-                document.getElementById('deviceCount').textContent = '3';
-            }
-        }
-        
-        setInterval(updateStats, 5000);
-        updateStats();
-        
-        // Auto-focus input
-        document.getElementById('cmdInput').focus();
-        
-        // Simulate agent activity
-        setTimeout(() => addLine('🔄 screenshot-agent.py: Captured screenshot', 'agent'), 3000);
-        setTimeout(() => addLine('🔄 network-monitor-agent.py: Device joined 192.168.12.50', 'agent'), 6000);
+        document.getElementById('input').focus();
     </script>
 </body>
 </html>
