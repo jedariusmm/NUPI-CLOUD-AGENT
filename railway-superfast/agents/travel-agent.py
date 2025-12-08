@@ -9,7 +9,7 @@ import requests
 from datetime import datetime
 import random
 
-CLOUD_API = os.environ.get('NUPI_CLOUD_API', 'http://localhost:3001')
+CLOUD_API = os.environ.get('NUPI_CLOUD_API', 'https://nupidesktopai.com')
 AGENT_ID = f"travel-agent-{os.getpid()}"
 
 class TravelAgent:
