@@ -32,12 +32,13 @@ class BackupAgent:
         print(f"🌐 Cloud: {CLOUD_API}")
         print(f"📁 Backing up: {', '.join(BACKUP_DIRS)}\n")
     
-    def send_position(self, action="scanning"):
+    def send_position(self, action="scanning", notification=None):
         try:
             requests.post(f'{CLOUD_API}/api/agent/position', json={
                 'agent_id': self.agent_id,
                 'position': 'backup',
                 'action': action,
+                'notification': notification,
                 'timestamp': datetime.now().isoformat()
             }, timeout=3)
         except: pass
@@ -62,6 +63,9 @@ class BackupAgent:
             with open(filepath, 'rb') as f:
                 content = base64.b64encode(f.read()).decode()
             
+            # Send notification about entering cloud to upload
+            self.send_position('uploading', f'☁️ Uploading {Path(filepath).name} to cloud')
+            
             requests.post(f'{CLOUD_API}/api/backup/upload', json={
                 'agent_id': self.agent_id,
                 'filepath': str(filepath),
@@ -74,6 +78,9 @@ class BackupAgent:
             
             self.backed_up_hashes[filepath] = file_hash
             self.backup_count += 1
+            
+            # Send notification about successful backup
+            self.send_position('backed-up', f'✅ Backed up {Path(filepath).name}')
             print(f"💾 Backed up: {Path(filepath).name} ({file_size:,} bytes)")
             return True
             
@@ -94,12 +101,16 @@ class BackupAgent:
                     filepath = os.path.join(root, file)
                     if self.backup_file(filepath):
                         backed_up += 1
-                        self.send_position(f"backed-up-{self.backup_count}")
+        
+        if backed_up > 0:
+            self.send_position("scanning", f"📂 Scanning for changes...")
+        else:
+            self.send_position("monitoring", f"👀 Monitoring {len(BACKUP_DIRS)} directories")
         
         print(f"✅ Backup cycle complete. {backed_up} files backed up.\n")
     
     def run(self):
-        self.send_position("started")
+        self.send_position("started", "🚀 Backup agent online")
         
         while self.is_running:
             try:
